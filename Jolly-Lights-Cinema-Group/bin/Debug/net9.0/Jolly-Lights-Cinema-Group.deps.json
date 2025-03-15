@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Jolly-Lights-Cinema-Group/1.0.0": {
+        "runtime": {
+          "Jolly-Lights-Cinema-Group.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Jolly-Lights-Cinema-Group/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

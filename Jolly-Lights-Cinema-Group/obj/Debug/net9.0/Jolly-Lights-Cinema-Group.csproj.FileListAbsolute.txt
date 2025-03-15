@@ -1,0 +1,15 @@
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\bin\Debug\net9.0\Jolly-Lights-Cinema-Group.exe
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\bin\Debug\net9.0\Jolly-Lights-Cinema-Group.deps.json
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\bin\Debug\net9.0\Jolly-Lights-Cinema-Group.runtimeconfig.json
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\bin\Debug\net9.0\Jolly-Lights-Cinema-Group.dll
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\bin\Debug\net9.0\Jolly-Lights-Cinema-Group.pdb
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.GeneratedMSBuildEditorConfig.editorconfig
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.AssemblyInfoInputs.cache
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.AssemblyInfo.cs
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.csproj.CoreCompileInputs.cache
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.sourcelink.json
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.dll
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\refint\Jolly-Lights-Cinema-Group.dll
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.pdb
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\Jolly-Lights-Cinema-Group.genruntimeconfig.cache
+Z:\programming\hr\Project B\Jolly-Lights-Cinema-Group\Jolly-Lights-Cinema-Group\obj\Debug\net9.0\ref\Jolly-Lights-Cinema-Group.dll
