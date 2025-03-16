@@ -12,7 +12,11 @@
             string prompt = "Jolly Lights Cinema Group";
             string[] options = { "Medewerker", "Manager", "Admin" };
             Menu menu = new Menu(prompt, options);
+            string locationPrompt = "Choose a location";
+            string[] optionsLocation = { "Rotterdam", "Utrecht", "Amsterdam" };
+            Menu location = new Menu(locationPrompt, optionsLocation);
             int selectedIndex = menu.Run();
+            int selectedLocation = location.Run();
         }
     }
 }
