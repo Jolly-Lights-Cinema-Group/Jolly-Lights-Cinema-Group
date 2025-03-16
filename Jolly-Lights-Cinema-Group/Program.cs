@@ -14,7 +14,7 @@
             Menu menu = new Menu(prompt, options);
             string locationPrompt = "Choose a location";
             string[] optionsLocation = { "Rotterdam", "Utrecht", "Amsterdam" };
-            Menu location = new Menu(locationPrompt, optionsLocation);
+            Location location = new Location(locationPrompt, optionsLocation);
             int selectedIndex = menu.Run();
             int selectedLocation = location.Run();
         }
