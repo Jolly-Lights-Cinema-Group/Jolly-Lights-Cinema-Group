@@ -9,7 +9,7 @@ public class AuthenticationService
         if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             return false;
         
-        var hashedPassword = string.
+        var hashedPassword = 
     }
 
     public bool Logout()
