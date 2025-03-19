@@ -13,9 +13,7 @@ public class AuthenticationRepository
         {
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = @"
-                    SELECT username, password, role from employees
-                    WHERE username = @username;";
+            command.CommandText = "SELECT UserName, Password, Role from employees WHERE username = @username;";
 
             command.Parameters.AddWithValue("@username", username);
             var reader = command.ExecuteReader();
@@ -25,6 +23,7 @@ public class AuthenticationRepository
                 user.UserName = reader.GetString(0);
                 user.Password = reader.GetString(1);
                 user.Role = reader.GetFieldValue<Role>(2);
+                user.ValidLogin = true;
             }
         }
 
