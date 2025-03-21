@@ -2,7 +2,7 @@ using Jolly_Lights_Cinema_Group.Domain;
 
 namespace Jolly_Lights_Cinema_Group
 {
-    public class managerChoiceHandler
+    public class ManagerChoiceHandler
     {
 
 // Class for the Manager menu to work with the logic placed in the program class.

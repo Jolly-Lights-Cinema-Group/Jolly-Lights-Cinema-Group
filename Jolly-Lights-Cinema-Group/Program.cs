@@ -18,7 +18,7 @@ namespace Jolly_Lights_Cinema_Group
             LocationMenu location = new(locationPrompt, optionsLocation);
             int selectedLocation = location.Run();
 
-            
+            Console.Clear();
             // Some login code to be developed.   -- Very basic authentication here. Will work with this if we do have the authentication method.
             string Username = string.Empty;
             string Password = string.Empty;
@@ -44,13 +44,14 @@ namespace Jolly_Lights_Cinema_Group
                 case "Admin":
                     AdminMenu adminMenu = new AdminMenu();
                     int adminChoice = adminMenu.Run();
+                    AdminChoiceHandler.AdminMainMenu = true;
                     AdminChoiceHandler.HandleChoice(adminChoice, ref user);
                     break;
 
                 case "Manager":
                     ManagerMenu managerMenu = new ManagerMenu();
                     int managerChoice = managerMenu.Run();
-                    managerChoiceHandler.HandleChoice(managerChoice, ref user);
+                    ManagerChoiceHandler.HandleChoice(managerChoice, ref user);
                     break;
 
                 case "Employee":
