@@ -10,13 +10,6 @@ public class MovieRoomService
     {
         _movieRoomRepo = new MovieRoomRepository();
     }
-// CREATE TABLE IF NOT EXISTS MovieRoom (
-//   Id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   RoomNumber INTEGER NOT NULL,
-//   RoomLayoutJson TEXT NOT NULL,
-//   SupportedMovieType INTEGER NOT NULL,
-//   LocationId INTEGER NOT NULL,
-//   FOREIGN KEY (LocationId) REFERENCES Location (Id) ON DELETE CASCADE
     public void RegisterMovieRoom(int roomNumber, string roomLayoutJson, int supportedMovieType, int locationId)
     {
         if (string.IsNullOrWhiteSpace(roomLayoutJson))
@@ -37,7 +30,7 @@ public class MovieRoomService
         }
         else
         {
-            Console.WriteLine("Movie Rooms:");
+            Console.WriteLine($"Movie Rooms at location: {locationId}:");
             foreach (var movieRoom in movieRooms)
             {
                 Console.WriteLine(movieRoom);
