@@ -10,11 +10,6 @@ public class MovieService
     {
         _movieRepo = new MovieRepository();
     }
-//   Id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   Title TEXT NOT NULL,
-//   Duration INTEGER NOT NULL,
-//   MinimunAge INTEGER NOT NULL,
-//   MovieCast TEXT
     public void RegisterMovie(string title, int duration, int minimumAge, string movieCast)
     {
         if (string.IsNullOrWhiteSpace(title))
