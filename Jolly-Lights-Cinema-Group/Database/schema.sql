@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Employee (
     Address TEXT NOT NULL,
     Email TEXT NOT NULL,
     UserName TEXT NOT NULL UNIQUE,
-    Password TEXT NOT NULL
+    Password TEXT NOT NULL,
     Role INTEGER NOT NULL
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Schedule (
   MovieRoomId INTEGER NOT NULL,
   MovieId INTEGER NOT NULL,
   StartDate DATETIME NOT NULL,
-  FOREIGN KEY (MovieRoomId) REFERENCES MovieRoom (Id) ON DELETE CASCADE, //Moeten schedules verwijderd worden wanneer een film word verwijderd?
+  FOREIGN KEY (MovieRoomId) REFERENCES MovieRoom (Id) ON DELETE CASCADE,
   FOREIGN KEY (MovieId) REFERENCES Movie (Id) ON DELETE CASCADE
 );
 
