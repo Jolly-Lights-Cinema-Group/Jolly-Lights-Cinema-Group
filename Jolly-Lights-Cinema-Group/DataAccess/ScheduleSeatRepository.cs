@@ -1,13 +1,3 @@
-// CREATE TABLE IF NOT EXISTS ScheduleSeat (
-//   Id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   ScheduleId INTEGER NOT NULL,
-//   ReservationId INTEGER NOT NULL,
-//   Price REAL NOT NULL,
-//   Type INTEGER NOT NULL,
-//   SeatNumber TEXT NOT NULL,
-//   FOREIGN KEY (ScheduleId) REFERENCES Schedule (Id) ON DELETE CASCADE,
-//   FOREIGN KEY (ReservationId) REFERENCES Reservation (Id) ON DELETE CASCADE
-// );
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;  
