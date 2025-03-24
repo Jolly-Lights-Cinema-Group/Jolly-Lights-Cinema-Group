@@ -14,7 +14,7 @@ public class EmployeeService
         _employeeRepo = new EmployeeRepository();
     }
 
-    public void RegisterEmployee(string firstName, string lastName, string email, string username, string password)
+    public void RegisterEmployee(string firstName, string lastName, string email, string username, string password, int role)
     {
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
@@ -28,7 +28,7 @@ public class EmployeeService
             return;
         }
 
-        _employeeRepo.AddEmployee(firstName, lastName, email, username, password);
+        _employeeRepo.AddEmployee(firstName, lastName, email, username, password, role);
     }
 
     public void ShowAllEmployees()
