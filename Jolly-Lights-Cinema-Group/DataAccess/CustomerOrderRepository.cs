@@ -1,7 +1,3 @@
-// CREATE TABLE IF NOT EXISTS CustomerOrder (
-//   Id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   GrandPrice REAL NOT NULL
-// );
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;  
