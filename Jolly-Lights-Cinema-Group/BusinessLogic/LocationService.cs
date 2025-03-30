@@ -28,6 +28,23 @@ public class LocationService
         _locationRepo.AddLocation(name, address);
     }
 
+    public void DeleteLocation(int id, string name, string address)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            Console.WriteLine("Error: Name cannot be empty.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            Console.WriteLine("Error: Address cannot be empty.");
+            return;
+        }
+
+        _locationRepo.RemoveLocation(id, name, address);
+    }
+
     public void ShowAllLocations()
     {
         List<string> locations = _locationRepo.GetAllLocations();

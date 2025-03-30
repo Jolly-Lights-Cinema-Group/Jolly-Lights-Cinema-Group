@@ -24,6 +24,33 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
+        public void RemoveLocation(int id, string name, string address)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    DELETE FROM Location
+                    WHERE Id = @id OR (Name = @name AND Address = @address);";
+
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@address", address);
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected > 0)
+                {
+                    Console.WriteLine("Location removed successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("No matching location found to remove.");
+                }
+            }
+        }
+
         public List<string> GetAllLocations()
         {
             var locations = new List<string>();
