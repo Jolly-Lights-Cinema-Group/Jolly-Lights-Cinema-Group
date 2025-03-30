@@ -15,22 +15,39 @@ public class EmployeeService
         _employeeRepo = new EmployeeRepository();
     }
 
-    public void RegisterEmployee(string firstName, string lastName, string email, string username, string password, UserRole role)
+    public bool RegisterEmployee(string firstName, string lastName, string email, string username, string password, UserRole role)
     {
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
             Console.WriteLine("Error: Name cannot be empty.");
-            return;
+            return false;
         }
 
         if (!email.Contains("@"))
         {
             Console.WriteLine("Error: Invalid email format.");
-            return;
+            return false;
+        }
+
+        if (!Enum.IsDefined(typeof(UserRole), role))
+        {
+            Console.WriteLine("Error: Invalid role.");
+            return false;
         }
 
         _employeeRepo.AddEmployee(firstName, lastName, email, username, password, (int)role);
-    }
+        return true;
+     }
+
+      public void DeleteEmployee(string firstName,string lastname)
+      {
+        
+        if (_employeeRepo.DeleteEmployee(firstName,lastname))
+        {Console.WriteLine("Employee Deleted Successfully");}
+        else
+        {Console.WriteLine("Employee not found.");}
+        
+      }
 
     public void ShowAllEmployees()
     {

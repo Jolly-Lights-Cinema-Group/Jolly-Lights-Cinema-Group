@@ -29,7 +29,24 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue(@"role", role);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Employee added successfully.");
+            }
+        }
+
+        public bool DeleteEmployee(string firstname,string lastname)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM Employee WHERE FirstName = @firstName AND LastName = @lastName";
+
+                command.Parameters.AddWithValue("@firstName", firstname);
+                command.Parameters.AddWithValue("@lastName", lastname);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+
+
             }
         }
 

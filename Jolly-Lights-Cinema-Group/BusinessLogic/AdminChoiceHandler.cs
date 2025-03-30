@@ -1,5 +1,6 @@
 using System.Net;
 using Jolly_Lights_Cinema_Group.Domain;
+using JollyLightsCinemaGroup.BusinessLogic;
 
 namespace Jolly_Lights_Cinema_Group
 {
@@ -65,6 +66,7 @@ namespace Jolly_Lights_Cinema_Group
 
         private static void ViewReports()
         {
+            Console.Clear();
             Console.WriteLine("Viewing reports...");
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
@@ -72,6 +74,7 @@ namespace Jolly_Lights_Cinema_Group
 
         private static void AccessSettings()
         {
+            Console.Clear();
             Console.WriteLine("Accessing settings...");
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
@@ -101,9 +104,48 @@ namespace Jolly_Lights_Cinema_Group
         // Admin ManageUsers Methods
         private static void AddEmployee()
         {
+            UserRole role;
             Console.Clear();
-            Console.WriteLine("Information to add the user:");
-            Console.WriteLine("\nPress any key to continue.");
+            Console.WriteLine("What is the firstname of the user?");
+            string firstName = Console.ReadLine()!;
+            Console.WriteLine("What is the Lastname of the user?");
+            string lastName = Console.ReadLine()!;
+            Console.WriteLine("What is the email of the user?");
+            string email = Console.ReadLine()!;
+            Console.WriteLine("What will the username be of the user?");
+            string username = Console.ReadLine()!;
+            Console.WriteLine("What will the password be of the user?");
+            string password = Console.ReadLine()!;
+            Console.WriteLine("What will the role be of the user? \nEmployee\nAdmin\nManager");
+            string StrRole = Console.ReadLine()!;
+
+            switch (StrRole)
+            {
+                case "Employee":
+                role = UserRole.Employee;
+                break;
+                case "Admin":
+                role = UserRole.Admin;
+                break;
+                case "Manager":
+                role = UserRole.Manager;
+                break;
+                default:
+                Console.WriteLine("Invalid role input");
+                return;
+            }
+            
+            EmployeeService employeeService = new EmployeeService();
+
+            if (employeeService.RegisterEmployee(firstName,lastName,email,username,password,role))
+            {
+            Console.WriteLine($"User created: {firstName} {lastName}, Email: {email}, Username: {username}, Role: {StrRole}");
+            }
+            else
+            {
+                Console.WriteLine("User Creating failed.");
+            }
+
             Console.ReadKey();
         }
 
@@ -111,19 +153,23 @@ namespace Jolly_Lights_Cinema_Group
         private static void DeleteEmployee()
         {
             Console.Clear();
-            Console.WriteLine("Deletes user: USERINFORMATION");
-            Console.WriteLine("\nPress any key to continue.");
+            Console.WriteLine("You can delete users by typing the first and lastname of the employee.");
+            Console.WriteLine("Firstname:");
+            string firstname = Console.ReadLine()!;
+            Console.WriteLine("Lastname: ");
+            string lastname = Console.ReadLine()!;
+
+            EmployeeService employeeService = new EmployeeService();
+            employeeService.DeleteEmployee(firstname,lastname);
+
             Console.ReadKey();
         }
 
         private static void ViewAllEmployees()
         {
             Console.Clear();
-            Console.WriteLine("All Employees:\n");
-            Console.WriteLine("AAA");
-            Console.WriteLine("BBB");
-            Console.WriteLine("CCC");
-            Console.WriteLine("\nPress any key to continue.");
+            EmployeeService employeeService = new EmployeeService();
+            employeeService.ShowAllEmployees();
             Console.ReadKey();
         }
         private static bool HandleManageLocationsChoice(int choice)
