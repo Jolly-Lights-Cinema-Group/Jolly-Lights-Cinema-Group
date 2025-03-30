@@ -1,4 +1,5 @@
 ﻿using Jolly_Lights_Cinema_Group.Domain;
+using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
 {
@@ -7,6 +8,7 @@ namespace Jolly_Lights_Cinema_Group
         static void Main()
         {
             // Main menu / Asking for role
+            DatabaseManager.InitializeDatabase();
             string prompt = "Jolly Lights Cinema Group";
             string[] options = { "Employee", "Manager", "Admin" };
             Menu menu = new(prompt, options);
