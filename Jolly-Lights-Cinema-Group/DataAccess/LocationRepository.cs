@@ -32,7 +32,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Name, Address FROM Loaction;";
+                command.CommandText = "SELECT Id, Name, Address FROM Location;";
 
                 using (var reader = command.ExecuteReader())
                 {

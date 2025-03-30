@@ -18,12 +18,15 @@ namespace Jolly_Lights_Cinema_Group
                     ManageUsers();
                     break;
                 case 1:
-                    ViewReports();
+                    ManageLocations();
                     break;
                 case 2:
-                    AccessSettings();
+                    ViewReports();
                     break;
                 case 3:
+                    AccessSettings();
+                    break;
+                case 4:
                     user.IsAuthenticated = false;
                     break;
                 default:
@@ -43,6 +46,19 @@ namespace Jolly_Lights_Cinema_Group
             {
             int userChoice = manageUsersMenu.Run();
             inManageUsersMenu = HandleManageUserChoice(userChoice);
+            Console.Clear();
+            }
+        }
+        private static void ManageLocations()   // Makes new Menu with UserManagement rules.
+        {
+            bool inManageLocationMenu = true;
+            AdminManageLocationsMenu manageLocationsMenu = new();
+            Console.Clear();
+            
+            while(inManageLocationMenu)
+            {
+            int userChoice = manageLocationsMenu.Run();
+            inManageLocationMenu = HandleManageLocationsChoice(userChoice);
             Console.Clear();
             }
         }
@@ -107,6 +123,69 @@ namespace Jolly_Lights_Cinema_Group
             Console.WriteLine("AAA");
             Console.WriteLine("BBB");
             Console.WriteLine("CCC");
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
+        private static bool HandleManageLocationsChoice(int choice)
+    {
+        switch (choice)
+        {
+            case 0:
+                AddLocation();
+                return true;
+            case 1:
+                DeleteLocation();
+                return true;
+            case 2:
+                ViewAllLocations();
+                return true;
+            case 3:
+                return false;
+            default:
+                Console.WriteLine("Invalid selection.");
+                return true;
+        }
+    }
+        // Admin ManageUsers Methods
+        private static void AddLocation()
+        {
+            Console.Clear();
+
+            Console.WriteLine("Information to add location:");
+            Console.Write("Enter the name of the location: ");
+            string? name = Console.ReadLine();
+
+            Console.Write("Enter the address of the location: ");
+            string? address = Console.ReadLine();
+
+            LocationService locationService = new LocationService();
+            if(name != null && address != null)
+            {
+                locationService.RegisterLocation(name, address);
+            }
+            else
+            {
+                Console.WriteLine("Invalid location");
+            }
+
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
+
+
+        private static void DeleteLocation()
+        {
+            Console.Clear();
+            Console.WriteLine("Deletes location: LOCATIONINFORMATION");
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
+
+        private static void ViewAllLocations()
+        {
+            Console.Clear();
+            LocationService locationService = new LocationService();
+            locationService.ShowAllLocations();      
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }

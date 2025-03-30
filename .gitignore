@@ -6,7 +6,7 @@ obj/
 *.pdb
 *.json
 
-# *.db
+*.db
 
 Microsoft.Data.Sqlite.dll
 SQLitePCLRaw.batteries_v2.dll
