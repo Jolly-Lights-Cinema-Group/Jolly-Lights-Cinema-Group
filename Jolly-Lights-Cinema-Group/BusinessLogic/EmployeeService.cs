@@ -1,3 +1,4 @@
+using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ public class EmployeeService
         _employeeRepo = new EmployeeRepository();
     }
 
-    public void RegisterEmployee(string firstName, string lastName, string email, string username, string password, int role)
+    public void RegisterEmployee(string firstName, string lastName, string email, string username, string password, UserRole role)
     {
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
@@ -28,7 +29,7 @@ public class EmployeeService
             return;
         }
 
-        _employeeRepo.AddEmployee(firstName, lastName, email, username, password, role);
+        _employeeRepo.AddEmployee(firstName, lastName, email, username, password, (int)role);
     }
 
     public void ShowAllEmployees()
