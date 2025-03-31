@@ -11,24 +11,42 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class EmployeeRepository
     {
-        public void AddEmployee(string firstName, string lastName, string email, string username, string password)
+        public void AddEmployee(string firstName, string lastName, string email, string username, string password, int role)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Employee (FirstName, LastName, Email, UserName, Password)
-                    VALUES (@firstName, @lastName, @email, @username, @password);";
+                    INSERT INTO Employee (FirstName, LastName, Email, UserName, Password, Role)
+                    VALUES (@firstName, @lastName, @email, @username, @password, @role);";
 
                 command.Parameters.AddWithValue("@firstName", firstName);
                 command.Parameters.AddWithValue("@lastName", lastName);
                 command.Parameters.AddWithValue("@email", email);
                 command.Parameters.AddWithValue("@username", username);
                 command.Parameters.AddWithValue("@password", password); // Change here for hashed password
+                command.Parameters.AddWithValue(@"role", role);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Employee added successfully.");
+            }
+        }
+
+        public bool DeleteEmployee(string firstname,string lastname)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM Employee WHERE FirstName = @firstName AND LastName = @lastName";
+
+                command.Parameters.AddWithValue("@firstName", firstname);
+                command.Parameters.AddWithValue("@lastName", lastname);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+
+
             }
         }
 
