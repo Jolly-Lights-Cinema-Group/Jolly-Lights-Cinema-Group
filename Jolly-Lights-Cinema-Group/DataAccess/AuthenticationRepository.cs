@@ -6,7 +6,7 @@ namespace JollyLightsCinemaGroup.DataAccess;
 
 public class AuthenticationRepository
 {
-    public User Login(string username, string password)
+    public static User Login(string username, string password)
     {
         var user = new User();
         using (var connection = DatabaseManager.GetConnection())

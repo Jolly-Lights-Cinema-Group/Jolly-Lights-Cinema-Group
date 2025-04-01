@@ -1,5 +1,4 @@
-using System.Net;
-using Jolly_Lights_Cinema_Group.Domain;
+using Jolly_Lights_Cinema_Group.Models;
 using JollyLightsCinemaGroup.BusinessLogic;
 
 namespace Jolly_Lights_Cinema_Group

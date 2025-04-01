@@ -8,4 +8,5 @@ public class User
     public string Password { get; set; }
     public Role Role { get; set; }
     public bool ValidLogin  { get; set; }
+    public bool IsAuthenticated  { get; set; }
 }

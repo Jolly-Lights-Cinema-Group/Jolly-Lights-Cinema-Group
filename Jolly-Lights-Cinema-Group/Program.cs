@@ -1,4 +1,7 @@
-﻿using Jolly_Lights_Cinema_Group.Domain;
+﻿using Jolly_Lights_Cinema_Group.BusinessLogic;
+using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Enum;
+using Jolly_Lights_Cinema_Group.Models;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -21,54 +24,55 @@ namespace Jolly_Lights_Cinema_Group
             int selectedLocation = location.Run();
 
             Console.Clear();
-            // Some login code to be developed.   -- Very basic authentication here. Will work with this if we do have the authentication method.
-            string Username = string.Empty;
-            string Password = string.Empty;
+
+            string userName;
+            string password;
             do
             {
-            Console.WriteLine("Login.");
-            Console.WriteLine("Username: ");
-            Username = Console.ReadLine()!;
-            Console.WriteLine("Password: ");
-            Password = Console.ReadLine()!;
-            } while (Username != "Admin" || Password != "Admin");
-            
-            User user = new(options[selectedIndex], optionsLocation[selectedLocation], true);
+                Console.WriteLine("Login.");
+                Console.WriteLine("Username: ");
+                userName = Console.ReadLine()!;
+                Console.WriteLine("Password: ");
+                password = Console.ReadLine()!;
+            } while (AuthenticationService.Login(userName: userName, password: password));
+
             Console.Clear();
-            Console.WriteLine($"Login successfull.\n\nWelcome {Username}!\nRole - {user.Role}\nLocation - {user.Location}");
+            Console.WriteLine($"Login successfull!");
             Console.ReadKey();
 
-
-            while (user.IsAuthenticated)
-        {
-            switch (user.Role)
+            var user = Globals.CurrentUser;
+            
+            while (user!.IsAuthenticated)
             {
-                case "Admin":
-                    AdminMenu adminMenu = new AdminMenu();
-                    int adminChoice = adminMenu.Run();
-                    AdminChoiceHandler.AdminMainMenu = true;
-                    AdminChoiceHandler.HandleChoice(adminChoice, ref user);
-                    break;
+                switch (user.Role)
+                {
+                    case Role.Admin:
+                        AdminMenu adminMenu = new AdminMenu();
+                        int adminChoice = adminMenu.Run();
+                        AdminChoiceHandler.AdminMainMenu = true;
+                        AdminChoiceHandler.HandleChoice(adminChoice, ref user);
+                        break;
 
-                case "Manager":
-                    ManagerMenu managerMenu = new ManagerMenu();
-                    int managerChoice = managerMenu.Run();
-                    ManagerChoiceHandler.HandleChoice(managerChoice, ref user);
-                    break;
+                    case Role.Manager:
+                        ManagerMenu managerMenu = new ManagerMenu();
+                        int managerChoice = managerMenu.Run();
+                        ManagerChoiceHandler.HandleChoice(managerChoice, ref user);
+                        break;
 
-                case "Employee":
-                    EmployeeMenu employeeMenu = new EmployeeMenu();
-                    int employeeChoice = employeeMenu.Run(); 
-                    EmployeeChoiceHandler.HandleChoice(employeeChoice, ref user);
-                    break;
+                    case Role.Employee:
+                        EmployeeMenu employeeMenu = new EmployeeMenu();
+                        int employeeChoice = employeeMenu.Run(); 
+                        EmployeeChoiceHandler.HandleChoice(employeeChoice, ref user);
+                        break;
 
-                default:
-                    Console.WriteLine("Invalid role selected.");
-                    break;
+                    default:
+                        Console.WriteLine("Invalid role selected.");
+                        break;
+                }
             }
-        }
-        Console.Clear();
-        Console.WriteLine($"Succesfully logged out.\nSee you next time {Username}");  
+            Console.Clear();
+            AuthenticationService.Logout();
+            Console.WriteLine($"Succesfully logged out!");  
         }
     }
 }
