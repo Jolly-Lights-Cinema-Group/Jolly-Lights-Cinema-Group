@@ -6,7 +6,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class LocationRepository
     {
-        public void AddLocation(string name, string address)
+        public void AddLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -16,15 +16,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO Location (Name, Address)
                     VALUES (@name, @address);";
 
-                command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@address", address);
+                command.Parameters.AddWithValue("@name", location.Name);
+                command.Parameters.AddWithValue("@address", location.Address);
 
                 command.ExecuteNonQuery();
                 Console.WriteLine("Location added successfully.");
             }
         }
 
-        public void RemoveLocation(int id, string name, string address)
+        public void RemoveLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -32,11 +32,10 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     DELETE FROM Location
-                    WHERE Id = @id OR (Name = @name AND Address = @address);";
+                    WHERE Name = @name AND Address = @address;";
 
-                command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@address", address);
+                command.Parameters.AddWithValue("@name", location.Name);
+                command.Parameters.AddWithValue("@address", location.Address);
 
                 int rowsAffected = command.ExecuteNonQuery();
 
