@@ -45,7 +45,9 @@ public class EmployeeService
         if (_employeeRepo.DeleteEmployee(firstName,lastname))
         {Console.WriteLine("Employee Deleted Successfully");}
         else
-        {Console.WriteLine("Employee not found.");}
+        {
+            Console.WriteLine("Employee not found.");
+        }
         
       }
 
