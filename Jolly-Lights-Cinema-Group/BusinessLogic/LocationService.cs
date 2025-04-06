@@ -11,38 +11,38 @@ public class LocationService
         _locationRepo = new LocationRepository();
     }
 
-    public void RegisterLocation(string name, string address)
+    public void RegisterLocation(Location location)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(location.Name))
         {
             Console.WriteLine("Error: Name cannot be empty.");
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(address))
+        if (string.IsNullOrWhiteSpace(location.Address))
         {
             Console.WriteLine("Error: Address cannot be empty.");
             return;
         }
 
-        _locationRepo.AddLocation(name, address);
+        _locationRepo.AddLocation(location);
     }
 
-    public void DeleteLocation(int id, string name, string address)
+    public void DeleteLocation(Location location)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(location.Name))
         {
             Console.WriteLine("Error: Name cannot be empty.");
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(address))
+        if (string.IsNullOrWhiteSpace(location.Address))
         {
             Console.WriteLine("Error: Address cannot be empty.");
             return;
         }
 
-        _locationRepo.RemoveLocation(id, name, address);
+        _locationRepo.RemoveLocation(location);
     }
 
     public void ShowAllLocations()

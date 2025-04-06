@@ -1,6 +1,4 @@
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 
 public class MovieService
 {
@@ -10,15 +8,27 @@ public class MovieService
     {
         _movieRepo = new MovieRepository();
     }
-    public void RegisterMovie(string title, int duration, int minimumAge, string movieCast)
+    public void RegisterMovie(Movie movie)
     {
-        if (string.IsNullOrWhiteSpace(title))
+        if (string.IsNullOrWhiteSpace(movie.Title))
         {
             Console.WriteLine("Error: Title cannot be empty.");
             return;
         }
 
-        _movieRepo.AddMovie(title, duration, minimumAge, movieCast);
+        _movieRepo.AddMovie(movie.Title, movie.Duration, movie.MinimumAge);
+    }
+
+    public void DeleteMovie(Movie movie)
+    {
+         if (_movieRepo.DeleteMovie(movie))
+         {
+            Console.WriteLine("\nMovie Deleted Successfully.");
+         }
+         else
+         {
+            Console.WriteLine("Movie not found.");
+         }
     }
 
     public void ShowAllMovies()
@@ -37,4 +47,5 @@ public class MovieService
             }
         }
     }
+    
 }
