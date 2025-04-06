@@ -1,7 +1,4 @@
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using Jolly_Lights_Cinema_Group.Domain;
-using JollyLightsCinemaGroup.BusinessLogic;
+using Jolly_Lights_Cinema_Group.Models;
 
 namespace Jolly_Lights_Cinema_Group
 {

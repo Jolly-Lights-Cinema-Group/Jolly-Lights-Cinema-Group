@@ -34,7 +34,7 @@ namespace Jolly_Lights_Cinema_Group
                 userName = Console.ReadLine()!;
                 Console.WriteLine("Password: ");
                 password = Console.ReadLine()!;
-            } while (AuthenticationService.Login(userName: userName, password: password));
+            } while (!AuthenticationService.Login(userName: userName, password: password));
 
             Console.Clear();
             Console.WriteLine($"Login successfull!");
