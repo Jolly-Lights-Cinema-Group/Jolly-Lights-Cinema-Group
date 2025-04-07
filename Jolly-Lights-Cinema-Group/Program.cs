@@ -38,8 +38,7 @@ namespace Jolly_Lights_Cinema_Group
 
             Console.Clear();
             Console.WriteLine($"Login successfull!");
-            Console.ReadKey();
-
+            
             var user = Globals.CurrentUser;
             
             while (user!.IsAuthenticated)

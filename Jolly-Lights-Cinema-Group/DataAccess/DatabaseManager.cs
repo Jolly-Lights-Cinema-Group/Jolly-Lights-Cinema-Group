@@ -6,7 +6,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class DatabaseManager
     {
-        private static readonly string _dbPath = @"..\..\..\Database\cinema.db";
+        private static readonly string _dbPath = @"Database\cinema.db";
         private static readonly string _connectionString = $"Data Source={_dbPath}";
 
         public static SqliteConnection GetConnection()
@@ -31,7 +31,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = File.ReadAllText("Jolly-Lights-Cinema-Group\\Database\\schema.sql");
+                command.CommandText = File.ReadAllText(@"Database\schema.sql");
                 command.ExecuteNonQuery();
                 Console.WriteLine("Database initialized.");
             }

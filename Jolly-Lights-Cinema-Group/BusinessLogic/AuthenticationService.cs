@@ -14,7 +14,8 @@ public class AuthenticationService()
 
         if (!currentUser.ValidLogin)
             return false;
-        
+
+        currentUser.IsAuthenticated = true;
         Globals.CurrentUser = currentUser;
         return true;
     }
