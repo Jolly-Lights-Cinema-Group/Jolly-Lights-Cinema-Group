@@ -1,4 +1,4 @@
-using Jolly_Lights_Cinema_Group.Domain;
+using Jolly_Lights_Cinema_Group.Models;
 
 namespace Jolly_Lights_Cinema_Group
 {

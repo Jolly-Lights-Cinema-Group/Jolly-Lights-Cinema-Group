@@ -1,25 +1,12 @@
-namespace Jolly_Lights_Cinema_Group.Domain;
+using Jolly_Lights_Cinema_Group.Enum;
 
-// Class for the user of the menu. 
-// This class will set the location, get the role of the user and checks if the user is authenticated.
-
+namespace Jolly_Lights_Cinema_Group.Models;
 
 public class User
 {
-    public string? Location { get; set; }
-    public string? Role { get; set; }
-    public bool IsAuthenticated { get; set; }
-
-    public User(string role, string location, bool isauthenticated)
-    {
-        Location = location;
-        IsAuthenticated = isauthenticated;  // for test purpose will be true
-        Role = role;
-    }
-
-    public void Authenticate() => IsAuthenticated = true;   // Will be from the database 
-
-    public void SetLocation(string location) => Location = location;   
-
-    public void SetRole(string role) => Role = role;   // Will be from the database.
+    public string UserName { get; set; }
+    public string Password { get; set; }
+    public Role Role { get; set; }
+    public bool ValidLogin  { get; set; }
+    public bool IsAuthenticated  { get; set; }
 }
