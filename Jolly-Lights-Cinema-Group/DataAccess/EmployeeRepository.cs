@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.Sqlite;  
+using Microsoft.Data.Sqlite;
+using Microsoft.Win32.SafeHandles;
 
-    // Manager for the Employee Table. For now, it has the functions: AddEmployee, GetAllEmployees and VerifyLogin (password).
+// Manager for the Employee Table. For now, it has the functions: AddEmployee, GetAllEmployees and VerifyLogin (password).
     // To do: 
     // - Adding new methods;
     // - For security sake: Hash passwords (didn't have time to get that working for now).
@@ -21,12 +22,14 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO Employee (FirstName, LastName, Email, UserName, Password, Role)
                     VALUES (@firstName, @lastName, @email, @username, @password, @role);";
 
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                
                 command.Parameters.AddWithValue("@firstName", firstName);
                 command.Parameters.AddWithValue("@lastName", lastName);
                 command.Parameters.AddWithValue("@email", email);
                 command.Parameters.AddWithValue("@username", username);
-                command.Parameters.AddWithValue("@password", password); // Change here for hashed password
-                command.Parameters.AddWithValue(@"role", role);
+                command.Parameters.AddWithValue("@password", hashedPassword); // Change here for hashed password
+                command.Parameters.AddWithValue("@role", role);
 
                 command.ExecuteNonQuery();
             }

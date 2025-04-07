@@ -23,7 +23,9 @@ public class AuthenticationRepository
                 user.UserName = reader.GetString(0);
                 user.Password = reader.GetString(1);
                 user.Role = reader.GetFieldValue<Role>(2);
-                user.ValidLogin = true;
+
+                if (BCrypt.Net.BCrypt.Verify(password, user.Password))
+                    user.ValidLogin = true;
             }
         }
 
