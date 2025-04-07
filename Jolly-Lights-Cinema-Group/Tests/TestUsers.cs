@@ -1,5 +1,3 @@
-using System;
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace JollyLightsCinemaGroup.BusinessLogic
