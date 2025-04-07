@@ -3,6 +3,9 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 using Jolly_Lights_Cinema_Group.Enum;
+using Microsoft.VisualBasic;
+using Jolly_Lights_Cinema_Group.Models;
+using Jolly_Lights_Cinema_Group.Common;
 
 // Business Service that will validate Userinput. For now it won't do much, except that it will Verify user registration (RegisterEmployee) input. 
 //
@@ -69,8 +72,34 @@ public class EmployeeService
         }
     }
 
-        public bool VerifyLogin(string userName, string password)
+    public void ChangeFirstName(string username, string firstname)
+    {
+        if (_employeeRepo.ChangeFirstNameDB(username,firstname))
         {
-            return _employeeRepo.VerifyLogin(userName, password);
+            Console.WriteLine("Firstname changed.");
         }
+        else
+        {
+            Console.WriteLine("Firstname didn't changed.");
+        }
+
+    }
+
+    public void ChangeLastName(string username, string lastname)
+    {
+        if (_employeeRepo.ChangeLastNameDB(username,lastname))
+        {
+            Console.WriteLine("Firstname changed.");
+        }
+        else
+        {
+            Console.WriteLine("Firstname didn't changed.");
+        }
+    }
+
+    public void ChangeEmail(string email)
+    {}
+
+    public void ChangePassword(string password)
+    {}
 }

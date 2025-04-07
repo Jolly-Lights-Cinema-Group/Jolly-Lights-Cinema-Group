@@ -74,19 +74,44 @@ namespace JollyLightsCinemaGroup.DataAccess
             return employees;
         }
 
-        public bool VerifyLogin(string userName, string password)
-        {
+         public bool ChangeFirstNameDB(string username, string firstname)
+         {
             using (var connection = DatabaseManager.GetConnection())
             {
-                string query = "SELECT COUNT(*) FROM Employee WHERE UserName = @UserName AND Password = @Password";
-                using (var command = new SqliteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@UserName", userName);
-                    command.Parameters.AddWithValue("@Password", password);
-                    var result = command.ExecuteScalar();
-                    return Convert.ToInt32(result) > 0;
-                }
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET firstname = @firstname WHERE USERNAME = @username";
+
+                command.Parameters.AddWithValue("@firstname", firstname);
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
             }
-        }
+         }
+
+         public bool ChangeLastNameDB(string username, string lastname)
+         {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET lastname = @lastname WHERE USERNAME = @username";
+
+                command.Parameters.AddWithValue("@lastname", lastname);
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+         }
+
+         public void ChangeEmailDB(string username, string email)
+         {}
+
+         public void ChangePasswordDB(string username, string password)
+         {}
+
+
     }
 }
