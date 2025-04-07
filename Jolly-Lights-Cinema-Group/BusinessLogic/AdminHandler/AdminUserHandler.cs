@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.BusinessLogic;
 
 namespace Jolly_Lights_Cinema_Group
@@ -41,7 +42,7 @@ public static class AdminUserHandler
     }
     private static void AddEmployee()
         {
-            UserRole role;
+            Role role;
             Console.Clear();
             Console.WriteLine("What is the firstname of the user?");
             string firstName = Console.ReadLine()!;
@@ -59,13 +60,13 @@ public static class AdminUserHandler
             switch (StrRole)
             {
                 case "Employee":
-                role = UserRole.Employee;
+                role = Role.Employee;
                 break;
                 case "Admin":
-                role = UserRole.Admin;
+                role = Role.Admin;
                 break;
                 case "Manager":
-                role = UserRole.Manager;
+                role = Role.Manager;
                 break;
                 default:
                 Console.WriteLine("Invalid role input");
