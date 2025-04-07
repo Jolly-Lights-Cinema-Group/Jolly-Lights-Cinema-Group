@@ -2,6 +2,7 @@ using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
+using Jolly_Lights_Cinema_Group.Enum;
 
 // Business Service that will validate Userinput. For now it won't do much, except that it will Verify user registration (RegisterEmployee) input. 
 //
@@ -15,7 +16,7 @@ public class EmployeeService
         _employeeRepo = new EmployeeRepository();
     }
 
-    public bool RegisterEmployee(string firstName, string lastName, string email, string username, string password, UserRole role)
+    public bool RegisterEmployee(string firstName, string lastName, string email, string username, string password, Role role)
     {
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
@@ -29,7 +30,7 @@ public class EmployeeService
             return false;
         }
 
-        if (!Enum.IsDefined(typeof(UserRole), role))
+        if (!Enum.IsDefined(typeof(Role), role))
         {
             Console.WriteLine("Error: Invalid role.");
             return false;
