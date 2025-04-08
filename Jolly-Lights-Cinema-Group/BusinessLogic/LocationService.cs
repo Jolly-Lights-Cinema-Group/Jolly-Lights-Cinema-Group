@@ -47,7 +47,7 @@ public class LocationService
 
     public void ShowAllLocations()
     {
-        List<string> locations = _locationRepo.GetAllLocations();
+        List<Location> locations = _locationRepo.GetAllLocations();
         if (locations.Count == 0)
         {
             Console.WriteLine("No locations found.");
@@ -57,7 +57,7 @@ public class LocationService
             Console.WriteLine("Locations:");
             foreach (var location in locations)
             {
-                Console.WriteLine(location);
+                Console.WriteLine($"Name: {location.Name}; Address: {location.Address}");
             }
         }
     }
