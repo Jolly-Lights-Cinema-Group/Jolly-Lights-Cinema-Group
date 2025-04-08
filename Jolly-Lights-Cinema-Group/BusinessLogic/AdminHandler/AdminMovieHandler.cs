@@ -47,21 +47,23 @@ namespace Jolly_Lights_Cinema_Group
             {
             Console.Clear();
             Console.WriteLine("What is the title of the movie?");
-            string title = Console.ReadLine()!;
+            string Title = Console.ReadLine()!;
             Console.WriteLine("What is the duration in minutes of the movie?");
-            int duration = Convert.ToInt32(Console.ReadLine());
+            int Duration = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("What is the minimum Age of the movie?");
             int MinimumAge = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("who are in the movie cast?");
+            string MovieCast = Console.ReadLine()!;
 
             Console.WriteLine("Are you ready to add the next movie to the database?\ny/n or e for exit: ");
-            Console.WriteLine($"Title: {title}\nDuration: {duration}\nMinimum Age: {MinimumAge}\n");
+            Console.WriteLine($"Title: {Title}\nDuration: {Duration}\nMinimum Age: {MinimumAge}\nMoviecast: {MovieCast}");
             Console.Write("Answer: ");
             string input = Console.ReadLine()!.ToLower();
             
             switch (input)
             {
                 case "y":
-                Movie movie = new Movie(title,duration,MinimumAge);
+                Movie movie = new Movie(Title,Duration,MinimumAge,MovieCast);
                 MovieService movieService = new MovieService();
                 movieService.RegisterMovie(movie);
                 Console.WriteLine("\nPress any key to exit.");
@@ -85,7 +87,7 @@ namespace Jolly_Lights_Cinema_Group
             Console.Clear();
             Console.WriteLine("What is the title of the movie te remove?");
             string title = Console.ReadLine()!;
-            Movie movietodelete = new Movie(title, 0,0);
+            Movie movietodelete = new Movie(title, 0,0,"a");
 
             MovieService movieService = new MovieService();
             movieService.DeleteMovie(movietodelete);

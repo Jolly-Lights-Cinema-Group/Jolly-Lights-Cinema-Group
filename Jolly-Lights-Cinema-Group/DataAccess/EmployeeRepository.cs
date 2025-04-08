@@ -3,39 +3,36 @@ using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32.SafeHandles;
 
-// Manager for the Employee Table. For now, it has the functions: AddEmployee, GetAllEmployees and VerifyLogin (password).
-    // To do: 
-    // - Adding new methods;
-    // - For security sake: Hash passwords (didn't have time to get that working for now).
-
 namespace JollyLightsCinemaGroup.DataAccess
 {
     public class EmployeeRepository
     {
-        public void AddEmployee(string firstName, string lastName, string email, string username, string password, int role)
+        public void AddEmployee(Employee employee)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Employee (FirstName, LastName, Email, UserName, Password, Role)
-                    VALUES (@firstName, @lastName, @email, @username, @password, @role);";
+                    INSERT INTO Employee (FirstName, LastName, DateOfBirth, Address, Email, UserName, Password, Role)
+                    VALUES (@firstName, @lastName, @dateofbirth, @address, @email, @username, @password, @role);";
 
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-                
-                command.Parameters.AddWithValue("@firstName", firstName);
-                command.Parameters.AddWithValue("@lastName", lastName);
-                command.Parameters.AddWithValue("@email", email);
-                command.Parameters.AddWithValue("@username", username);
-                command.Parameters.AddWithValue("@password", hashedPassword); // Change here for hashed password
-                command.Parameters.AddWithValue("@role", role);
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(employee.Password);
+
+                command.Parameters.AddWithValue("@firstName", employee.FirstName);
+                command.Parameters.AddWithValue("@lastName", employee.LastName);
+                command.Parameters.AddWithValue("@dateofbirth", employee.DateofBirth);
+                command.Parameters.AddWithValue("@address", employee.Address);
+                command.Parameters.AddWithValue("@email", employee.Email);
+                command.Parameters.AddWithValue("@username", employee.UserName);
+                command.Parameters.AddWithValue("@password", hashedPassword);
+                command.Parameters.AddWithValue("@role", employee.Role);
 
                 command.ExecuteNonQuery();
             }
         }
 
-        public bool DeleteEmployee(string firstname,string lastname)
+        public bool DeleteEmployee(string firstname, string lastname)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -48,8 +45,21 @@ namespace JollyLightsCinemaGroup.DataAccess
 
                 int rowsAffected = command.ExecuteNonQuery();
                 return rowsAffected > 0;
+            }
+        }
 
+        public bool UserNameAlreadyExist(string username)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM EMPLOYEE WHERE username = @username";
 
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = Convert.ToInt32(command.ExecuteScalar());
+                return rowsAffected > 0;
             }
         }
 
@@ -74,19 +84,44 @@ namespace JollyLightsCinemaGroup.DataAccess
             return employees;
         }
 
-        public bool VerifyLogin(string userName, string password)
+        public bool ChangeFirstNameDB(string username, string firstname)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
-                string query = "SELECT COUNT(*) FROM Employee WHERE UserName = @UserName AND Password = @Password";
-                using (var command = new SqliteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@UserName", userName);
-                    command.Parameters.AddWithValue("@Password", password);
-                    var result = command.ExecuteScalar();
-                    return Convert.ToInt32(result) > 0;
-                }
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET firstname = @firstname WHERE USERNAME = @username";
+
+                command.Parameters.AddWithValue("@firstname", firstname);
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
             }
         }
+
+        public bool ChangeLastNameDB(string username, string lastname)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET lastname = @lastname WHERE USERNAME = @username";
+
+                command.Parameters.AddWithValue("@lastname", lastname);
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+        }
+
+        public void ChangeEmailDB(string username, string email)
+        { }
+
+        public void ChangePasswordDB(string username, string password)
+        { }
+
+
     }
 }

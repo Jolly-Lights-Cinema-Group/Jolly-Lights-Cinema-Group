@@ -10,9 +10,13 @@ namespace JollyLightsCinemaGroup.BusinessLogic
             DatabaseManager.InitializeDatabase();
             EmployeeService employeeService = new EmployeeService();
 
-            employeeService.RegisterEmployee("Employee", "Test", "test.employee@email.com", "test_employee", "testemployee", Role.Employee); // Employee
-            employeeService.RegisterEmployee("Admin", "Test", "test.admin@email.com", "test_admin", "testadmin", Role.Admin); // Admin
-            employeeService.RegisterEmployee("Manager", "Test", "test.manager@email.com", "test_manager", "testmanager", Role.Manager); // Manager
+            Employee Employee = new Employee("Employee", "Test", "01-01-1111", "Testway 32", "test.employee@email.com", "test_employee", "testemployee", Role.Employee);
+            Employee Admin = new Employee("Admin", "Test", "01-01-1111", "Testway 32", "test.admin@email.com", "test_admin", "testadmin", Role.Admin);
+            Employee Manager = new Employee("Manager", "Test", "01-01-1111", "Testway 32", "test.manager@email.com", "test_manager", "testmanager", Role.Manager);
+
+            employeeService.RegisterEmployee(Employee);
+            employeeService.RegisterEmployee(Admin);
+            employeeService.RegisterEmployee(Manager);
 
             Console.WriteLine("Test users added successfully.");
         }

@@ -16,19 +16,26 @@ public class MovieService
             return;
         }
 
-        _movieRepo.AddMovie(movie.Title, movie.Duration, movie.MinimumAge);
+        if (_movieRepo.AddMovie(movie))
+        {
+            Console.WriteLine("Movie has been added.");
+        }
+        else
+        {
+            Console.WriteLine("Something went wrong.");
+        }
     }
 
     public void DeleteMovie(Movie movie)
     {
-         if (_movieRepo.DeleteMovie(movie))
-         {
+        if (_movieRepo.DeleteMovie(movie))
+        {
             Console.WriteLine("\nMovie Deleted Successfully.");
-         }
-         else
-         {
+        }
+        else
+        {
             Console.WriteLine("Movie not found.");
-         }
+        }
     }
 
     public void ShowAllMovies()
@@ -47,5 +54,5 @@ public class MovieService
             }
         }
     }
-    
+
 }

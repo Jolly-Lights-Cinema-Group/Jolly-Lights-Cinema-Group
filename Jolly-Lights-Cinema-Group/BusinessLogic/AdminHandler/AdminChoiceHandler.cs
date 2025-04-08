@@ -26,7 +26,7 @@ namespace Jolly_Lights_Cinema_Group
                     ViewReports();
                     break;
                 case 4:
-                    AccessSettings();
+                    AccountSettingsHandler.ManageAccount();
                     break;
                 case 5:
                     user.IsAuthenticated = false;
@@ -41,14 +41,6 @@ namespace Jolly_Lights_Cinema_Group
         {
             Console.Clear();
             Console.WriteLine("Viewing reports...");
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
-        }
-
-        private static void AccessSettings()
-        {
-            Console.Clear();
-            Console.WriteLine("Accessing settings...");
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }
