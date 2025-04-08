@@ -4,84 +4,88 @@ using JollyLightsCinemaGroup.BusinessLogic;
 namespace Jolly_Lights_Cinema_Group
 {
 
-public static class AdminUserHandler
-{
-    public static void ManageUsers()
+    public static class AdminUserHandler
+    {
+        public static void ManageUsers()
         {
             bool inManageUsersMenu = true;
             AdminManageUsersMenu manageUsersMenu = new();
             Console.Clear();
-            
-            while(inManageUsersMenu)
+
+            while (inManageUsersMenu)
             {
-            int userChoice = manageUsersMenu.Run();
-            inManageUsersMenu = HandleManageUserChoice(userChoice);
-            Console.Clear();
+                int userChoice = manageUsersMenu.Run();
+                inManageUsersMenu = HandleManageUserChoice(userChoice);
+                Console.Clear();
             }
         }
-    
-    private static bool HandleManageUserChoice(int choice)
-    {
-        switch (choice)
+
+        private static bool HandleManageUserChoice(int choice)
         {
-            case 0:
-                AddEmployee();
-                return true;
-            case 1:
-                DeleteEmployee();
-                return true;
-            case 2:
-                ViewAllEmployees();
-                return true;
-            case 3:
-                return false;
-            default:
-                Console.WriteLine("Invalid selection.");
-                return true;
+            switch (choice)
+            {
+                case 0:
+                    AddEmployee();
+                    return true;
+                case 1:
+                    DeleteEmployee();
+                    return true;
+                case 2:
+                    ViewAllEmployees();
+                    return true;
+                case 3:
+                    return false;
+                default:
+                    Console.WriteLine("Invalid selection.");
+                    return true;
+            }
         }
-    }
-    private static void AddEmployee()
+        private static void AddEmployee()
         {
             Role role;
             Console.Clear();
-            Console.WriteLine("What is the firstname of the user?");
+            Console.WriteLine("What is the firstname of the Employee?");
             string firstName = Console.ReadLine()!;
-            Console.WriteLine("What is the Lastname of the user?");
+            Console.WriteLine("What is the Lastname of the Employee?");
             string lastName = Console.ReadLine()!;
-            Console.WriteLine("What is the email of the user?");
+            Console.WriteLine("What is the Data of Birth of the Employee?");
+            string DateofBirth = Console.ReadLine()!;
+            Console.WriteLine("What is the Adress of the Employee?");
+            string Address = Console.ReadLine()!;
+            Console.WriteLine("What is the email of the Employee?");
             string email = Console.ReadLine()!;
-            Console.WriteLine("What will the username be of the user?");
+            Console.WriteLine("What will the username be of the Employee?");
             string username = Console.ReadLine()!;
-            Console.WriteLine("What will the password be of the user?");
+            Console.WriteLine("What will the password be of the Employee?");
             string password = Console.ReadLine()!;
-            Console.WriteLine("What will the role be of the user? \nEmployee\nAdmin\nManager");
+            Console.WriteLine("What will the role be of the Employee?\n1: Employee\n2: Admin\n3: Manager");
             string StrRole = Console.ReadLine()!;
 
             switch (StrRole)
             {
                 case "Employee":
-                role = Role.Employee;
-                break;
+                    role = Role.Employee;
+                    break;
                 case "Admin":
-                role = Role.Admin;
-                break;
+                    role = Role.Admin;
+                    break;
                 case "Manager":
-                role = Role.Manager;
-                break;
+                    role = Role.Manager;
+                    break;
                 default:
-                Console.WriteLine("Invalid role input");
-                return;
+                    Console.WriteLine("Invalid role input");
+                    return;
             }
-            
+            Employee employee = new Employee(firstName, lastName, DateofBirth, Address, email, username, password, role);
             EmployeeService employeeService = new EmployeeService();
 
-            if (employeeService.RegisterEmployee(firstName,lastName,email,username,password,role))
+            if (employeeService.RegisterEmployee(employee))
             {
-            Console.WriteLine($"User created: {firstName} {lastName}, Email: {email}, Username: {username}, Role: {StrRole}");
+                Console.WriteLine($"User created: {firstName} {lastName}\nEmail: {email},\nUsername: {username}\nRole: {StrRole}");
             }
             else
             {
-                Console.WriteLine("User Creating failed.");
+                Console.WriteLine("\nUser Creating failed.");
             }
 
             Console.ReadKey();
@@ -98,7 +102,7 @@ public static class AdminUserHandler
             string lastname = Console.ReadLine()!;
 
             EmployeeService employeeService = new EmployeeService();
-            employeeService.DeleteEmployee(firstname,lastname);
+            employeeService.DeleteEmployee(firstname, lastname);
 
             Console.ReadKey();
         }

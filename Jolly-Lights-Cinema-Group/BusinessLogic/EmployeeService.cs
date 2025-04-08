@@ -19,27 +19,33 @@ public class EmployeeService
         _employeeRepo = new EmployeeRepository();
     }
 
-    public bool RegisterEmployee(string firstName, string lastName, string email, string username, string password, Role role)
+    public bool RegisterEmployee(Employee employee)
     {
-        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+        if (string.IsNullOrWhiteSpace(employee.FirstName) || string.IsNullOrWhiteSpace(employee.LastName))
         {
             Console.WriteLine("Error: Name cannot be empty.");
             return false;
         }
 
-        if (!email.Contains("@"))
+        if (!employee.Email.Contains("@"))
         {
             Console.WriteLine("Error: Invalid email format.");
             return false;
         }
 
-        if (!Enum.IsDefined(typeof(Role), role))
+        if (!Enum.IsDefined(typeof(Role), employee.Role))
         {
             Console.WriteLine("Error: Invalid role.");
             return false;
         }
 
-        _employeeRepo.AddEmployee(firstName, lastName, email, username, password, (int)role);
+        if (_employeeRepo.UserNameAlreadyExist(employee.UserName))
+        {
+            Console.WriteLine("Error: Username already exists.");
+            return false;
+        }
+
+        _employeeRepo.AddEmployee(employee);
         return true;
      }
 

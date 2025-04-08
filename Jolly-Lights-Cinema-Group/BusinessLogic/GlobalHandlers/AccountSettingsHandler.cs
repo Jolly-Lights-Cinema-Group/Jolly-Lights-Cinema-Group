@@ -14,12 +14,12 @@ namespace Jolly_Lights_Cinema_Group
             bool inManageAccountMenu = true;
             AccountSettingsMenu ManageAccountSettings = new();
             Console.Clear();
-            
-            while(inManageAccountMenu)
+
+            while (inManageAccountMenu)
             {
-            int userChoice = ManageAccountSettings.Run();
-            inManageAccountMenu = HandleManageAccountChoice(userChoice);
-            Console.Clear();
+                int userChoice = ManageAccountSettings.Run();
+                inManageAccountMenu = HandleManageAccountChoice(userChoice);
+                Console.Clear();
             }
         }
         private static bool HandleManageAccountChoice(int choice)
@@ -59,7 +59,7 @@ namespace Jolly_Lights_Cinema_Group
 
         private static void ChangeLastName()
         {
-           Console.Clear();
+            Console.Clear();
             Console.WriteLine($"To what do you want to change your lastname {Globals.CurrentUser?.UserName}?");
             string lastname = Console.ReadLine()!;
 
@@ -68,13 +68,13 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadKey();
         }
 
-        private static void  ChangeEmail()
+        private static void ChangeEmail()
         {
             Console.Clear();
             Console.ReadKey();
         }
 
-        private static void  ChangePassword()
+        private static void ChangePassword()
         {
             Console.Clear();
             Console.ReadKey();
