@@ -6,7 +6,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class LocationRepository
     {
-        public void AddLocation(Location location)
+        public bool AddLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -21,10 +21,11 @@ namespace JollyLightsCinemaGroup.DataAccess
 
                 command.ExecuteNonQuery();
                 Console.WriteLine("Location added successfully.");
+                return true;
             }
         }
 
-        public void RemoveLocation(Location location)
+        public bool RemoveLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -42,29 +43,32 @@ namespace JollyLightsCinemaGroup.DataAccess
                 if (rowsAffected > 0)
                 {
                     Console.WriteLine("Location removed successfully.");
+                    return true;
                 }
                 else
                 {
                     Console.WriteLine("No matching location found to remove.");
+                    return false;
                 }
             }
         }
 
-        public List<string> GetAllLocations()
+        public List<Location> GetAllLocations()
         {
-            var locations = new List<string>();
+            List<Location> locations = new List<Location>();
 
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Name, Address FROM Location;";
+                command.CommandText = "SELECT Name, Address FROM Location;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        locations.Add($"ID: {reader.GetInt32(0)}, Name: {reader.GetString(1)}, Address: {reader.GetString(2)}");
+                        Location location = new(reader.GetString(0), reader.GetString(1));
+                        locations.Add(location);
                     }
                 }
             }

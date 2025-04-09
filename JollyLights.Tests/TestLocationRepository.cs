@@ -1,0 +1,82 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Jolly_Lights_Cinema_Group;
+using Jolly_Lights_Cinema_Group.Models;
+using JollyLightsCinemaGroup.DataAccess;
+using System.Security.Cryptography;
+
+namespace Jolly_Lights.Tests
+{
+    [TestClass]
+    public class LocationTests
+    {
+        [TestInitialize]
+        public void Setup()
+        {
+            DatabaseManager.InitializeDatabase();
+        }
+
+        [TestMethod]
+        public void Test_AddLocation_AddsLocationToDatabase()
+        {
+            string name = "TestLocation";
+            string address = "TestStreet 123";
+            Location location = new(name, address);
+
+            LocationRepository locationRepository = new LocationRepository();
+
+            bool result = locationRepository.AddLocation(location);
+
+            Assert.IsTrue(result, "Location not added to database");
+            locationRepository.RemoveLocation(location);
+        }
+
+        [TestMethod]
+        public void Test_ViewAllLocations()
+        {
+            LocationRepository locationRepository = new LocationRepository();
+
+            Location location1 = new("TestLocation1", "TestStreet 1");
+            Location location2 = new("TestLocation2", "TestStreet 2");
+
+            locationRepository.AddLocation(location1);
+            locationRepository.AddLocation(location2);
+
+            List<Location> allLocations = locationRepository.GetAllLocations();
+
+            bool resultLocation1 = false;
+            bool resultLocation2 = false;
+            foreach (Location location in allLocations)
+            {
+                if (location.Name == "TestLocation1" && location.Address == "TestStreet 1")
+                {
+                    resultLocation1 = true;
+                }
+                if (location.Name == "TestLocation2" && location.Address == "TestStreet 2")
+                {
+                    resultLocation2 = true;
+                }
+            }
+
+            Assert.IsTrue(resultLocation1, "Location 1 not vissible in all locations");
+            Assert.IsTrue(resultLocation2, "Location 2 not vissible in all locations");
+
+            locationRepository.RemoveLocation(location1);
+            locationRepository.RemoveLocation(location2);
+        }
+
+        [TestMethod]
+        public void Test_DeleteLocation_DeletesLocationFromDatabase()
+        {
+            string name = "TestLocation";
+            string address = "TestStreet 123";
+            Location location = new(name, address);
+
+            LocationRepository locationRepository = new LocationRepository();
+            locationRepository.AddLocation(location);
+
+            bool result = locationRepository.RemoveLocation(location);
+
+            Assert.IsTrue(result, "Location could not be deleted.");
+        }
+    }
+}
