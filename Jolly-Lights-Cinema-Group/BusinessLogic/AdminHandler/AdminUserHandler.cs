@@ -81,7 +81,7 @@ namespace Jolly_Lights_Cinema_Group
 
             if (employeeService.RegisterEmployee(employee))
             {
-                Console.WriteLine($"User created: {firstName} {lastName}\nEmail: {email},\nUsername: {username}\nRole: {StrRole}");
+                Console.WriteLine($"Employee created: {firstName} {lastName}\nEmail: {email},\nUsername: {username}\nRole: {StrRole}");
             }
             else
             {
@@ -101,8 +101,10 @@ namespace Jolly_Lights_Cinema_Group
             Console.WriteLine("Lastname: ");
             string lastname = Console.ReadLine()!;
 
+            Employee employee = new Employee(firstname, lastname, "null", "null", "null", "null", "null", Role.Employee);
             EmployeeService employeeService = new EmployeeService();
-            employeeService.DeleteEmployee(firstname, lastname);
+
+            employeeService.DeleteEmployee(employee);
 
             Console.ReadKey();
         }

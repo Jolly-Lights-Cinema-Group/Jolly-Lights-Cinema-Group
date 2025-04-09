@@ -50,10 +50,10 @@ namespace Jolly_Lights_Cinema_Group
         {
             Console.Clear();
             Console.WriteLine($"To what do you want to change your firstname {Globals.CurrentUser?.UserName}?");
-            string firstName = Console.ReadLine()!;
+            string Firstname = Console.ReadLine()!;
 
             EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangeFirstName(Globals.CurrentUser.UserName, firstName);
+            employeeService.ChangeFirstName(Firstname, Globals.CurrentUser.UserName);
             Console.ReadKey();
         }
 
@@ -64,7 +64,7 @@ namespace Jolly_Lights_Cinema_Group
             string lastname = Console.ReadLine()!;
 
             EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangeLastName(Globals.CurrentUser.UserName, lastname);
+            employeeService.ChangeLastName(lastname, Globals.CurrentUser.UserName);
             Console.ReadKey();
         }
 

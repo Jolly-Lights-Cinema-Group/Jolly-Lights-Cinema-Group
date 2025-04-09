@@ -16,7 +16,7 @@ namespace Jolly_Lights_Cinema_Group
             string[] options = { "Employee", "Manager", "Admin" };
             Menu menu = new(prompt, options);
             int selectedIndex = menu.Run();
-            
+
             // Main menu / Asking for location
             string locationPrompt = "Choose a location";
             string[] optionsLocation = { "Rotterdam", "Utrecht", "Amsterdam" };
@@ -38,9 +38,9 @@ namespace Jolly_Lights_Cinema_Group
 
             Console.Clear();
             Console.WriteLine($"Login successfull!");
-            
+
             var user = Globals.CurrentUser;
-            
+
             while (user!.IsAuthenticated)
             {
                 switch (user.Role)
@@ -60,7 +60,7 @@ namespace Jolly_Lights_Cinema_Group
 
                     case Role.Employee:
                         EmployeeMenu employeeMenu = new EmployeeMenu();
-                        int employeeChoice = employeeMenu.Run(); 
+                        int employeeChoice = employeeMenu.Run();
                         EmployeeChoiceHandler.HandleChoice(employeeChoice, ref user);
                         break;
 
@@ -71,7 +71,7 @@ namespace Jolly_Lights_Cinema_Group
             }
             Console.Clear();
             AuthenticationService.Logout();
-            Console.WriteLine($"Succesfully logged out!");  
+            Console.WriteLine($"Succesfully logged out!");
         }
     }
 }
