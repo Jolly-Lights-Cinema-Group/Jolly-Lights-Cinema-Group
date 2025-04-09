@@ -40,23 +40,23 @@ namespace Jolly_Lights_Cinema_Group
             Console.Clear();
 
             Console.WriteLine("Information to add location:");
-            Console.Write("Enter the name of the location: ");
-            string? name = Console.ReadLine();
+            string? name;
+            do
+            {
+                Console.Write("Enter the name of the location: ");
+                name = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(name));
 
-            Console.Write("Enter the address of the location: ");
-            string? address = Console.ReadLine();
-
+            string? address;
+            do
+            {
+                Console.Write("Enter the address of the location: ");
+                address = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(address));
 
             LocationService locationService = new LocationService();
-            if(name != null && address != null)
-            {
-                Location location = new(name, address);
-                locationService.RegisterLocation(location);
-            }
-            else
-            {
-                Console.WriteLine("Invalid location");
-            }
+            Location location = new(name, address);
+            locationService.RegisterLocation(location);
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
@@ -69,22 +69,23 @@ namespace Jolly_Lights_Cinema_Group
 
             Console.WriteLine("Information to delete location:");
 
-            Console.Write("Enter the name of the location: ");
-            string? name = Console.ReadLine();
+            string? name;
+            do
+            {
+                Console.Write("Enter the name of the location: ");
+                name = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(name));
 
-            Console.Write("Enter the address of the location: ");
-            string? address = Console.ReadLine();
+            string? address;
+            do
+            {
+                Console.Write("Enter the address of the location: ");
+                address = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(address));
 
             LocationService locationService = new LocationService();
-            if(name != null && address != null)
-            {
-                Location location = new(name, address);
-                locationService.DeleteLocation(location);
-            }
-            else
-            {
-                Console.WriteLine("Invalid location");
-            }
+            Location location = new(name, address);
+            locationService.DeleteLocation(location);
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();

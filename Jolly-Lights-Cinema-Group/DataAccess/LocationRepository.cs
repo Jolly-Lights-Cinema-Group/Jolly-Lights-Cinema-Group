@@ -20,7 +20,6 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@address", location.Address);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Location added successfully.");
                 return true;
             }
         }
@@ -42,12 +41,10 @@ namespace JollyLightsCinemaGroup.DataAccess
 
                 if (rowsAffected > 0)
                 {
-                    Console.WriteLine("Location removed successfully.");
                     return true;
                 }
                 else
                 {
-                    Console.WriteLine("No matching location found to remove.");
                     return false;
                 }
             }
@@ -73,6 +70,10 @@ namespace JollyLightsCinemaGroup.DataAccess
                 }
             }
             return locations;
+        }
+        public bool ModifyLocation(Location location)
+        {
+            return true;
         }
     }
 }
