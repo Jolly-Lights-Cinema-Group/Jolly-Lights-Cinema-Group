@@ -40,14 +40,24 @@ public class LocationService
         if (locations.Count == 0)
         {
             Console.WriteLine("No locations found.");
+            return;
         }
-        else
+
+        Console.WriteLine("Locations:");
+        foreach (var location in locations)
         {
-            Console.WriteLine("Locations:");
-            foreach (var location in locations)
-            {
-                Console.WriteLine($"Name: {location.Name}; Address: {location.Address}");
-            }
+            Console.WriteLine($"Name: {location.Name}; Address: {location.Address}");
         }
+        return;
+    }
+    public void UpdateLocation(Location location, string? newName, string? newAddress)
+    {
+        if (_locationRepo.ModifyLocation(location, newName, newAddress))
+        {
+            Console.WriteLine("Location is updated");
+            return;
+        }
+        Console.WriteLine("No locations found.");
+        return;
     }
 }

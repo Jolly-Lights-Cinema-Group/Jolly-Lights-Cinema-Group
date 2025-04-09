@@ -91,6 +91,38 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadKey();
         }
 
+        public static void ModifyLocation()
+        {
+            Console.Clear();
+
+            Console.WriteLine("Information to modify location:");
+
+            string? oldName;
+            do
+            {
+                Console.Write("Enter the name of the location you want to modify: ");
+                oldName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(oldName));
+
+            string? oldAddress;
+            do
+            {
+                Console.Write("Enter the address of the location you want to modify: ");
+                oldAddress = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(oldAddress));
+
+            Console.Write("Enter the new name of the location (leave empty keep the current name): ");
+            string? newName = Console.ReadLine();
+            Console.Write("Enter the new address of the location (leave empty keep the current address): ");
+            string? newAddress = Console.ReadLine();
+
+            LocationService locationService = new LocationService();
+            Location oldLocation = new(oldName, oldAddress);
+            
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();           
+        }
+
         public static void ViewAllLocations()
         {
             Console.Clear();
