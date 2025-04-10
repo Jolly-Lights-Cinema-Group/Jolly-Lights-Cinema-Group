@@ -29,6 +29,9 @@ namespace Jolly_Lights_Cinema_Group
                     ViewAllLocations();
                     return true;
                 case 3:
+                    ModifyLocation();
+                    return true;
+                case 4:
                     return false;
                 default:
                     Console.WriteLine("Invalid selection.");
@@ -118,7 +121,7 @@ namespace Jolly_Lights_Cinema_Group
 
             LocationService locationService = new LocationService();
             Location oldLocation = new(oldName, oldAddress);
-            
+            locationService.UpdateLocation(oldLocation, newName, newAddress);
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();           
         }

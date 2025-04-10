@@ -57,7 +57,7 @@ public class LocationService
             Console.WriteLine("Location is updated");
             return;
         }
-        Console.WriteLine("No locations found.");
+        Console.WriteLine("No location found to update.");
         return;
     }
 }
