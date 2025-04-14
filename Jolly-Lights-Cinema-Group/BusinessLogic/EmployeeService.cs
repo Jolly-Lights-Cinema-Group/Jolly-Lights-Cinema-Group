@@ -103,9 +103,27 @@ public class EmployeeService
         }
     }
 
-    public void ChangeEmail(string lastname, string username)
-    { }
+    public void ChangeEmail(string email, string username)
+    {
+        if (_employeeRepo.ChangeEmailDB(email, username))
+        {
+            Console.WriteLine("email changed.");
+        }
+        else
+        {
+            Console.WriteLine("email didn't changed.");
+        }
+    }
 
-    public void ChangePassword(string lastname, string username)
-    { }
+    public void ChangePassword(string password, string username)
+    {
+        if (_employeeRepo.ChangePasswordDB(password, username))
+        {
+            Console.WriteLine("password changed.");
+        }
+        else
+        {
+            Console.WriteLine("password didn't changed.");
+        }
+    }
 }

@@ -71,12 +71,22 @@ namespace Jolly_Lights_Cinema_Group
         private static void ChangeEmail()
         {
             Console.Clear();
+            Console.WriteLine($"To what do you want to change your Email {Globals.CurrentUser?.UserName}?");
+            string email = Console.ReadLine()!;
+
+            EmployeeService employeeService = new EmployeeService();
+            employeeService.ChangeEmail(email, Globals.CurrentUser.UserName);
             Console.ReadKey();
         }
 
         private static void ChangePassword()
         {
             Console.Clear();
+            Console.WriteLine($"To what do you want to change your password {Globals.CurrentUser?.UserName}?");
+            string password = Console.ReadLine()!;
+
+            EmployeeService employeeService = new EmployeeService();
+            employeeService.ChangePassword(password, Globals.CurrentUser.UserName);
             Console.ReadKey();
         }
     }

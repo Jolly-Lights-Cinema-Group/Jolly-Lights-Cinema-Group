@@ -40,7 +40,7 @@ public class MovieService
 
     public void ShowAllMovies()
     {
-        List<string> movies = _movieRepo.GetAllMovies();
+        List<Movie> movies = _movieRepo.GetAllMovies();
         if (movies.Count == 0)
         {
             Console.WriteLine("No movies found.");

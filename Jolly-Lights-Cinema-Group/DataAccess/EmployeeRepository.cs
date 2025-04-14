@@ -166,12 +166,38 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public void ChangeEmailDB(Employee employee)
-        { }
+        public bool ChangeEmailDB(string email, string username)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET email = @email WHERE USERNAME = @username";
 
-        public void ChangePasswordDB(Employee employee)
-        { }
+                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@username", username);
 
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+        }
 
+        public bool ChangePasswordDB(string password, string username)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE EMPLOYEE SET Password = @password WHERE USERNAME = @username";
+
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+                command.Parameters.AddWithValue("@password", hashedPassword);
+                command.Parameters.AddWithValue("@username", username);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+        }
     }
 }
