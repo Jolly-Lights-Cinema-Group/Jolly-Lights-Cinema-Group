@@ -124,5 +124,41 @@ namespace Jolly_Lights.Tests
             Assert.AreEqual("ChangedUser", LastnameChanged.LastName, "Employee should be changed to ChangedUser");
             employeerepository.DeleteEmployee(LastnameChanged);
         }
+
+        [TestMethod]
+        public void Test_ChangeEmail_ChangingEmailOfEmployee()
+        {
+            Employee employee = new Employee("Test2", "Employee", "01-01-1111", "Testway 32", "test.employee@email.com", "test1_subject_Changeemail", "testemployee", Role.Employee);
+            EmployeeRepository employeerepository = new EmployeeRepository();
+
+            employeerepository.AddEmployee(employee);
+
+            Employee EmailNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.AreEqual("test.employee@email.com", EmailNotchanged.Email, "Email should be test.employee@email.com.");
+
+            employeerepository.ChangeEmailDB("Changedemail@email.com", employee.UserName);
+            Employee EmailChanged = employeerepository.GetEmployeeByUsername(employee);
+
+            Assert.AreEqual("Changedemail@email.com", EmailChanged.Email, "Employee should be changed to ChangedUser");
+            employeerepository.DeleteEmployee(EmailChanged);
+        }
+
+        [TestMethod]
+        public void Test_ChangePassword_ChangingPasswordOfEmployee()
+        {
+            Employee employee = new Employee("Test2", "Employee", "01-01-1111", "Testway 32", "test.employee@email.com", "test1_subject_ChangePassword", "testemployee", Role.Employee);
+            EmployeeRepository employeerepository = new EmployeeRepository();
+
+            employeerepository.AddEmployee(employee);
+
+            Employee PasswordNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.IsTrue(BCrypt.Net.BCrypt.Verify("testemployee", PasswordNotchanged.Password), "Password should match the newly changed password.");
+
+            employeerepository.ChangePasswordDB("Changedpassword", employee.UserName);
+            Employee PasswordChanged = employeerepository.GetEmployeeByUsername(employee);
+
+            Assert.IsTrue(BCrypt.Net.BCrypt.Verify("Changedpassword", PasswordChanged.Password), "Password should match the newly changed password.");
+            employeerepository.DeleteEmployee(PasswordChanged);
+        }
     }
 }
