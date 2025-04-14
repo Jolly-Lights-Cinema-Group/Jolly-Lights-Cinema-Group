@@ -19,3 +19,5 @@ SQLitePCLRaw.provider.e_sqlite3.dll
 *.log
 *.tmp
 .DS_Store
+
+DataAccess/DatabaseManager.cs

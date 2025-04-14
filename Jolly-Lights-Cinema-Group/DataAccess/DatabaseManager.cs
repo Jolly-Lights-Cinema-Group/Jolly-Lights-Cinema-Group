@@ -6,7 +6,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class DatabaseManager
     {
-        private static readonly string _dbPath = @"Database\cinema.db";
+        private static readonly string _dbPath = @"../../../../Jolly-Lights-Cinema-Group\Database\cinema.db";
         private static readonly string _connectionString = $"Data Source={_dbPath}";
 
         public static SqliteConnection GetConnection()
