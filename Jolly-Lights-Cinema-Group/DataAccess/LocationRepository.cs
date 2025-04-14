@@ -20,7 +20,6 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@address", location.Address);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Location added successfully.");
                 return true;
             }
         }
@@ -38,18 +37,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@name", location.Name);
                 command.Parameters.AddWithValue("@address", location.Address);
 
-                int rowsAffected = command.ExecuteNonQuery();
-
-                if (rowsAffected > 0)
-                {
-                    Console.WriteLine("Location removed successfully.");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("No matching location found to remove.");
-                    return false;
-                }
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
@@ -73,6 +61,50 @@ namespace JollyLightsCinemaGroup.DataAccess
                 }
             }
             return locations;
+        }
+        public bool ModifyLocation(Location oldLocation, string? newName, string? newAddress)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+
+                var updates = new List<string>();
+                var parameters = new Dictionary<string, object>();
+
+                if (!string.IsNullOrWhiteSpace(newName))
+                {
+                    updates.Add("Name = @newName");
+                    parameters["@newName"] = newName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(newAddress))
+                {
+                    updates.Add("Address = @newAddress");
+                    parameters["@newAddress"] = newAddress;
+                }
+
+                if (updates.Count == 0)
+                {
+                    return false;
+                }
+
+                var command = connection.CreateCommand();
+                command.CommandText = $@"
+                    UPDATE Location
+                    SET {string.Join(", ", updates)}
+                    WHERE Name = @oldName AND Address = @oldAddress;";
+
+                command.Parameters.AddWithValue("@oldName", oldLocation.Name);
+                command.Parameters.AddWithValue("@oldAddress", oldLocation.Address);
+
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value);
+                }
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
         }
     }
 }
