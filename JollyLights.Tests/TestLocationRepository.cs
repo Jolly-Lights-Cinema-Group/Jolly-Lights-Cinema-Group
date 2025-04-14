@@ -78,5 +78,30 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "Location could not be deleted.");
         }
+
+        [TestMethod]
+        public void Test_ModifyLocation_ModifyLocationFromDatabase()
+        {
+            string name = "TestLocation";
+            string address = "TestStreet 123";
+            Location oldLocation = new(name, address);
+            Location newLocation = new("ModifyLocation", "TestModify 123");
+
+            LocationRepository locationRepository = new LocationRepository();
+            locationRepository.AddLocation(oldLocation);
+
+            bool result = locationRepository.ModifyLocation(oldLocation, newLocation.Name, newLocation.Address);
+
+            Assert.IsTrue(result, "Location could not be modified.");
+
+            Location newLocationName = new("ModifyName", "");
+
+            bool resultOnlyModifyName = locationRepository.ModifyLocation(newLocation, newLocationName.Name, newLocationName.Address);
+
+            Assert.IsTrue(resultOnlyModifyName, "Location could not be modified.");
+
+            Location locationToRemove = new(newLocationName.Name, newLocation.Address);
+            locationRepository.RemoveLocation(locationToRemove);
+        }
     }
 }
