@@ -6,10 +6,23 @@ namespace Jolly_Lights.Tests
     [TestClass]
     public class Movietest
     {
+        private string? _tempDir;
+
         [TestInitialize]
         public void Setup()
         {
+            _tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_tempDir);
+
+            string testSchemaPath = Path.Combine(_tempDir, "schema.sql");     
+
+            var originalSchemaPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Jolly-Lights-Cinema-Group", "Database", "schema.sql");
+            File.Copy(originalSchemaPath, testSchemaPath);
+
+            DatabaseManager.OverridePaths(_tempDir);
+
             DatabaseManager.InitializeDatabase();
+            Console.WriteLine("Temporary directory: " + _tempDir);
         }
 
         [TestMethod]
@@ -87,6 +100,15 @@ namespace Jolly_Lights.Tests
             movieRepository.DeleteMovie(movie1);
             movieRepository.DeleteMovie(movie2);
             movieRepository.DeleteMovie(movie3);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            if (Directory.Exists(_tempDir))
+            {
+                Directory.Delete(_tempDir, recursive: true);
+            }
         }
     }
 }
