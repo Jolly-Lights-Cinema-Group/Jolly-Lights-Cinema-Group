@@ -25,7 +25,6 @@ namespace Jolly_Lights.Tests
             DatabaseManager.OverridePaths(_tempDir);
 
             DatabaseManager.InitializeDatabase();
-            Console.WriteLine("Temporary directory: " + _tempDir);
         }
 
         [TestMethod]

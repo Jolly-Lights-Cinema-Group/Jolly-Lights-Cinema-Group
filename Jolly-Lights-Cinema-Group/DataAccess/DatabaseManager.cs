@@ -1,7 +1,4 @@
 using Microsoft.Data.Sqlite;
-using System;
-using System.Dynamic;
-using System.IO;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
