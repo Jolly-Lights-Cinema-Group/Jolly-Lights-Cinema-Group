@@ -16,6 +16,17 @@ public static class ReservationService
         return;
     }
 
+    public static void DeleteReservation(Reservation reservation)
+    {
+        if (ReservationRepository.RemoveReservation(reservation))
+        {
+            Console.WriteLine("Reservation removed successfully.");
+            return;
+        }
+        Console.WriteLine("No matching reservation found to remove.");
+        return;
+    }
+
     public static void ShowAllReservations()
     {
         List<Reservation> reservations = ReservationRepository.GetAllReservations();

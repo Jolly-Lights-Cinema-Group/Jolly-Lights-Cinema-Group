@@ -29,6 +29,22 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
+        public static bool RemoveReservation(Reservation reservation)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    DELETE FROM Reservation
+                    WHERE ReservationNumber = @reservationNumber;";
+
+                command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
         public static List<Reservation> GetAllReservations()
         {
             List<Reservation> reservations = new List<Reservation>();
