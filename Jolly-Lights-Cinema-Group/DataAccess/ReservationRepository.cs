@@ -4,42 +4,47 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public class ReservationRepository
+    public static class ReservationRepository
     {
-        public void AddReservation(string reservationNumber, int orderId, int paid)
+        public static bool AddReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Reservation (ReservationNumber, OrderId, Paid)
+                    INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid)
                     VALUES (@reservationNumber, @orderId, @paid);";
 
-                command.Parameters.AddWithValue("@reservationNumber", reservationNumber);
-                command.Parameters.AddWithValue("@orderId", orderId);
-                command.Parameters.AddWithValue("@paid", paid);
+                command.Parameters.AddWithValue("@firstName", reservation.FirstName);
+                command.Parameters.AddWithValue("@lastName", reservation.LastName);
+                command.Parameters.AddWithValue("@phoneNumber", reservation.PhoneNumber);
+                command.Parameters.AddWithValue("@eMail", reservation.EMail);
+                command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
+                command.Parameters.AddWithValue("@orderId", reservation.OrderId);
+                command.Parameters.AddWithValue("@paid", Convert.ToBoolean(reservation.Paid));
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Reservation added successfully.");
+                return true;
             }
         }
 
-        public List<string> GetAllReservations()
+        public static List<Reservation> GetAllReservations()
         {
-            var reservations = new List<string>();
+            List<Reservation> reservations = new List<Reservation>();
 
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, ReservationNumber, OrderId, Paid FROM Reservation;";
+                command.CommandText = "SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid FROM Reservation;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        reservations.Add($"ID: {reader.GetInt32(0)}, Reservation number: {reader.GetString(1)}, Order ID: {reader.GetString(2)}, Paid: {Convert.ToBoolean(reader.GetInt32(3))}");
+                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5), Convert.ToBoolean(reader.GetInt32(6)));
+                        reservations.Add(reservation);
                     }
                 }
             }

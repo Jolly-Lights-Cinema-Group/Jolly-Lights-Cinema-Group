@@ -2,45 +2,32 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 
-public class ReservationService
+public static class ReservationService
 {
-    private readonly ReservationRepository _reservationRepo;
-
-    public ReservationService()
+    public static void RegisterReservation(Reservation reservation)
     {
-        _reservationRepo = new ReservationRepository();
-    }
-
-    public void RegisterReservation(string reservationNumber, int orderId, int paid)
-    {
-        if (string.IsNullOrWhiteSpace(reservationNumber))
+        if (ReservationRepository.AddReservation(reservation))
         {
-            Console.WriteLine("Error: Name cannot be empty.");
-            return;
-        }
-        if (int.IsNegative(paid))
-        {
-            Console.WriteLine("Error: Paid cannot be an negative number.");
+            Console.WriteLine("Reservation added successfully.");
             return;
         }
 
-        _reservationRepo.AddReservation(reservationNumber, orderId, paid);
+        Console.WriteLine("Reservation was not added to the database.");
+        return;
     }
 
-    public void ShowAllReservations()
+    public static void ShowAllReservations()
     {
-        List<string> reservations = _reservationRepo.GetAllReservations();
+        List<Reservation> reservations = ReservationRepository.GetAllReservations();
         if (reservations.Count == 0)
         {
             Console.WriteLine("No reservations found.");
+            return;
         }
-        else
+        Console.WriteLine("Reservations:");
+        foreach (Reservation reservation in reservations)
         {
-            Console.WriteLine("Reservations:");
-            foreach (var reservation in reservations)
-            {
-                Console.WriteLine(reservation);
-            }
+            Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}; Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}; Order Id: {reservation.OrderId}");
         }
     }
 }
