@@ -66,5 +66,27 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return reservations;
         }
+
+        public static Reservation? FindReservationByReservationNumber(string reservationNumber)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid 
+                    FROM Reservation
+                    WHERE ReservationNumber = @reservationNumber;";
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5), Convert.ToBoolean(reader.GetInt32(6)));
+                        return reservation;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

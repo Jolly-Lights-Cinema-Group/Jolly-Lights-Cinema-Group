@@ -41,4 +41,15 @@ public static class ReservationService
             Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}; Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}; Order Id: {reservation.OrderId}");
         }
     }
+
+    public static void FindReservationByReservationNumber(string reservationNumber)
+    {
+        Reservation? reservation = ReservationRepository.FindReservationByReservationNumber(reservationNumber);
+        if (reservation != null)
+        {
+            Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}; Order Id: {reservation.OrderId}");
+            return;
+        }
+        Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");
+    }
 }
