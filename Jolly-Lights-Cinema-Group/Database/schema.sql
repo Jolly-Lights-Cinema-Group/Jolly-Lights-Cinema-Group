@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS Reservation (
   LastName TEXT NOT NULL,
   PhoneNumber INTEGER NOT NULL,
   EMail TEXT NOT NULL,
-  ReservationNumber TEXT NOT NULL,
+  ReservationNumber TEXT NOT NULL UNIQUE,
   OrderId INTEGER NOT NULL,
   Paid INTEGER NOT NULL CHECK (Paid IN (0, 1)),
   FOREIGN KEY (OrderId) REFERENCES CustomerOrder (Id) ON DELETE CASCADE
