@@ -6,9 +6,21 @@ namespace Jolly_Lights.Tests
     [TestClass]
     public class Employeetest
     {
+        private string? _tempDir;
+
         [TestInitialize]
         public void Setup()
         {
+            _tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_tempDir);
+
+            string testSchemaPath = Path.Combine(_tempDir, "schema.sql");     
+
+            var originalSchemaPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Jolly-Lights-Cinema-Group", "Database", "schema.sql");
+            File.Copy(originalSchemaPath, testSchemaPath);
+
+            DatabaseManager.OverridePaths(_tempDir);
+
             DatabaseManager.InitializeDatabase();
         }
 
@@ -159,6 +171,15 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(BCrypt.Net.BCrypt.Verify("Changedpassword", PasswordChanged.Password), "Password should match the newly changed password.");
             employeerepository.DeleteEmployee(PasswordChanged);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            if (Directory.Exists(_tempDir))
+            {
+                Directory.Delete(_tempDir, recursive: true);
+            }
         }
     }
 }
