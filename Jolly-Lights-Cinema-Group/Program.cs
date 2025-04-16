@@ -13,7 +13,6 @@ namespace Jolly_Lights_Cinema_Group
         {
             // Main menu / Asking for role
             DatabaseManager.InitializeDatabase();
-            TestLocations.CreateTestLocations();
             string prompt = "Jolly Lights Cinema Group";
             string[] options = { "Employee", "Manager", "Admin" };
             Menu menu = new(prompt, options);
