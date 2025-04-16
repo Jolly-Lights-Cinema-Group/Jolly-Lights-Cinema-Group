@@ -2,6 +2,7 @@
 using Jolly_Lights_Cinema_Group.Common;
 using Jolly_Lights_Cinema_Group.Enum;
 using Jolly_Lights_Cinema_Group.Models;
+using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -12,15 +13,14 @@ namespace Jolly_Lights_Cinema_Group
         {
             // Main menu / Asking for role
             DatabaseManager.InitializeDatabase();
+            TestLocations.CreateTestLocations();
             string prompt = "Jolly Lights Cinema Group";
             string[] options = { "Employee", "Manager", "Admin" };
             Menu menu = new(prompt, options);
             int selectedIndex = menu.Run();
 
             // Main menu / Asking for location
-            string locationPrompt = "Choose a location";
-            string[] optionsLocation = { "Rotterdam", "Utrecht", "Amsterdam" };
-            LocationMenu location = new(locationPrompt, optionsLocation);
+            LocationMenu location = new();
             int selectedLocation = location.Run();
 
             Console.Clear();

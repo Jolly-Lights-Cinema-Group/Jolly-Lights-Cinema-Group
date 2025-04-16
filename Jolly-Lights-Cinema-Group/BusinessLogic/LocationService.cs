@@ -2,18 +2,11 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 
-public class LocationService
+public static class LocationService
 {
-    private readonly LocationRepository _locationRepo;
-
-    public LocationService()
+    public static void RegisterLocation(Location location)
     {
-        _locationRepo = new LocationRepository();
-    }
-
-    public void RegisterLocation(Location location)
-    {
-        if (_locationRepo.AddLocation(location))
+        if (LocationRepository.AddLocation(location))
         {
             Console.WriteLine("Location added successfully.");
             return;
@@ -23,9 +16,9 @@ public class LocationService
         return;
     }
 
-    public void DeleteLocation(Location location)
+    public static void DeleteLocation(Location location)
     {
-        if (_locationRepo.RemoveLocation(location))
+        if (LocationRepository.RemoveLocation(location))
         {
             Console.WriteLine("Location removed successfully.");
             return;
@@ -34,9 +27,9 @@ public class LocationService
         return;
     }
 
-    public void ShowAllLocations()
+    public static void ShowAllLocations()
     {
-        List<Location> locations = _locationRepo.GetAllLocations();
+        List<Location> locations = LocationRepository.GetAllLocations();
         if (locations.Count == 0)
         {
             Console.WriteLine("No locations found.");
@@ -50,9 +43,9 @@ public class LocationService
         }
         return;
     }
-    public void UpdateLocation(Location location, string? newName, string? newAddress)
+    public static void UpdateLocation(Location location, string? newName, string? newAddress)
     {
-        if (_locationRepo.ModifyLocation(location, newName, newAddress))
+        if (LocationRepository.ModifyLocation(location, newName, newAddress))
         {
             Console.WriteLine("Location is updated");
             return;
