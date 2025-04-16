@@ -1,4 +1,4 @@
-class CustomerOrder
+public class CustomerOrder
 {
     public double GrandPrice { get; set; }
 
