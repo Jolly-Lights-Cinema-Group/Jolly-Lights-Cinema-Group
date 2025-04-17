@@ -4,9 +4,9 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public class CustomerOrderRepository
+    public static class CustomerOrderRepository
     {
-        public void AddCustomerOrder(double grandPrice)
+        public static bool AddCustomerOrder(CustomerOrder customerOrder)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -16,16 +16,16 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO CustomerOrder (GrandPrice)
                     VALUES (@grandPrice);";
 
-                command.Parameters.AddWithValue("@grandPrice", grandPrice);
+                command.Parameters.AddWithValue("@grandPrice", customerOrder.GrandPrice);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine("Customer order added successfully.");
+                return true;
             }
         }
 
-        public List<string> GetAllCustomerOrders()
+        public static List<CustomerOrder> GetAllCustomerOrders()
         {
-            var customerOrders = new List<string>();
+            List<CustomerOrder> customerOrders = new List<CustomerOrder>();
 
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -37,7 +37,8 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        customerOrders.Add($"ID: {reader.GetInt32(0)}, Grand total: {reader.GetString(1)}");
+                        CustomerOrder customerOrder = new(reader.GetInt32(0));
+                        customerOrders.Add(customerOrder);
                     }
                 }
             }

@@ -12,15 +12,18 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ManageUsers();
+                    ManageReservations();
                     break;
                 case 1:
-                    ViewReports();
+                    ManageUsers();
                     break;
                 case 2:
+                    ViewReports();
+                    break;
+                case 3:
                     AccessSettings();
                     break;
-                case 3: 
+                case 4: 
                     user.IsAuthenticated = false;
                     break;
                 default:
@@ -50,6 +53,13 @@ namespace Jolly_Lights_Cinema_Group
         private static void AccessSettings()
         {
             Console.WriteLine("Accessing settings...");
+        }
+        private static void ManageReservations()
+        {
+            Console.Clear();
+            Console.WriteLine("Manage Reservations");
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();           
         }
     }
 }
