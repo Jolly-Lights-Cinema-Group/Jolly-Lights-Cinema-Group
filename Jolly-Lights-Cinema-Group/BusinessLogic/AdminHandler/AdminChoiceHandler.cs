@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
     public class AdminChoiceHandler
     {
 
-// Class for the Admin menu to work with the logic placed in the main program.
+        // Class for the Admin menu to work with the logic placed in the main program.
 
         public static bool AdminMainMenu = false;
         public static bool AdminManageUserMenu = false;
@@ -52,7 +52,7 @@ namespace Jolly_Lights_Cinema_Group
             Console.Clear();
             Console.WriteLine("Manage Reservations");
             Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();           
+            Console.ReadKey();
         }
     }
 }
