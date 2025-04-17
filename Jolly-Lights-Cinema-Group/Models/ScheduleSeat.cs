@@ -1,18 +1,24 @@
 class ScheduleSeat
 {
+    public int? Id { get; set; }
     public int ScheduleId { get; set; }
     public int ReservationId { get; set; }
     public double Price { get; set; }
     public int Type { get; set; }
     public string? SeatNumber { get; set; }
 
-    public ScheduleSeat(int scheduleid, int reservationid, double price, int type, string seatnumber)
+    public ScheduleSeat(int scheduleId, int reservationId, double price, int type, string seatNumber)
     {
-        ScheduleId = scheduleid;
-        ReservationId = reservationid;
+        ScheduleId = scheduleId;
+        ReservationId = reservationId;
         Price = price;
         Type = type;
-        SeatNumber = seatnumber;
+        SeatNumber = seatNumber;
     }
 
+    public ScheduleSeat(int id, int scheduleId, int reservationId, double price, int type, string seatNumber)
+        : this(scheduleId, reservationId, price, type, seatNumber)
+    {
+        Id = id;
+    }
 }
