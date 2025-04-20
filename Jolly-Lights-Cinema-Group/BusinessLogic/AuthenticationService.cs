@@ -9,12 +9,12 @@ public class AuthenticationService()
     {
         if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             return false;
-        
+
         var currentUser = AuthenticationRepository.Login(userName, password);
 
         if (!currentUser.ValidLogin)
             return false;
-        
+
         currentUser.IsAuthenticated = true;
         Globals.CurrentUser = currentUser;
         return true;

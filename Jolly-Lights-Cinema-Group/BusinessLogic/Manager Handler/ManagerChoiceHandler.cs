@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
     public class ManagerChoiceHandler
     {
 
-// Class for the Manager menu to work with the logic placed in the program class.
+        // Class for the Manager menu to work with the logic placed in the program class.
 
         public static void HandleChoice(int choice, ref User user)
         {
@@ -15,15 +15,15 @@ namespace Jolly_Lights_Cinema_Group
                     ManageReservations();
                     break;
                 case 1:
-                    ManageUsers();
+                    Console.WriteLine("Need to be implemented.");
                     break;
                 case 2:
-                    ViewReports();
+                    Console.WriteLine("Need to be implemented.");
                     break;
                 case 3:
-                    AccessSettings();
+                    AccountSettingsHandler.ManageAccount();
                     break;
-                case 4: 
+                case 4:
                     user.IsAuthenticated = false;
                     break;
                 default:
@@ -40,9 +40,9 @@ namespace Jolly_Lights_Cinema_Group
             Console.WriteLine("Pieter");
             Console.WriteLine("Sofie");
 
-            
+
             Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey(); 
+            Console.ReadKey();
         }
 
         private static void ViewReports()
@@ -50,16 +50,12 @@ namespace Jolly_Lights_Cinema_Group
             Console.WriteLine("Viewing reports...");
         }
 
-        private static void AccessSettings()
-        {
-            Console.WriteLine("Accessing settings...");
-        }
         private static void ManageReservations()
         {
             Console.Clear();
             Console.WriteLine("Manage Reservations");
             Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();           
+            Console.ReadKey();
         }
     }
 }

@@ -49,45 +49,84 @@ namespace Jolly_Lights_Cinema_Group
         private static void ChangeFirstName()
         {
             Console.Clear();
-            Console.WriteLine($"To what do you want to change your firstname {Globals.CurrentUser?.UserName}?");
-            string Firstname = Console.ReadLine()!;
+            bool IsValid = false;
+            do
+            {
+                Console.WriteLine($"To what do you want to change your firstname {Globals.CurrentUser?.UserName}?");
+                string? Firstname = Console.ReadLine()!;
 
-            EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangeFirstName(Firstname, Globals.CurrentUser.UserName);
+                if (!string.IsNullOrWhiteSpace(Firstname))
+                {
+                    EmployeeService employeeService = new EmployeeService();
+                    employeeService.ChangeFirstName(Firstname, Globals.CurrentUser.UserName);
+                    IsValid = true;
+                }
+            }
+            while (!IsValid);
+
             Console.ReadKey();
         }
 
         private static void ChangeLastName()
         {
             Console.Clear();
-            Console.WriteLine($"To what do you want to change your lastname {Globals.CurrentUser?.UserName}?");
-            string lastname = Console.ReadLine()!;
+            bool IsValid = false;
+            do
+            {
+                Console.WriteLine($"To what do you want to change your lastname {Globals.CurrentUser?.UserName}?");
+                string? lastname = Console.ReadLine()!;
 
-            EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangeLastName(lastname, Globals.CurrentUser.UserName);
+                if (!string.IsNullOrWhiteSpace(lastname))
+                {
+                    EmployeeService employeeService = new EmployeeService();
+                    employeeService.ChangeLastName(lastname, Globals.CurrentUser.UserName);
+                    IsValid = true;
+                }
+            }
+            while (!IsValid);
+
             Console.ReadKey();
         }
 
         private static void ChangeEmail()
         {
-            Console.Clear();
-            Console.WriteLine($"To what do you want to change your Email {Globals.CurrentUser?.UserName}?");
-            string email = Console.ReadLine()!;
 
-            EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangeEmail(email, Globals.CurrentUser.UserName);
-            Console.ReadKey();
+            Console.Clear();
+            bool IsValid = false;
+            do
+
+            {
+                Console.WriteLine($"To what do you want to change your Email {Globals.CurrentUser?.UserName}?");
+                string email = Console.ReadLine()!;
+
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    EmployeeService employeeService = new EmployeeService();
+                    employeeService.ChangeEmail(email, Globals.CurrentUser.UserName);
+                    IsValid = true;
+                }
+            }
+            while (!IsValid);
         }
 
         private static void ChangePassword()
         {
             Console.Clear();
-            Console.WriteLine($"To what do you want to change your password {Globals.CurrentUser?.UserName}?");
-            string password = Console.ReadLine()!;
+            bool IsValid = false;
 
-            EmployeeService employeeService = new EmployeeService();
-            employeeService.ChangePassword(password, Globals.CurrentUser.UserName);
-            Console.ReadKey();
+            do
+            {
+                Console.WriteLine($"To what do you want to change your password {Globals.CurrentUser?.UserName}?");
+                string password = Console.ReadLine()!;
+
+                if (!string.IsNullOrWhiteSpace(password))
+                {
+                    EmployeeService employeeService = new EmployeeService();
+                    employeeService.ChangePassword(password, Globals.CurrentUser.UserName);
+                    IsValid = true;
+                }
+            }
+            while (!IsValid);
         }
     }
 
