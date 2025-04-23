@@ -88,6 +88,6 @@ CREATE TABLE IF NOT EXISTS DiscountCode (
   DiscountAmount REAL NOT NULL,
   DiscountType TEXT NOT NULL,
   ExperationDate DATETIME NOT NULL,
-  OrderId INTEGER NOT NULL,
+  OrderId INTEGER,
   FOREIGN KEY (OrderId) REFERENCES CustomerOrder (Id) ON DELETE CASCADE
 );

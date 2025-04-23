@@ -15,7 +15,7 @@ namespace Jolly_Lights_Cinema_Group
                     ManageReservations();
                     break;
                 case 1:
-                    Console.WriteLine("Need to be implemented.");
+                    DiscountCodeHandler.ManageDiscountCode();
                     break;
                 case 2:
                     Console.WriteLine("Need to be implemented.");
