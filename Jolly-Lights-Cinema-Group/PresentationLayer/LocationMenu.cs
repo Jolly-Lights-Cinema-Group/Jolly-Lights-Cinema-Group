@@ -9,7 +9,8 @@ namespace Jolly_Lights_Cinema_Group
 
         private static string[] GetLocationOptions()
         {
-            List<Location> locations = LocationRepository.GetAllLocations();
+            LocationRepository locationRepository = new LocationRepository();
+            List<Location> locations = locationRepository.GetAllLocations();
             return locations.Select(location => location.Name).ToArray();
         }
     }

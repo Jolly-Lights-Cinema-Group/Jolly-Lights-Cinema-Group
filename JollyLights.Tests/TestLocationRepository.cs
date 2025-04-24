@@ -34,7 +34,9 @@ namespace Jolly_Lights.Tests
             string address = "TestStreet 123";
             Location location = new(name, address);
 
-            bool result = LocationRepository.AddLocation(location);
+            LocationRepository locationRepository = new LocationRepository();
+
+            bool result = locationRepository.AddLocation(location);
 
             Assert.IsTrue(result, "Location not added to database");
         }
@@ -46,10 +48,12 @@ namespace Jolly_Lights.Tests
             Location location1 = new("TestLocation1", "TestStreet 1");
             Location location2 = new("TestLocation2", "TestStreet 2");
 
-            LocationRepository.AddLocation(location1);
-            LocationRepository.AddLocation(location2);
+            LocationRepository locationRepository = new LocationRepository();
 
-            List<Location> allLocations = LocationRepository.GetAllLocations();
+            locationRepository.AddLocation(location1);
+            locationRepository.AddLocation(location2);
+
+            List<Location> allLocations = locationRepository.GetAllLocations();
 
             bool resultLocation1 = false;
             bool resultLocation2 = false;
@@ -76,9 +80,11 @@ namespace Jolly_Lights.Tests
             string address = "TestStreet 123";
             Location location = new(name, address);
 
-            LocationRepository.AddLocation(location);
+            LocationRepository locationRepository = new LocationRepository();
 
-            bool result = LocationRepository.RemoveLocation(location);
+            locationRepository.AddLocation(location);
+
+            bool result = locationRepository.RemoveLocation(location);
 
             Assert.IsTrue(result, "Location could not be deleted.");
         }
@@ -91,15 +97,17 @@ namespace Jolly_Lights.Tests
             Location oldLocation = new(name, address);
             Location newLocation = new("ModifyLocation", "TestModify 123");
 
-            LocationRepository.AddLocation(oldLocation);
+            LocationRepository locationRepository = new LocationRepository();
 
-            bool result = LocationRepository.ModifyLocation(oldLocation, newLocation.Name, newLocation.Address);
+            locationRepository.AddLocation(oldLocation);
+
+            bool result = locationRepository.ModifyLocation(oldLocation, newLocation.Name, newLocation.Address);
 
             Assert.IsTrue(result, "Location could not be modified.");
 
             Location newLocationName = new("ModifyName", "");
 
-            bool resultOnlyModifyName = LocationRepository.ModifyLocation(newLocation, newLocationName.Name, newLocationName.Address);
+            bool resultOnlyModifyName = locationRepository.ModifyLocation(newLocation, newLocationName.Name, newLocationName.Address);
 
             Assert.IsTrue(resultOnlyModifyName, "Location could not be modified.");
         }
