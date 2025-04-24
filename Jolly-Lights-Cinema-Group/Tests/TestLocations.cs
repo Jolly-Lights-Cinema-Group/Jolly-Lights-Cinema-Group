@@ -13,9 +13,11 @@ namespace JollyLightsCinemaGroup.BusinessLogic
             Location locationAmsterdam = new Location("Jolly Lights Amsterdam", "Amsterdam Kalverstraat 113");
             Location locationUtrecht = new Location("Jolly Lights Utrecht", "Utrecht Oudegracht 114");
 
-            LocationRepository.AddLocation(locationRotterdam);
-            LocationRepository.AddLocation(locationAmsterdam);
-            LocationRepository.AddLocation(locationUtrecht);
+            LocationRepository locationRepository = new LocationRepository();
+
+            locationRepository.AddLocation(locationRotterdam);
+            locationRepository.AddLocation(locationAmsterdam);
+            locationRepository.AddLocation(locationUtrecht);
 
             Console.WriteLine("Test locations added successfully.");
         }

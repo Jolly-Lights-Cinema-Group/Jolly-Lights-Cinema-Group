@@ -57,8 +57,9 @@ namespace Jolly_Lights_Cinema_Group
                 address = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(address));
 
+            LocationService locationService = new LocationService();
             Location location = new(name, address);
-            LocationService.RegisterLocation(location);
+            locationService.RegisterLocation(location);
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
@@ -85,8 +86,9 @@ namespace Jolly_Lights_Cinema_Group
                 address = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(address));
 
+            LocationService locationService = new LocationService();
             Location location = new(name, address);
-            LocationService.DeleteLocation(location);
+            locationService.DeleteLocation(location);
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
@@ -117,8 +119,10 @@ namespace Jolly_Lights_Cinema_Group
             Console.Write("Enter the new address of the location (leave empty keep the current address): ");
             string? newAddress = Console.ReadLine();
 
+            LocationService locationService = new LocationService();
             Location oldLocation = new(oldName, oldAddress);
-            LocationService.UpdateLocation(oldLocation, newName, newAddress);
+            locationService.UpdateLocation(oldLocation, newName, newAddress);
+
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();           
         }
@@ -126,7 +130,10 @@ namespace Jolly_Lights_Cinema_Group
         public static void ViewAllLocations()
         {
             Console.Clear();
-            LocationService.ShowAllLocations();      
+
+            LocationService locationService = new LocationService();
+            locationService.ShowAllLocations();
+
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }

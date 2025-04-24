@@ -4,9 +4,9 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public static class LocationRepository
+    public class LocationRepository
     {
-        public static bool AddLocation(Location location)
+        public bool AddLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -24,7 +24,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static bool RemoveLocation(Location location)
+        public bool RemoveLocation(Location location)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -41,7 +41,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static List<Location> GetAllLocations()
+        public List<Location> GetAllLocations()
         {
             List<Location> locations = new List<Location>();
 
@@ -62,7 +62,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return locations;
         }
-        public static bool ModifyLocation(Location oldLocation, string? newName, string? newAddress)
+        public bool ModifyLocation(Location oldLocation, string? newName, string? newAddress)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
