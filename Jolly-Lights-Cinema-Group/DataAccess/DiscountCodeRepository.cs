@@ -19,7 +19,37 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return rowsAffected > 0;
             }
         }
-        public void AddDiscountCode(DiscountCode discountcode)
+
+        public DiscountCode GetDiscountCode(string code)
+        {
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT * FROM DiscountCode WHERE Code = @code";
+
+                command.Parameters.AddWithValue("@code", code);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new DiscountCode(
+                            reader.GetString(1), // Code
+                            reader.GetDouble(2),  // DiscountAmount
+                            reader.GetString(3),  // DiscountType
+                            reader.GetDateTime(4),  // Experationdate
+                            reader.IsDBNull(5) ? (int?)null : reader.GetInt32(4) // OrderId (can be NULL)
+                        );
+                    }
+                }
+
+                return null;
+            }
+        }
+        public bool AddDiscountCode(DiscountCode discountcode)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -35,8 +65,24 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@experationDate", discountcode.ExperationDate);
                 command.Parameters.AddWithValue("@orderId", discountcode.OrderId ?? ((object)DBNull.Value));
 
-                command.ExecuteNonQuery();
-                Console.WriteLine("Discount code added successfully.");
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected == 1;
+            }
+        }
+
+        public bool DeleteDiscountCode(string code)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    DELETE FROM DiscountCode WHERE Code = @code";
+
+                command.Parameters.AddWithValue("@code", code);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected == 1;
             }
         }
     }

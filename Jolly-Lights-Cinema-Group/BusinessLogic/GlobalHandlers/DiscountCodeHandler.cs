@@ -37,10 +37,10 @@ namespace Jolly_Lights_Cinema_Group
                     MakeGeneralDiscountCode();
                     return true;
                 case 2:
-                    Console.WriteLine();
+                    DeleteDiscountCode();
                     return true;
                 case 3:
-                    Console.WriteLine();
+                    GetDiscountCode();
                     return true;
                 case 4:
                     return false;
@@ -80,7 +80,7 @@ namespace Jolly_Lights_Cinema_Group
             string? Type = Console.ReadLine();
 
             Console.WriteLine($"Discount Code: (Example: SPRING20,20TH-ANNIVERSARY,1-MILLION-COSTUMERS)");
-            string Code = Console.ReadLine();
+            string? Code = Console.ReadLine();
 
             Console.WriteLine($"What will the discount amount be?: (Example: 20% = 0.2, 30% = 0.3)");
             double DiscountAmount;
@@ -89,62 +89,45 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine("Invalid input. Please enter a number like 0.2 or 0.3:");
             }
 
-            Console.WriteLine($"What will the experation month be: (YY/MM/DD)");
+            Console.WriteLine($"What will the experation month be: (DD/MM/YYYY)");
             DateTime ExperationDate = Convert.ToDateTime(Console.ReadLine());
 
             Console.WriteLine($"OrderId: (Leave Empty if none)");
             string? orderInput = Console.ReadLine();
             int? OrderId = string.IsNullOrWhiteSpace(orderInput) ? null : int.Parse(orderInput);
 
-            Console.WriteLine($"Discount code = {Type},{Code},{DiscountAmount},{ExperationDate},{OrderId}");
-
             DiscountCode discountcode = new DiscountCode(Code, DiscountAmount, Type, ExperationDate, OrderId);
-
             DiscountCodeService discountcodeservice = new();
+
             discountcodeservice.RegisterDiscountCode(discountcode);
+
 
             Console.ReadKey();
         }
 
-        private static void ChangeEmail()
+        private static void DeleteDiscountCode()
         {
 
             Console.Clear();
-            bool IsValid = false;
-            do
+            Console.WriteLine("What is the code of the Discount to delete?:");
+            string? code = Console.ReadLine();
 
-            {
-                Console.WriteLine($"To what do you want to change your Email {Globals.CurrentUser?.UserName}?");
-                string email = Console.ReadLine()!;
+            DiscountCodeService discountcode = new();
 
-                if (!string.IsNullOrWhiteSpace(email))
-                {
-                    EmployeeService employeeService = new EmployeeService();
-                    employeeService.ChangeEmail(email, Globals.CurrentUser.UserName);
-                    IsValid = true;
-                }
-            }
-            while (!IsValid);
+            discountcode.DeleteDiscountCode(code);
+            Console.ReadLine();
         }
 
-        private static void ChangePassword()
+        private static void GetDiscountCode()
         {
             Console.Clear();
-            bool IsValid = false;
+            Console.WriteLine("What is the code of the Discount:");
+            string? code = Console.ReadLine();
 
-            do
-            {
-                Console.WriteLine($"To what do you want to change your password {Globals.CurrentUser?.UserName}?");
-                string password = Console.ReadLine()!;
+            DiscountCodeService discountcode = new();
 
-                if (!string.IsNullOrWhiteSpace(password))
-                {
-                    EmployeeService employeeService = new EmployeeService();
-                    employeeService.ChangePassword(password, Globals.CurrentUser.UserName);
-                    IsValid = true;
-                }
-            }
-            while (!IsValid);
+            discountcode.GetDiscountCodeFromDB(code);
+            Console.ReadLine();
         }
     }
 
