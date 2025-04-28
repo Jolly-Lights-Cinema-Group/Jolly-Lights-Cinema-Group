@@ -42,7 +42,7 @@ public class DiscountCodeService
         }
     }
 
-    public void GetDiscountCodeFromDB(string code)
+    public void GetDiscountCodeFromDB(string code) // Getting a discount code back. Delete the messages.
     {
         Console.Clear();
 

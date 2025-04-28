@@ -50,7 +50,7 @@ public class MovieService
             Console.WriteLine("Movies:");
             foreach (var movie in movies)
             {
-                Console.WriteLine(movie);
+                Console.WriteLine($"Title:{movie.Title}; Duration: {movie.Duration}; MinimumAge: {movie.MinimumAge}; ReleaseDate: {movie.ReleaseDate}; Case: {movie.MovieCast}");
             }
         }
     }
