@@ -14,14 +14,13 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid)
-                    VALUES (@reservationNumber, @orderId, @paid);";
+                    VALUES (@reservationNumber, @paid);";
 
                 command.Parameters.AddWithValue("@firstName", reservation.FirstName);
                 command.Parameters.AddWithValue("@lastName", reservation.LastName);
                 command.Parameters.AddWithValue("@phoneNumber", reservation.PhoneNumber);
                 command.Parameters.AddWithValue("@eMail", reservation.EMail);
                 command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
-                command.Parameters.AddWithValue("@orderId", reservation.OrderId);
                 command.Parameters.AddWithValue("@paid", Convert.ToBoolean(reservation.Paid));
 
                 command.ExecuteNonQuery();
@@ -53,13 +52,13 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid FROM Reservation;";
+                command.CommandText = "SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid FROM Reservation;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5), Convert.ToBoolean(reader.GetInt32(6)));
+                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), Convert.ToBoolean(reader.GetInt32(6)));
                         reservations.Add(reservation);
                     }
                 }
@@ -74,14 +73,14 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid 
+                    SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid 
                     FROM Reservation
                     WHERE ReservationNumber = @reservationNumber;";
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5), Convert.ToBoolean(reader.GetInt32(6)));
+                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), Convert.ToBoolean(reader.GetInt32(6)));
                         return reservation;
                     }
                 }
