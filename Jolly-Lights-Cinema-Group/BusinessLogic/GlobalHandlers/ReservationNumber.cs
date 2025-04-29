@@ -6,12 +6,13 @@ namespace JollyLightsCinemaGroup.BusinessLogic
 {
     public static class ReservationNumberGenerator
     {
+        private static readonly ReservationRepository _reservationRepository = new ReservationRepository();
         private static readonly char[] AllowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ1234567890".ToCharArray();
 
         private static readonly Random random = new();
         public static string GetReservationNumber()
         {
-            var existingReservationNumbers = ReservationRepository.GetAllReservations().Select(r => r.ReservationNumber).ToHashSet();
+            var existingReservationNumbers = _reservationRepository.GetAllReservations().Select(r => r.ReservationNumber).ToHashSet();
 
             string reservationNumber;
             do
