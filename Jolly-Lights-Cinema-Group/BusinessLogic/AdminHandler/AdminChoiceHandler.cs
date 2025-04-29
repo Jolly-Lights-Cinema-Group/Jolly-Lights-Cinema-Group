@@ -47,12 +47,5 @@ namespace Jolly_Lights_Cinema_Group
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }
-        private static void ManageReservations()
-        {
-            Console.Clear();
-            Console.WriteLine("Manage Reservations");
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
-        }
     }
 }

@@ -49,7 +49,7 @@ public class ReservationService
         if (reservation != null)
         {
             Console.WriteLine($"{reservationNumber}:");
-            Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
+            Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number: {reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
             return;
         }
         Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");

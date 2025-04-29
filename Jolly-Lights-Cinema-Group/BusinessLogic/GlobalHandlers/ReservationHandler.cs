@@ -26,6 +26,12 @@ namespace Jolly_Lights_Cinema_Group
                     AddReservation();
                     return true;
                 case 1:
+                    DeleteReservation();
+                    return true;
+                case 2:
+                    GetReservation();
+                    return true;
+                case 3:
                     return false;
                 default:
                     Console.WriteLine("Invalid selection.");
@@ -103,6 +109,27 @@ namespace Jolly_Lights_Cinema_Group
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
+        }
+
+        public static void GetReservation()
+        {
+            Console.Clear();
+
+            Console.WriteLine("Find reservation:");
+
+            string? reservationNumber;
+            do
+            {
+                Console.Write("Enter reservation number: ");
+                reservationNumber = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(reservationNumber));
+
+
+            ReservationService reservationService = new ReservationService();
+            reservationService.FindReservationByReservationNumber(reservationNumber);
+
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();   
         }
     }
 }

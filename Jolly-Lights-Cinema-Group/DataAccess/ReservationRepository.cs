@@ -13,8 +13,8 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid)
-                    VALUES (@reservationNumber, @paid);";
+                    INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid)
+                    VALUES (@firstName, @lastName, @phoneNumber, @eMail, @reservationNumber, @paid);";
 
                 command.Parameters.AddWithValue("@firstName", reservation.FirstName);
                 command.Parameters.AddWithValue("@lastName", reservation.LastName);
