@@ -4,9 +4,9 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public static class ReservationRepository
+    public class ReservationRepository
     {
-        public static bool AddReservation(Reservation reservation)
+        public bool AddReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -28,7 +28,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static bool RemoveReservation(Reservation reservation)
+        public bool RemoveReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -44,7 +44,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static List<Reservation> GetAllReservations()
+        public List<Reservation> GetAllReservations()
         {
             List<Reservation> reservations = new List<Reservation>();
 
@@ -66,7 +66,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return reservations;
         }
 
-        public static Reservation? FindReservationByReservationNumber(string reservationNumber)
+        public Reservation? FindReservationByReservationNumber(string reservationNumber)
         {
             using (var connection = DatabaseManager.GetConnection())
             {

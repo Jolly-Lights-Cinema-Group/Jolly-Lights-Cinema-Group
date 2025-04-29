@@ -2,11 +2,12 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 
-public static class ReservationService
+public class ReservationService
 {
-    public static void RegisterReservation(Reservation reservation)
+    private readonly ReservationRepository _reservationRepository = new ReservationRepository();
+    public void RegisterReservation(Reservation reservation)
     {
-        if (ReservationRepository.AddReservation(reservation))
+        if (_reservationRepository.AddReservation(reservation))
         {
             Console.WriteLine("Reservation added successfully.");
             return;
@@ -16,9 +17,9 @@ public static class ReservationService
         return;
     }
 
-    public static void DeleteReservation(Reservation reservation)
+    public void DeleteReservation(Reservation reservation)
     {
-        if (ReservationRepository.RemoveReservation(reservation))
+        if (_reservationRepository.RemoveReservation(reservation))
         {
             Console.WriteLine("Reservation removed successfully.");
             return;
@@ -27,9 +28,9 @@ public static class ReservationService
         return;
     }
 
-    public static void ShowAllReservations()
+    public void ShowAllReservations()
     {
-        List<Reservation> reservations = ReservationRepository.GetAllReservations();
+        List<Reservation> reservations = _reservationRepository.GetAllReservations();
         if (reservations.Count == 0)
         {
             Console.WriteLine("No reservations found.");
@@ -42,9 +43,9 @@ public static class ReservationService
         }
     }
 
-    public static void FindReservationByReservationNumber(string reservationNumber)
+    public void FindReservationByReservationNumber(string reservationNumber)
     {
-        Reservation? reservation = ReservationRepository.FindReservationByReservationNumber(reservationNumber);
+        Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
         if (reservation != null)
         {
             Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");

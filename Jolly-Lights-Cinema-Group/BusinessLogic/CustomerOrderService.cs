@@ -2,11 +2,12 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 
-public static class CustomerOrderService
+public class CustomerOrderService
 {
-    public static void RegisterCustomerOrder(CustomerOrder customerOrder)
+    private readonly CustomerOrderRepository _customerOrderRepository = new CustomerOrderRepository();
+    public void RegisterCustomerOrder(CustomerOrder customerOrder)
     {
-        CustomerOrderRepository.AddCustomerOrder(customerOrder);
+        _customerOrderRepository.AddCustomerOrder(customerOrder);
     }
 
 }

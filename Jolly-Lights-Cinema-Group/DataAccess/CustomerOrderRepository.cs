@@ -4,9 +4,9 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public static class CustomerOrderRepository
+    public class CustomerOrderRepository
     {
-        public static bool AddCustomerOrder(CustomerOrder customerOrder)
+        public bool AddCustomerOrder(CustomerOrder customerOrder)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -23,7 +23,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static List<CustomerOrder> GetAllCustomerOrders()
+        public List<CustomerOrder> GetAllCustomerOrders()
         {
             List<CustomerOrder> customerOrders = new List<CustomerOrder>();
 
