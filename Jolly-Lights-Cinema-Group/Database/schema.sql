@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Movie (
   Title TEXT NOT NULL,
   Duration INTEGER NOT NULL,
   MinimunAge INTEGER NOT NULL,
+  ReleaseDate DATETIME NOT NULL,
   MovieCast TEXT
 );
 

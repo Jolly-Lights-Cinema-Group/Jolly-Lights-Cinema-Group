@@ -13,12 +13,13 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Movie (Title, Duration, MinimunAge, MovieCast)
-                    VALUES (@title, @duration, @minimumage, @moviecast);";
+                    INSERT INTO Movie (Title, Duration, MinimunAge,ReleaseDate, MovieCast)
+                    VALUES (@title, @duration, @minimumage, @releasedate, @moviecast);";
 
                 command.Parameters.AddWithValue("@title", movie.Title);
                 command.Parameters.AddWithValue("@duration", movie.Duration);
                 command.Parameters.AddWithValue("@minimumage", movie.MinimumAge);
+                command.Parameters.AddWithValue("@releasedate", movie.ReleaseDate);
                 command.Parameters.AddWithValue("@moviecast", movie.MovieCast);
 
                 command.ExecuteNonQuery();
@@ -48,7 +49,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                SELECT Title, Duration, MinimunAge, MovieCast FROM Movie
+                SELECT Title, Duration, MinimunAge, ReleaseDate, MovieCast FROM Movie
                 WHERE Title = @Title;";
 
                 command.Parameters.AddWithValue("@Title", movie.Title);
@@ -61,7 +62,8 @@ namespace JollyLightsCinemaGroup.DataAccess
                             reader.GetString(0), // Title
                             reader.GetInt32(1),  // Duration
                             reader.GetInt32(2),  // MinimunAge
-                            reader.GetString(3)  // MovieCast
+                            reader.GetDateTime(3), // ReleaseDate
+                            reader.GetString(4)  // MovieCast
                         );
                     }
                 }
@@ -79,7 +81,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                SELECT Title, Duration, MinimunAge, MovieCast FROM Movie;";
+                SELECT Title, Duration, MinimunAge, ReleaseDate, MovieCast FROM Movie;";
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -93,7 +95,8 @@ namespace JollyLightsCinemaGroup.DataAccess
                             SafeGet(0),
                             reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
                             reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
-                            SafeGet(3)
+                            reader.GetDateTime(3),
+                            SafeGet(4)
                         ));
                     }
                 }
