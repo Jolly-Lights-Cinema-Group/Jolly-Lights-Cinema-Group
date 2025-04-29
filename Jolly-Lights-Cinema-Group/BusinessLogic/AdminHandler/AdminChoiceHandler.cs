@@ -14,7 +14,7 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ManageReservations();
+                    ReservationHandler.ManageReservations();
                     break;
                 case 1:
                     AdminUserHandler.ManageUsers();

@@ -48,6 +48,7 @@ public class ReservationService
         Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
         if (reservation != null)
         {
+            Console.WriteLine($"{reservationNumber}:");
             Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
             return;
         }

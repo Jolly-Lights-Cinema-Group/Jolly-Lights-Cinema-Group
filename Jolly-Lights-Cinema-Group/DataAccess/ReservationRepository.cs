@@ -73,14 +73,17 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid 
+                    SELECT Id, FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid 
                     FROM Reservation
                     WHERE ReservationNumber = @reservationNumber;";
+
+                command.Parameters.AddWithValue("@reservationNumber", reservationNumber);
+
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), Convert.ToBoolean(reader.GetInt32(6)));
+                        Reservation reservation = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetString(5), Convert.ToBoolean(reader.GetInt32(6)));
                         return reservation;
                     }
                 }
