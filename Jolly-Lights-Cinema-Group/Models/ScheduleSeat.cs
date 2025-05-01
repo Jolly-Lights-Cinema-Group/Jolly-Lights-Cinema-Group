@@ -1,13 +1,15 @@
-class ScheduleSeat
+using Jolly_Lights_Cinema_Group.Enum;
+
+public class ScheduleSeat
 {
     public int? Id { get; set; }
     public int ScheduleId { get; set; }
     public int ReservationId { get; set; }
     public double Price { get; set; }
-    public int Type { get; set; }
+    public SeatType Type { get; set; }
     public string? SeatNumber { get; set; }
 
-    public ScheduleSeat(int scheduleId, int reservationId, double price, int type, string seatNumber)
+    public ScheduleSeat(int scheduleId, int reservationId, double price, SeatType type, string seatNumber)
     {
         ScheduleId = scheduleId;
         ReservationId = reservationId;
@@ -16,7 +18,7 @@ class ScheduleSeat
         SeatNumber = seatNumber;
     }
 
-    public ScheduleSeat(int id, int scheduleId, int reservationId, double price, int type, string seatNumber)
+    public ScheduleSeat(int id, int scheduleId, int reservationId, double price, SeatType type, string seatNumber)
         : this(scheduleId, reservationId, price, type, seatNumber)
     {
         Id = id;
