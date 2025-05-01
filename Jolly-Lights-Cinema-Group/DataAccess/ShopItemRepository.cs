@@ -38,7 +38,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Name, Price, Stock, MinimumAge FROM ShopItem,;";
+                command.CommandText = "SELECT Id, Name, Price, Stock, MinimumAge FROM ShopItem;";
 
                 using (var reader = command.ExecuteReader())
                 {

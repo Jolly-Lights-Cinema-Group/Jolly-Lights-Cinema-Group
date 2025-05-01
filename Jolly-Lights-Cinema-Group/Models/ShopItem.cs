@@ -10,8 +10,8 @@ public class ShopItem
     {
         Name = name;
         Price = price;
-        MinimumAge = minimumAge;
         Stock = stock;
+        MinimumAge = minimumAge;
     }
 
     public ShopItem(int id, string name, double price, int stock, int minimumAge = 0)
