@@ -22,8 +22,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@releasedate", movie.ReleaseDate);
                 command.Parameters.AddWithValue("@moviecast", movie.MovieCast);
 
-                command.ExecuteNonQuery();
-                return true;
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
@@ -42,7 +41,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public Movie GetMovieByTitle(Movie movie)
+        public Movie? GetMovieByTitle(Movie movie)
         {
             using (var connection = DatabaseManager.GetConnection())
             {

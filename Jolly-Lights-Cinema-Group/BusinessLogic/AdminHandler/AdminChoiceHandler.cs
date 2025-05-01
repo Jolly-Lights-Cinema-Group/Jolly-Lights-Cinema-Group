@@ -14,7 +14,7 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ManageReservations();
+                    ReservationHandler.ManageReservations();
                     break;
                 case 1:
                     AdminUserHandler.ManageUsers();
@@ -44,13 +44,6 @@ namespace Jolly_Lights_Cinema_Group
         {
             Console.Clear();
             Console.WriteLine("Viewing reports...");
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
-        }
-        private static void ManageReservations()
-        {
-            Console.Clear();
-            Console.WriteLine("Manage Reservations");
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }

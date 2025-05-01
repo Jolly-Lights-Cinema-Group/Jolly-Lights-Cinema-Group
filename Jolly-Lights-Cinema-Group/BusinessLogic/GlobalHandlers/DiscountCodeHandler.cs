@@ -76,11 +76,20 @@ namespace Jolly_Lights_Cinema_Group
         private static void MakeGeneralDiscountCode()
         {
             Console.Clear();
-            Console.WriteLine($"Discount Code name:");
-            string? Type = Console.ReadLine();
+            string? Type;
+            do
+            {
+                Console.Write($"Discount Code name:");
+                Type = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(Type));
 
             Console.WriteLine($"Discount Code: (Example: SPRING20,20TH-ANNIVERSARY,1-MILLION-COSTUMERS)");
-            string? Code = Console.ReadLine();
+            string? Code;
+            do
+            {
+                Console.Write($"Discount Code: (Example: SPRING20,20TH-ANNIVERSARY,1-MILLION-COSTUMERS)");
+                Code = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(Code));
 
             Console.WriteLine($"What will the discount amount be?: (Example: 20% = 0.2, 30% = 0.3)");
             double DiscountAmount;
@@ -109,8 +118,12 @@ namespace Jolly_Lights_Cinema_Group
         {
 
             Console.Clear();
-            Console.WriteLine("What is the code of the Discount to delete?:");
-            string? code = Console.ReadLine();
+            string? code;
+            do
+            {
+                Console.Write("What is the code of the Discount to delete?:");
+                code = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(code));
 
             DiscountCodeService discountcode = new();
 
@@ -121,8 +134,12 @@ namespace Jolly_Lights_Cinema_Group
         private static void GetDiscountCode()
         {
             Console.Clear();
-            Console.WriteLine("What is the code of the Discount:");
-            string? code = Console.ReadLine();
+            string? code;
+            do
+            {
+                Console.Write("What is the code of the Discount:");
+                code = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(code));
 
             DiscountCodeService discountcode = new();
 
@@ -130,5 +147,4 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadLine();
         }
     }
-
 }

@@ -4,17 +4,17 @@ using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
-    public static class ReservationRepository
+    public class ReservationRepository
     {
-        public static bool AddReservation(Reservation reservation)
+        public bool AddReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, OrderId, Paid)
-                    VALUES (@reservationNumber, @paid);";
+                    INSERT INTO Reservation (FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid)
+                    VALUES (@firstName, @lastName, @phoneNumber, @eMail, @reservationNumber, @paid);";
 
                 command.Parameters.AddWithValue("@firstName", reservation.FirstName);
                 command.Parameters.AddWithValue("@lastName", reservation.LastName);
@@ -23,12 +23,12 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
                 command.Parameters.AddWithValue("@paid", Convert.ToBoolean(reservation.Paid));
 
-                command.ExecuteNonQuery();
-                return true;
+                return command.ExecuteNonQuery() > 0;
+
             }
         }
 
-        public static bool RemoveReservation(Reservation reservation)
+        public bool RemoveReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -44,7 +44,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static List<Reservation> GetAllReservations()
+        public List<Reservation> GetAllReservations()
         {
             List<Reservation> reservations = new List<Reservation>();
 
@@ -52,13 +52,13 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid FROM Reservation;";
+                command.CommandText = "SELECT Id, FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid FROM Reservation;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), Convert.ToBoolean(reader.GetInt32(6)));
+                        Reservation reservation = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetString(5), Convert.ToBoolean(reader.GetInt32(6)));
                         reservations.Add(reservation);
                     }
                 }
@@ -66,21 +66,24 @@ namespace JollyLightsCinemaGroup.DataAccess
             return reservations;
         }
 
-        public static Reservation? FindReservationByReservationNumber(string reservationNumber)
+        public Reservation? FindReservationByReservationNumber(string reservationNumber)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid 
+                    SELECT Id, FirstName, LastName, PhoneNumber, EMail, ReservationNumber, Paid 
                     FROM Reservation
                     WHERE ReservationNumber = @reservationNumber;";
+
+                command.Parameters.AddWithValue("@reservationNumber", reservationNumber);
+
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        Reservation reservation = new(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetString(4), Convert.ToBoolean(reader.GetInt32(6)));
+                        Reservation reservation = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetString(5), Convert.ToBoolean(reader.GetInt32(6)));
                         return reservation;
                     }
                 }

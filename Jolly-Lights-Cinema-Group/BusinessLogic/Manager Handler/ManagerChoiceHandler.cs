@@ -12,7 +12,7 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ManageReservations();
+                    ReservationHandler.ManageReservations();
                     break;
                 case 1:
                     DiscountCodeHandler.ManageDiscountCode();
@@ -48,14 +48,6 @@ namespace Jolly_Lights_Cinema_Group
         private static void ViewReports()
         {
             Console.WriteLine("Viewing reports...");
-        }
-
-        private static void ManageReservations()
-        {
-            Console.Clear();
-            Console.WriteLine("Manage Reservations");
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
         }
     }
 }

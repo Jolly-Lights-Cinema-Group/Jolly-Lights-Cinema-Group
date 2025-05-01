@@ -46,9 +46,10 @@ public class DiscountCodeService
     {
         Console.Clear();
 
-        if (_discountCodeRepo.GetDiscountCode(code) != null)
+        DiscountCode? Discount = _discountCodeRepo.GetDiscountCode(code);
+
+        if (Discount != null)
         {
-            DiscountCode Discount = _discountCodeRepo.GetDiscountCode(code);
             Console.WriteLine($"Discount exists:\nCode: {Discount.Code}\nAmount:{Discount.DiscountAmount * 100}%\nType: {Discount.DiscountType}\nValid till:{Discount.ExperationDate}");
         }
         else

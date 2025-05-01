@@ -66,7 +66,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public Employee GetEmployeeByUsername(Employee employee)  // not implemented yet. Only used for tests
+        public Employee? GetEmployeeByUsername(Employee employee)  // not implemented yet. Only used for tests
         {
             using (var connection = DatabaseManager.GetConnection())
             {
