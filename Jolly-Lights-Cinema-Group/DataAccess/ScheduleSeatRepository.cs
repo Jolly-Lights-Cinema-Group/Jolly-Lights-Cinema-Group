@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Jolly_Lights_Cinema_Group.Enum;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
 {
     public class ScheduleSeatRepository
     {
-        public void AddScheduleSeat(int scheduleId, int reservationId, double price, int type, string seatNumber)
+        public bool AddScheduleSeat(ScheduleSeat scheduleSeat)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -16,33 +17,33 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO ScheduleSeat (ScheduleId, ReservationId, Price, Type, SeatNumber)
                     VALUES (@scheduleId, @reservationId, @price, @type, @seatNumber);";
 
-                command.Parameters.AddWithValue("@scheduleId", scheduleId);
-                command.Parameters.AddWithValue("@reservationId", reservationId);
-                command.Parameters.AddWithValue("@price", price);
-                command.Parameters.AddWithValue("@type", type);
-                command.Parameters.AddWithValue("@seatNumber", seatNumber);
+                command.Parameters.AddWithValue("@scheduleId", scheduleSeat.ScheduleId);
+                command.Parameters.AddWithValue("@reservationId", scheduleSeat.ReservationId);
+                command.Parameters.AddWithValue("@price", scheduleSeat.Price);
+                command.Parameters.AddWithValue("@type", scheduleSeat.Type);
+                command.Parameters.AddWithValue("@seatNumber", scheduleSeat.SeatNumber);
 
-                command.ExecuteNonQuery();
-                Console.WriteLine("Schedule seat added successfully.");
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
-        public List<string> GetSeatsBySchedule(int scheduleId)
+        public List<ScheduleSeat> GetSeatsBySchedule(int scheduleId)
         {
-            var seats = new List<string>();
+            var seats = new List<ScheduleSeat>();
 
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Price, Type, SeatNumber FROM ScheduleSeat WHERE ScheduleId = @ScheduleId;";
+                command.CommandText = "SELECT Id, ScheduleId, ReservationId, Price, Type, SeatNumber FROM ScheduleSeat WHERE ScheduleId = @ScheduleId;";
                 command.Parameters.AddWithValue("@ScheduleId", scheduleId);
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        seats.Add($"ID: {reader.GetInt32(0)}, Price: {reader.GetString(1)}, Type: {reader.GetString(2)}, Seat number: {reader.GetString(3)}");
+                        ScheduleSeat seat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5));
+                        seats.Add(seat);
                     }
                 }
             }

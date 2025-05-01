@@ -1,8 +1,4 @@
-﻿using System.Security.Cryptography;
-using Jolly_Lights_Cinema_Group;
-using Jolly_Lights_Cinema_Group.Models;
-using JollyLightsCinemaGroup.DataAccess;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights.Tests
 {

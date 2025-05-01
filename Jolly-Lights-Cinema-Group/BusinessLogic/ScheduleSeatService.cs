@@ -2,33 +2,40 @@ using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
 
-public class ScheduleSeatService
+namespace JollyLightsCinemaGroup.BusinessLogic
 {
-    private readonly ScheduleSeatRepository _scheduleSeatRepo;
-
-    public ScheduleSeatService()
+    public class ScheduleSeatService
     {
-        _scheduleSeatRepo = new ScheduleSeatRepository();
-    }
+        private readonly ScheduleSeatRepository _scheduleSeatRepo;
 
-    public void RegisterScheduleSeat(int scheduleId, int reservationId, double price, int type, string seatNumber)
-    {
-        _scheduleSeatRepo.AddScheduleSeat(scheduleId, reservationId, price, type, seatNumber);
-    }
-
-    public void ShowAllLScheduleSeats(int scheduleId)
-    {
-        List<string> seats = _scheduleSeatRepo.GetSeatsBySchedule(scheduleId);
-        if (seats.Count == 0)
+        public ScheduleSeatService()
         {
-            Console.WriteLine("No reserved seats found for this schedule.");
+            _scheduleSeatRepo = new ScheduleSeatRepository();
         }
-        else
+
+        public void RegisterScheduleSeat(ScheduleSeat scheduleSeat)
         {
-            Console.WriteLine("Reserved Seats:");
-            foreach (var seat in seats)
+            if (_scheduleSeatRepo.AddScheduleSeat(scheduleSeat))
             {
-                Console.WriteLine(seat);
+                Console.WriteLine($"Seat: {scheduleSeat.SeatNumber} reserved.");
+                return;
+            }
+        }
+
+        public void ShowAllLScheduleSeats(int scheduleId)
+        {
+            List<ScheduleSeat> seats = _scheduleSeatRepo.GetSeatsBySchedule(scheduleId);
+            if (seats.Count == 0)
+            {
+                Console.WriteLine("No reserved seats found for this schedule.");
+            }
+            else
+            {
+                Console.WriteLine("Reserved Seats:");
+                foreach (var seat in seats)
+                {
+                    Console.WriteLine($"Seatnumber: {seat.SeatNumber}; Seat type: {seat.Type}; Price: ${seat.Price}");
+                }
             }
         }
     }
