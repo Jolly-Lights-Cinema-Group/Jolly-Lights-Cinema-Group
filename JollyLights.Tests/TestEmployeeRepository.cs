@@ -36,7 +36,7 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "AddEmployee should return true if insertion was successful.");
 
-            Employee inserted = employeerepository.GetEmployeeByUsername(employee);
+            Employee? inserted = employeerepository.GetEmployeeByUsername(employee);
             Assert.IsNotNull(inserted, "Employee should exist in database.");
             Assert.AreEqual("Test", inserted.FirstName, "Test Should be the firstname.");
             Assert.AreEqual("Employee", inserted.LastName, "Employee Should be the LastName.");
@@ -109,12 +109,14 @@ namespace Jolly_Lights.Tests
 
             employeerepository.AddEmployee(employee);
 
-            Employee FirstnameNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? FirstnameNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.IsNotNull(FirstnameNotchanged, "Employee with first name not changed not found in database");
             Assert.AreEqual("Test2", FirstnameNotchanged.FirstName, "Username should be Test2.");
 
             employeerepository.ChangeFirstNameDB("ChangedUser", employee.UserName);
-            Employee FirstnameChanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? FirstnameChanged = employeerepository.GetEmployeeByUsername(employee);
 
+            Assert.IsNotNull(FirstnameChanged, "Employee with first name changed not found in database");
             Assert.AreEqual("ChangedUser", FirstnameChanged.FirstName, "Test2 should be changed to ChangedUser");
             employeerepository.DeleteEmployee(FirstnameChanged);
         }
@@ -127,12 +129,14 @@ namespace Jolly_Lights.Tests
 
             employeerepository.AddEmployee(employee);
 
-            Employee LastnameNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? LastnameNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.IsNotNull(LastnameNotchanged, "Employee with last name not changed not found in database");
             Assert.AreEqual("Employee", LastnameNotchanged.LastName, "Lastname should be Employee.");
 
             employeerepository.ChangeLastNameDB("ChangedUser", employee.UserName);
-            Employee LastnameChanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? LastnameChanged = employeerepository.GetEmployeeByUsername(employee);
 
+            Assert.IsNotNull(LastnameChanged, "Employee with last name changed not found in database");
             Assert.AreEqual("ChangedUser", LastnameChanged.LastName, "Employee should be changed to ChangedUser");
             employeerepository.DeleteEmployee(LastnameChanged);
         }
@@ -145,12 +149,14 @@ namespace Jolly_Lights.Tests
 
             employeerepository.AddEmployee(employee);
 
-            Employee EmailNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? EmailNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.IsNotNull(EmailNotchanged, "Employee with email not changed  not found in database");
             Assert.AreEqual("test.employee@email.com", EmailNotchanged.Email, "Email should be test.employee@email.com.");
 
             employeerepository.ChangeEmailDB("Changedemail@email.com", employee.UserName);
-            Employee EmailChanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? EmailChanged = employeerepository.GetEmployeeByUsername(employee);
 
+            Assert.IsNotNull(EmailChanged, "Employee with email changed not found in database");
             Assert.AreEqual("Changedemail@email.com", EmailChanged.Email, "Employee should be changed to ChangedUser");
             employeerepository.DeleteEmployee(EmailChanged);
         }
@@ -163,12 +169,14 @@ namespace Jolly_Lights.Tests
 
             employeerepository.AddEmployee(employee);
 
-            Employee PasswordNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? PasswordNotchanged = employeerepository.GetEmployeeByUsername(employee);
+            Assert.IsNotNull(PasswordNotchanged, "Employee with password not changed not found in database");
             Assert.IsTrue(BCrypt.Net.BCrypt.Verify("testemployee", PasswordNotchanged.Password), "Password should match the newly changed password.");
 
             employeerepository.ChangePasswordDB("Changedpassword", employee.UserName);
-            Employee PasswordChanged = employeerepository.GetEmployeeByUsername(employee);
+            Employee? PasswordChanged = employeerepository.GetEmployeeByUsername(employee);
 
+            Assert.IsNotNull(PasswordChanged, "Employee with password changed not found in database");
             Assert.IsTrue(BCrypt.Net.BCrypt.Verify("Changedpassword", PasswordChanged.Password), "Password should match the newly changed password.");
             employeerepository.DeleteEmployee(PasswordChanged);
         }

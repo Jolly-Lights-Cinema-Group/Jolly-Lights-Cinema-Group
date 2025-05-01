@@ -20,7 +20,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public DiscountCode GetDiscountCode(string code)
+        public DiscountCode? GetDiscountCode(string code)
         {
 
             using (var connection = DatabaseManager.GetConnection())

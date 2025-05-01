@@ -19,8 +19,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@name", location.Name);
                 command.Parameters.AddWithValue("@address", location.Address);
 
-                command.ExecuteNonQuery();
-                return true;
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
@@ -102,8 +101,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                     command.Parameters.AddWithValue(param.Key, param.Value);
                 }
 
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                return command.ExecuteNonQuery() > 0;
             }
         }
     }

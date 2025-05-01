@@ -28,7 +28,7 @@ namespace Jolly_Lights.Tests
         public void Test_Addmovie_AddmovietoDB()
         {
 
-            Movie movie = new Movie("TestMovie1", 90, 18, "Jason Mamoa");
+            Movie movie = new Movie("TestMovie1", 90, 18, DateTime.Now, "Jason Mamoa");
 
             MovieRepository movierepository = new MovieRepository();
 
@@ -36,7 +36,7 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "Addmovie should return true if insertion was successful.");
 
-            Movie inserted = movierepository.GetMovieByTitle(movie);
+            Movie? inserted = movierepository.GetMovieByTitle(movie);
             Assert.IsNotNull(inserted, "Movie should exist.");
             Assert.AreEqual("TestMovie1", inserted.Title, "TestMovie1 should be the title");
             Assert.AreEqual(90, inserted.Duration, "90 minutes should be the duration.");
@@ -51,7 +51,7 @@ namespace Jolly_Lights.Tests
         public void Test_Deletemovie_DeleteMoviefromDB()
         {
 
-            Movie movie = new Movie("TestMovie1", 90, 18, "Jason Mamoa");
+            Movie movie = new Movie("TestMovie1", 90, 18, DateTime.Now, "Jason Mamoa");
 
             MovieRepository movierepository = new MovieRepository();
 
@@ -60,7 +60,7 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "Deletemovie should return true if deletion was successful.");
 
-            Movie inserted = movierepository.GetMovieByTitle(movie);
+            Movie? inserted = movierepository.GetMovieByTitle(movie);
             Assert.IsNull(inserted, "Movie should not exist in database.");
 
         }
@@ -69,9 +69,9 @@ namespace Jolly_Lights.Tests
         [DoNotParallelize]
         public void Test_ShowAllMovies_ShowAllMoviesFromDB()
         {
-            Movie movie1 = new Movie("TestMovie1", 90, 18, "Jason Mamoa");
-            Movie movie2 = new Movie("TestMovie2", 90, 18, "Jason Mamoa");
-            Movie movie3 = new Movie("TestMovie3", 90, 18, "Jason Mamoa");
+            Movie movie1 = new Movie("TestMovie1", 90, 18, DateTime.Now, "Jason Mamoa");
+            Movie movie2 = new Movie("TestMovie2", 90, 18, DateTime.Now, "Jason Mamoa");
+            Movie movie3 = new Movie("TestMovie3", 90, 18, DateTime.Now, "Jason Mamoa");
 
             MovieRepository movieRepository = new MovieRepository();
 

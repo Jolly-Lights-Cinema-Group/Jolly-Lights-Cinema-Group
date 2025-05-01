@@ -18,8 +18,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 
                 command.Parameters.AddWithValue("@grandPrice", customerOrder.GrandPrice);
 
-                command.ExecuteNonQuery();
-                return true;
+                return command.ExecuteNonQuery() > 0;
             }
         }
 

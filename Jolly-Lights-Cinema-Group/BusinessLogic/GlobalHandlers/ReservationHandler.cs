@@ -76,7 +76,7 @@ namespace Jolly_Lights_Cinema_Group
 
             string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
 
-            Reservation reservation = new(firstName, lastName, phoneNumber, eMail, reservationNumber, false);
+            Reservation reservation = new(firstName, lastName, phoneNumber, eMail, reservationNumber);
 
             reservationService.RegisterReservation(reservation);
 
