@@ -55,7 +55,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine($"To what do you want to change your firstname {Globals.CurrentUser?.UserName}?");
                 string? Firstname = Console.ReadLine()!;
 
-                if (!string.IsNullOrWhiteSpace(Firstname))
+                if (!string.IsNullOrWhiteSpace(Firstname) && Globals.CurrentUser != null && Globals.CurrentUser.UserName != null)
                 {
                     EmployeeService employeeService = new EmployeeService();
                     employeeService.ChangeFirstName(Firstname, Globals.CurrentUser.UserName);
@@ -76,7 +76,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine($"To what do you want to change your lastname {Globals.CurrentUser?.UserName}?");
                 string? lastname = Console.ReadLine()!;
 
-                if (!string.IsNullOrWhiteSpace(lastname))
+                if (!string.IsNullOrWhiteSpace(lastname) && Globals.CurrentUser != null && Globals.CurrentUser.UserName != null)
                 {
                     EmployeeService employeeService = new EmployeeService();
                     employeeService.ChangeLastName(lastname, Globals.CurrentUser.UserName);
@@ -99,7 +99,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine($"To what do you want to change your Email {Globals.CurrentUser?.UserName}?");
                 string email = Console.ReadLine()!;
 
-                if (!string.IsNullOrWhiteSpace(email))
+                if (!string.IsNullOrWhiteSpace(email) && Globals.CurrentUser != null && Globals.CurrentUser.UserName != null)
                 {
                     EmployeeService employeeService = new EmployeeService();
                     employeeService.ChangeEmail(email, Globals.CurrentUser.UserName);
@@ -119,7 +119,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine($"To what do you want to change your password {Globals.CurrentUser?.UserName}?");
                 string password = Console.ReadLine()!;
 
-                if (!string.IsNullOrWhiteSpace(password))
+                if (!string.IsNullOrWhiteSpace(password) && Globals.CurrentUser != null && Globals.CurrentUser.UserName != null)
                 {
                     EmployeeService employeeService = new EmployeeService();
                     employeeService.ChangePassword(password, Globals.CurrentUser.UserName);
