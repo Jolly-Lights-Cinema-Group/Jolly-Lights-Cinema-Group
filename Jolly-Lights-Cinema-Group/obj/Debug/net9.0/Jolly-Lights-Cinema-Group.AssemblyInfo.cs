@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Jolly-Lights-Cinema-Group")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5db2148db7e44637727239958877565c8eae5906")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff21a52435e744f58ce9bcba33e11d91457c0cbe")]
 [assembly: System.Reflection.AssemblyProductAttribute("Jolly-Lights-Cinema-Group")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Jolly-Lights-Cinema-Group")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
