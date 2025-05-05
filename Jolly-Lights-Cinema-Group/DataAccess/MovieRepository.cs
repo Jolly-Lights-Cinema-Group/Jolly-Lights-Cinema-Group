@@ -26,21 +26,6 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public bool DeleteMovie(Movie movie)
-        {
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"DELETE FROM Movie WHERE Title = @Title";
-
-                command.Parameters.AddWithValue("@Title", movie.Title);
-
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
-        }
-
         public Movie? GetMovieByTitle(Movie movie)
         {
             using (var connection = DatabaseManager.GetConnection())

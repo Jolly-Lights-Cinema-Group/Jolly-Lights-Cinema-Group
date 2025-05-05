@@ -42,27 +42,6 @@ namespace Jolly_Lights.Tests
             Assert.AreEqual(90, inserted.Duration, "90 minutes should be the duration.");
             Assert.AreEqual(18, inserted.MinimumAge, "18 should be the minimum age.");
             Assert.AreEqual("Jason Mamoa", inserted.MovieCast, "Jason Mamoa should be the cast.");
-
-            movierepository.DeleteMovie(movie);
-        }
-
-
-        [TestMethod]
-        public void Test_Deletemovie_DeleteMoviefromDB()
-        {
-
-            Movie movie = new Movie("TestMovie1", 90, 18, DateTime.Now, "Jason Mamoa");
-
-            MovieRepository movierepository = new MovieRepository();
-
-            movierepository.AddMovie(movie);
-            bool result = movierepository.DeleteMovie(movie);
-
-            Assert.IsTrue(result, "Deletemovie should return true if deletion was successful.");
-
-            Movie? inserted = movierepository.GetMovieByTitle(movie);
-            Assert.IsNull(inserted, "Movie should not exist in database.");
-
         }
 
         [TestMethod]
@@ -95,10 +74,6 @@ namespace Jolly_Lights.Tests
             Assert.IsTrue(MovieTest1, $"Title: TestMovie1 should have been detected.");
             Assert.IsTrue(MovieTest2, $"Title: TestMovie2 should have been detected.");
             Assert.IsTrue(MovieTest3, $"Title: TestMovie3 should have been detected.");
-
-            movieRepository.DeleteMovie(movie1);
-            movieRepository.DeleteMovie(movie2);
-            movieRepository.DeleteMovie(movie3);
         }
 
         [TestCleanup]
