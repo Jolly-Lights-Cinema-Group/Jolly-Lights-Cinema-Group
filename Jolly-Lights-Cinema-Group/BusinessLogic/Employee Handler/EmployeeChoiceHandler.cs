@@ -15,15 +15,18 @@ namespace Jolly_Lights_Cinema_Group
                     ReservationHandler.ManageReservations();
                     break;
                 case 1:
-                    ManageUsers();
+                    ShopManagementHandler.ManageShopManagement();
                     break;
                 case 2:
-                    ViewReports();
+                    ManageUsers();
                     break;
                 case 3:
-                    AccessSettings();
+                    ViewReports();
                     break;
                 case 4:
+                    AccessSettings();
+                    break;
+                case 5:
                 user.IsAuthenticated = false;
                     break;
                 default:

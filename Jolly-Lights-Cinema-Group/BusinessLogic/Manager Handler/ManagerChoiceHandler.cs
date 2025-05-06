@@ -18,7 +18,7 @@ namespace Jolly_Lights_Cinema_Group
                     DiscountCodeHandler.ManageDiscountCode();
                     break;
                 case 2:
-                    Console.WriteLine("Need to be implemented.");
+                    ShopManagementHandler.ManageShopManagement();
                     break;
                 case 3:
                     AccountSettingsHandler.ManageAccount();

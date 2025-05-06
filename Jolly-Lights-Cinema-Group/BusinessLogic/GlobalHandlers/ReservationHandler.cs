@@ -80,7 +80,15 @@ namespace Jolly_Lights_Cinema_Group
 
             reservationService.RegisterReservation(reservation);
 
-            Console.WriteLine("\nPress any key to continue.");
+            Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
+            string? response = Console.ReadLine()?.Trim().ToLower();
+
+            if (response == "y")
+            {
+                ShopHandler.ManageShop();
+            }
+
+            Console.WriteLine("\nReservation complete. Press any key to continue.");
             Console.ReadKey();
         }
 
@@ -129,7 +137,7 @@ namespace Jolly_Lights_Cinema_Group
             reservationService.FindReservationByReservationNumber(reservationNumber);
 
             Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();   
+            Console.ReadKey();
         }
     }
 }
