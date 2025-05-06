@@ -102,9 +102,9 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.CommandText = $@"
                     UPDATE ShopItem
                     SET {string.Join(", ", updates)}
-                    WHERE Name = @name;";
+                    WHERE Id = @id;";
 
-                command.Parameters.AddWithValue("@name", shopItem.Name);
+                command.Parameters.AddWithValue("@id", shopItem.Id);
 
                 foreach (var param in parameters)
                 {
