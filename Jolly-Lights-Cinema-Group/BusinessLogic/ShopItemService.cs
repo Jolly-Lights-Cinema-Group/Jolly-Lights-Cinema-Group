@@ -36,10 +36,37 @@ public class ShopItemService
     {
         if (_shopItemRepository.ModifyShopItem(shopItem, newName, newPrice, newStock, newMinimumAge))
         {
-            Console.WriteLine("Shop item is updated");
+            Console.WriteLine($"{shopItem.Name} is updated");
             return;
         }
         Console.WriteLine("No item found in shop to update.");
+        return;
+    }
+
+    public void SellShopItem(ShopItem shopItem, Reservation reservation)
+    {
+        if (shopItem != null)
+        {
+            if (shopItem.Stock <= 0)
+            {
+                Console.WriteLine($"{shopItem.Name} out of stock.");
+                return;
+            }
+
+            if (shopItem.Id != null && reservation.Id != null)
+            {
+                ScheduleShopItem scheduleShopItem = new(shopItem.Id.Value, reservation.Id.Value);
+
+                ScheduleShopItemRepository scheduleShopItemRepository = new();
+
+                if (_shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock -= 1), "") == true && scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem) == true)
+                {
+                    Console.WriteLine($"{shopItem.Name} added to reservation: {reservation.ReservationNumber}.");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine($"No shop item to add to reservation: {reservation.ReservationNumber}.");
         return;
     }
 }

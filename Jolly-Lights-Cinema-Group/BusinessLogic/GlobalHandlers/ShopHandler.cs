@@ -37,13 +37,10 @@ namespace Jolly_Lights_Cinema_Group
             if (choice >= 0 && choice < _shopItems.Count)
             {
                 ShopItem selectedItem = _shopItems[choice];
-                if (selectedItem.Id != null && reservation.Id != null)
-                {
-                    ScheduleShopItem scheduleShopItem = new(selectedItem.Id.Value, reservation.Id.Value);
-                    ScheduleShopItemService scheduleShopItemService = new();
-                    scheduleShopItemService.RegisterScheduleShopItem(scheduleShopItem);
-                }
+                ShopItemService shopItemService = new();
+                shopItemService.SellShopItem(selectedItem, reservation);
             }
+
             else
             {
                 Console.WriteLine("Invalid choice.");
