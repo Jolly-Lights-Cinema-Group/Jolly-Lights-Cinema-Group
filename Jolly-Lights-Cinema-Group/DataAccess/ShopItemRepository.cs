@@ -114,5 +114,30 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return command.ExecuteNonQuery() > 0;
             }
         }
+
+        public ShopItem? GetShopItemByName(string name)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Id, Name, Price, Stock, MinimumAge
+                    FROM ShopItem
+                    WHERE Name = @name;";
+
+                command.Parameters.AddWithValue("@name", name);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        ShopItem shopItem =  new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4));
+                        return shopItem;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
