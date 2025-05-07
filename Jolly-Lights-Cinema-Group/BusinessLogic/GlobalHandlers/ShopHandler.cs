@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
     public static class ShopHandler
     {
         private static List<ShopItem> _shopItems = new();
-        public static void ManageShop()
+        public static void ManageShop(Reservation reservation)
         {
             ShopItemRepository shopItemRepository = new ShopItemRepository();
             _shopItems = shopItemRepository.GetAllShopItems();
@@ -22,12 +22,12 @@ namespace Jolly_Lights_Cinema_Group
             while (inShop)
             {
                 int choice = shopMenu.Run();
-                inShop = HandleShopChoice(choice);
+                inShop = HandleShopChoice(choice, reservation);
                 Console.Clear();
             }
         }
 
-        private static bool HandleShopChoice(int choice)
+        private static bool HandleShopChoice(int choice, Reservation reservation)
         {
             if (choice == _shopItems.Count)
             {
@@ -37,7 +37,12 @@ namespace Jolly_Lights_Cinema_Group
             if (choice >= 0 && choice < _shopItems.Count)
             {
                 ShopItem selectedItem = _shopItems[choice];
-                Console.WriteLine($"{selectedItem.Name} added.");
+                if (selectedItem.Id != null && reservation.Id != null)
+                {
+                    ScheduleShopItem scheduleShopItem = new(selectedItem.Id.Value, reservation.Id.Value);
+                    ScheduleShopItemService scheduleShopItemService = new();
+                    scheduleShopItemService.RegisterScheduleShopItem(scheduleShopItem);
+                }
             }
             else
             {

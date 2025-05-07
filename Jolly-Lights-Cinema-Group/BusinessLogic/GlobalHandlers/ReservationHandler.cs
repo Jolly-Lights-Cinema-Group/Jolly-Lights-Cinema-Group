@@ -85,7 +85,9 @@ namespace Jolly_Lights_Cinema_Group
 
             if (response == "y")
             {
-                ShopHandler.ManageShop();
+                ReservationRepository reservationRepository = new();
+                Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
+                ShopHandler.ManageShop(newReservation);
             }
 
             Console.WriteLine("\nReservation complete. Press any key to continue.");
