@@ -27,12 +27,9 @@ namespace Jolly_Lights_Cinema_Group
                     AddMovie();
                     return true;
                 case 1:
-                    DeleteMovie();
-                    return true;
-                case 2:
                     ViewAllMovies();
                     return true;
-                case 3:
+                case 2:
                     return false;
                 default:
                     Console.WriteLine("Invalid selection.");
@@ -82,19 +79,6 @@ namespace Jolly_Lights_Cinema_Group
                         break;
                 }
             } while (AddingMovie == true);
-        }
-
-        private static void DeleteMovie()
-        {
-            Console.Clear();
-            Console.WriteLine("What is the title of the movie te remove?");
-            string title = Console.ReadLine()!;
-            Movie movietodelete = new Movie(title, 0, 0, DateTime.Now, "a");
-
-            MovieService movieService = new MovieService();
-            movieService.DeleteMovie(movietodelete);
-
-            Console.ReadKey();
         }
 
         private static void ViewAllMovies()

@@ -26,18 +26,6 @@ public class MovieService
         }
     }
 
-    public void DeleteMovie(Movie movie)
-    {
-        if (_movieRepo.DeleteMovie(movie))
-        {
-            Console.WriteLine("\nMovie Deleted Successfully.");
-        }
-        else
-        {
-            Console.WriteLine("Movie not found.");
-        }
-    }
-
     public void ShowAllMovies()
     {
         List<Movie> movies = _movieRepo.GetAllMovies();
