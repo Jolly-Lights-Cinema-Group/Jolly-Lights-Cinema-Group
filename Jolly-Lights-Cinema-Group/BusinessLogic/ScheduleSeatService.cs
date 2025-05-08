@@ -34,7 +34,7 @@ namespace JollyLightsCinemaGroup.BusinessLogic
                 Console.WriteLine("Reserved Seats:");
                 foreach (var seat in seats)
                 {
-                    Console.WriteLine($"Seatnumber: {seat.SeatNumber}; Seat type: {seat.Type}; Price: ${seat.Price}");
+                    Console.WriteLine($"Seatnumber: {seat.SeatNumber}; Seat type: {seat.Type}; Price: €{seat.Price}");
                 }
             }
         }

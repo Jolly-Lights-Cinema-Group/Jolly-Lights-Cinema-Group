@@ -75,8 +75,9 @@ namespace Jolly_Lights.Tests
 
             ShopItemRepository shopItemRepository = new ShopItemRepository();
             shopItemRepository.AddShopItem(oldShopItem);
+            ShopItem shopItemId = shopItemRepository.GetShopItemByName(oldShopItem.Name)!;
 
-            bool result = shopItemRepository.ModifyShopItem(oldShopItem, "", "3", "", "18");
+            bool result = shopItemRepository.ModifyShopItem(shopItemId, "", "3", "", "18");
             Assert.IsTrue(result, "ShopItem could not be modified.");
         }
 
