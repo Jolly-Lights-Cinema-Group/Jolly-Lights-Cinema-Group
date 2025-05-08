@@ -80,15 +80,19 @@ namespace Jolly_Lights_Cinema_Group
 
             reservationService.RegisterReservation(reservation);
 
+            ReservationRepository reservationRepository = new();
+            Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
+
             Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
             string? response = Console.ReadLine()?.Trim().ToLower();
 
             if (response == "y")
             {
-                ReservationRepository reservationRepository = new();
-                Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
                 ShopHandler.ManageShop(newReservation);
             }
+
+            OrderLineService orderLineService = new();
+            orderLineService.CreateOrderLineForReservation(newReservation);
 
             Console.WriteLine("\nReservation complete. Press any key to continue.");
             Console.ReadKey();
