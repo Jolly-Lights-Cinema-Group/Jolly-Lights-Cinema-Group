@@ -34,5 +34,32 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return command.ExecuteNonQuery() > 0;
             }
         }
+
+        public List<ScheduleShopItem> GetScheduleShopItemByReservation(Reservation reservation)
+        {
+            List<ScheduleShopItem> scheduleShopItems = new List<ScheduleShopItem>();
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Id, ShopItemId, ReservationId 
+                    FROM ScheduleShopItem
+                    WHERE ReservationId = @reservationId;";
+
+                command.Parameters.AddWithValue("@reservationId", reservation.Id);
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ScheduleShopItem scheduleShopItem = new ScheduleShopItem(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2));
+                        scheduleShopItems.Add(scheduleShopItem);
+                    }
+                }
+            }
+            return scheduleShopItems;
+        }
     }
 }
