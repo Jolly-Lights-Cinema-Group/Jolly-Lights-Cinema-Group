@@ -40,10 +40,24 @@ CREATE TABLE IF NOT EXISTS Schedule (
   Id INTEGER PRIMARY KEY AUTOINCREMENT,
   MovieRoomId INTEGER NOT NULL,
   MovieId INTEGER NOT NULL,
-  StartDate DATETIME NOT NULL,
+  StartDate DATE NOT NULL,
+  StartTime TIME NOT NULL,
+  FreeAfter DATETIME,
   FOREIGN KEY (MovieRoomId) REFERENCES MovieRoom (Id) ON DELETE CASCADE,
   FOREIGN KEY (MovieId) REFERENCES Movie (Id) ON DELETE CASCADE
 );
+
+-- trigger to update FreeAfter column after a schedule is inserted --
+CREATE TRIGGER AfterInsertSchedule
+AFTER INSERT ON Schedule
+FOR EACH ROW
+BEGIN
+    UPDATE Schedule
+    SET FreeAfter = datetime(NEW.StartDate || ' ' || NEW.StartTime, '+' || 
+                              (SELECT Duration FROM Movie WHERE Id = NEW.MovieId) || ' minutes')
+    WHERE Id = NEW.Id;
+END;
+-----------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS Reservation (
   Id INTEGER PRIMARY KEY AUTOINCREMENT,

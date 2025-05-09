@@ -29,7 +29,7 @@ namespace Jolly_Lights_Cinema_Group
                     ShopManagementHandler.ManageShopManagement();
                     break;
                 case 5:
-                    ViewReports();
+                    MovieScheduleHandler.ScheduleMovies();
                     break;
                 case 6:
                     AccountSettingsHandler.ManageAccount();

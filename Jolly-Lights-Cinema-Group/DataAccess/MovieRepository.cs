@@ -26,32 +26,65 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public Movie? GetMovieByTitle(Movie movie)
+        public static Movie? GetMovieById(int index)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                SELECT Title, Duration, MinimunAge, ReleaseDate, MovieCast FROM Movie
-                WHERE Title = @Title;";
+                SELECT Id, Title, Duration, MinimunAge, ReleaseDate, MovieCast FROM Movie
+                WHERE Id = @Id;";
 
-                command.Parameters.AddWithValue("@Title", movie.Title);
+                command.Parameters.AddWithValue("@Id", index);
 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
                         return new Movie(
-                            reader.GetString(0), // Title
-                            reader.GetInt32(1),  // Duration
-                            reader.GetInt32(2),  // MinimunAge
-                            reader.GetDateTime(3), // ReleaseDate
-                            reader.GetString(4)  // MovieCast
+                            reader.GetInt32(0), // id
+                            reader.GetString(1), // Title
+                            reader.GetInt32(2),  // Duration
+                            reader.GetInt32(3),  // MinimunAge
+                            reader.GetDateTime(4), // ReleaseDate
+                            reader.GetString(5)  // MovieCast
                         );
                     }
                 }
             }
+            Console.WriteLine("Movie with this ID not found.");
+            return null;
+        }
+
+        public static Movie? GetMovieByTitle(string Title)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                SELECT Id, Title, Duration, MinimunAge, ReleaseDate, MovieCast FROM Movie
+                WHERE Title = @Title;";
+
+                command.Parameters.AddWithValue("@Title", Title);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Movie(
+                            reader.GetInt32(0), // id
+                            reader.GetString(1), // Title
+                            reader.GetInt32(2),  // Duration
+                            reader.GetInt32(3),  // MinimunAge
+                            reader.GetDateTime(4), // ReleaseDate
+                            reader.GetString(5)  // MovieCast
+                        );
+                    }
+                }
+            }
+            Console.WriteLine("Movie with this Title not found.");
             return null;
         }
 
