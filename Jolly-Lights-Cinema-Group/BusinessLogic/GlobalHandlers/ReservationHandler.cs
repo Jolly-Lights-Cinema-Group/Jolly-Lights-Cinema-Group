@@ -72,7 +72,36 @@ namespace Jolly_Lights_Cinema_Group
                 eMail = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(eMail));
 
+            var seatrow = -1;
+            var seat = -1;
+            
+            MovieRoomService movieRoomService = new MovieRoomService();
             ReservationService reservationService = new ReservationService();
+
+            var roomLayout = movieRoomService.GetRoomLayout(1, 1); //TODO get roomNumber and locationId from selected movie from schedule.
+            var reservedSeats = reservationService.GetReservedSeats(1, 1);
+
+            var rowCount = 1;
+            foreach (var row in roomLayout)
+            {
+                var seatCount = 1;
+                foreach (var item in row)
+                {
+                    if (reservedSeats.Contains((rowCount.ToString(), item)))
+                    {
+                        roomLayout[rowCount][seatCount] = "X";
+                    }
+                    seatCount++;
+                }
+
+                rowCount++;
+            }
+
+            var selectedSeat = "";
+            do
+            {
+                selectedSeat = startSeatSelection(roomLayout);
+            } while (string.IsNullOrWhiteSpace(eMail));
 
             string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
 
@@ -144,6 +173,62 @@ namespace Jolly_Lights_Cinema_Group
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
+        }
+
+        private static string startSeatSelection(List<List<string>> seats)
+        {
+            ConsoleKey keypressed;
+            do
+            {
+                Console.Clear();
+                DisplayOptions(seats);
+            
+                var keyInfo = Console.ReadKey(true);
+                keypressed = keyInfo.Key;
+
+                if (keypressed == ConsoleKey.UpArrow)
+                {
+                    SelectedIndex--;
+                    if (SelectedIndex < 0)
+                        SelectedIndex = Options.Length - 1;
+                }
+                else if (keypressed == ConsoleKey.DownArrow)
+                {
+                    SelectedIndex++;
+                    if (SelectedIndex >= Options.Length)
+                        SelectedIndex = 0;
+                }
+
+            } while (keypressed != ConsoleKey.Enter);
+            return SelectedIndex;
+        }
+        
+        public static void DisplayOptions(List<List<string>> options)
+        {
+            Console.WriteLine("Select a seat");
+            foreach (var option in options)
+            {
+                for (int i = 0; i < option.Count; i++)
+                {
+                    string currentOption = option[i];
+                    string prefix;
+
+                    if (i == SelectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.White;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                    }
+
+                    Console.WriteLine($"{currentOption}");
+                }
+            }
+
+            Console.ResetColor();
         }
     }
 }

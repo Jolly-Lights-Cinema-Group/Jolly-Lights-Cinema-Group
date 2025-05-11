@@ -90,5 +90,31 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return null;
         }
+        
+        public List<string> GetReservedSeats(int roomNumber, int locationId)
+        {
+            var result = new List<string>();
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT SeatNumber
+                    FROM ScheduleSeat
+                    LEFT JOIN Schedule ON ScheduleSeat.ScheduleId = Schedule.Id
+                    WHERE Schedule.MovieRoomId = @RoomNumber;";
+
+                command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return result;
+        }
     }
 }

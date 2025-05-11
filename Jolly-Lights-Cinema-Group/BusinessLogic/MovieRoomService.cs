@@ -1,6 +1,7 @@
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public class MovieRoomService
 {
@@ -41,5 +42,11 @@ public class MovieRoomService
     public void DeleteRoom(int roomNumber, int locationId)
     {
         _movieRoomRepo.DeleteMovieRoom(roomNumber, locationId);
+    }
+
+    public List<List<string>>? GetRoomLayout(int roomNumber, int locationId)
+    {
+        var roomLayoutJson =  _movieRoomRepo.GetRoomLayoutJson(roomNumber, locationId);
+        return MovieRoomJsonHelper.ConvertJsonToGrid(roomLayoutJson);
     }
 }

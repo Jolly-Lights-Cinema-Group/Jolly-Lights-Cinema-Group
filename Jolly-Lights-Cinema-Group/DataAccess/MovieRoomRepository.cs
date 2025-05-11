@@ -57,5 +57,30 @@ public class MovieRoomRepository
         command.CommandText = "DELETE FROM MovieRoom WHERE RoomNumber = @RoomNumber AND LocationId = @LocationId;";
         command.Parameters.AddWithValue("@RoomNumber", roomNumber);
         command.Parameters.AddWithValue("@LocationId", locationId);
+    }    
+    
+    public string GetRoomLayoutJson(int roomNumber, int locationId)
+    {
+        var movieRoomLayout = "";
+
+        using (var connection = DatabaseManager.GetConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+                "SELECT RoomLayoutJson FROM MovieRoom WHERE LocationId = @LocationId AND RoomNumber = @RoomNumber;";
+            command.Parameters.AddWithValue("@LocationId", locationId);
+            command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    movieRoomLayout = reader.GetString(0);
+                }
+            }
+        }
+
+        return movieRoomLayout;
     }
 }

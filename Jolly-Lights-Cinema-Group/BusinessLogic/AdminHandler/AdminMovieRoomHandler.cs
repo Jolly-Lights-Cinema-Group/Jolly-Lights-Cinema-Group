@@ -89,7 +89,7 @@ namespace Jolly_Lights_Cinema_Group
             
             var locationId = 0;
 
-            if (Globals.CurrentUser?.Location.Id > 0)
+            if (Globals.CurrentUser?.Location?.Id > 0)
                 locationId = (int)Globals.CurrentUser.Location.Id;
             else
             {
@@ -122,9 +122,17 @@ namespace Jolly_Lights_Cinema_Group
         
         private static string? SelectFile()
         {
-            using var openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "Selecteer een bestand";
-            return openFileDialog.ShowDialog() == DialogResult.OK ? openFileDialog.FileName : null;
+            var selectedPath = "";
+            var t = new Thread(() => {
+                using var openFileDialog = new OpenFileDialog();
+                openFileDialog.Title = "Selecteer een bestand";
+                selectedPath = openFileDialog.ShowDialog() == DialogResult.OK ? openFileDialog.FileName : null;
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+            return selectedPath;
         }
     }
 }
