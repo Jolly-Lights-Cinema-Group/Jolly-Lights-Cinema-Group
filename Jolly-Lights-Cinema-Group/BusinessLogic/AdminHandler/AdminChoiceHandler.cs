@@ -29,12 +29,15 @@ namespace Jolly_Lights_Cinema_Group
                     ShopManagementHandler.ManageShopManagement();
                     break;
                 case 5:
-                    ViewReports();
+                    AdminMovieRoomHandler.ManageMovieRooms();
                     break;
                 case 6:
-                    AccountSettingsHandler.ManageAccount();
+                    ViewReports();
                     break;
                 case 7:
+                    AccountSettingsHandler.ManageAccount();
+                    break;
+                case 8:
                     user.IsAuthenticated = false;
                     break;
                 default:
@@ -47,6 +50,13 @@ namespace Jolly_Lights_Cinema_Group
         {
             Console.Clear();
             Console.WriteLine("Viewing reports...");
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
+        private static void ManageReservations()
+        {
+            Console.Clear();
+            Console.WriteLine("Manage Reservations");
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }
