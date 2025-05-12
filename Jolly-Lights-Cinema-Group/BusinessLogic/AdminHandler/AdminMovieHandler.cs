@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
 {
@@ -54,6 +55,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine("who are in the movie cast?");
                 string MovieCast = Console.ReadLine()!;
 
+                Console.Clear();
                 Console.WriteLine("Are you ready to add the next movie to the database?\ny/n or e for exit: ");
                 Console.WriteLine($"Title: {Title}\nDuration: {Duration}\nMinimum Age: {MinimumAge}\nReleaseDate: {ReleaseDate}\nMoviecast: {MovieCast}");
                 Console.Write("Answer: ");
@@ -88,6 +90,7 @@ namespace Jolly_Lights_Cinema_Group
             movieservice.ShowAllMovies();
             Console.ReadKey();
         }
+
     }
 
 }
