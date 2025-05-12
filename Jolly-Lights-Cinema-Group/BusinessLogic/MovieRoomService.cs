@@ -1,6 +1,7 @@
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public class MovieRoomService
 {
@@ -23,7 +24,7 @@ public class MovieRoomService
 
     public void ShowMoviesRoomsLocation(int locationId)
     {
-        List<string> movieRooms = _movieRoomRepo.GetAllMovieRooms(locationId);
+        var movieRooms = _movieRoomRepo.GetAllMovieRooms(locationId);
         if (movieRooms.Count == 0)
         {
             Console.WriteLine($"No movies rooms found for location with ID: {locationId}.");
@@ -33,8 +34,19 @@ public class MovieRoomService
             Console.WriteLine($"Movie Rooms at location: {locationId}:");
             foreach (var movieRoom in movieRooms)
             {
-                Console.WriteLine(movieRoom);
+                Console.WriteLine($"ID: {movieRoom.Id}, Room number: {movieRoom.RoomNumber}, Supported movie type: {movieRoom.SupportedMovieType}");
             }
         }
+    }
+    
+    public void DeleteRoom(int roomNumber, int locationId)
+    {
+        _movieRoomRepo.DeleteMovieRoom(roomNumber, locationId);
+    }
+
+    public List<List<string>>? GetRoomLayout(int roomNumber, int locationId)
+    {
+        var roomLayoutJson =  _movieRoomRepo.GetRoomLayoutJson(roomNumber, locationId);
+        return MovieRoomJsonHelper.ConvertJsonToGrid(roomLayoutJson);
     }
 }

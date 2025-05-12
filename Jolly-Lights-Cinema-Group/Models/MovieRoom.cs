@@ -1,4 +1,4 @@
-class MovieRoom
+public class MovieRoom
 {
     public int? Id { get; set; }
     public int RoomNumber { get; set; }

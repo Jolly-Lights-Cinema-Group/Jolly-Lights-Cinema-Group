@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Jolly_Lights_Cinema_Group.Enum;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
@@ -89,6 +90,51 @@ namespace JollyLightsCinemaGroup.DataAccess
                 }
             }
             return null;
+        }
+        
+        public List<string> GetReservedSeats(int roomNumber, int locationId)
+        {
+            var result = new List<string>();
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT SeatNumber
+                    FROM ScheduleSeat
+                    LEFT JOIN Schedule ON ScheduleSeat.ScheduleId = Schedule.Id
+                    WHERE Schedule.MovieRoomId = @RoomNumber;";
+
+                command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return result;
+        }
+        
+        public void AddSeatToReservation(string seat, SeatType type, int reservationId, int scheduleId, double price)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    INSERT INTO ScheduleSeat (SeatNumber, ReservationId, Price, Type, ScheduleId)
+                    VALUES (@SeatNumber, @ReservationId, @Price, @Type, @ScheduleId);";
+
+                command.Parameters.AddWithValue("@SeatNumber", seat);
+                command.Parameters.AddWithValue("@ReservationId", reservationId);
+                command.Parameters.AddWithValue("@Price", price);
+                command.Parameters.AddWithValue("@Type", type);
+                command.Parameters.AddWithValue("@ScheduleId", scheduleId);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

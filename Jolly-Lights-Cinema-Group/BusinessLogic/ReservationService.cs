@@ -54,4 +54,10 @@ public class ReservationService
         }
         Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");
     }
+
+    public List<(string, string)> GetReservedSeats(int roomNumber, int locationId)
+    {
+        var result = _reservationRepository.GetReservedSeats(roomNumber, locationId);
+        return result.Select(x => (x.Split(',')[0], x.Split(',')[1])).ToList();
+    }
 }
