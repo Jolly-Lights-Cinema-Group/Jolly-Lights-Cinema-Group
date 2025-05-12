@@ -1,3 +1,5 @@
+using System.Windows.Forms.Design;
+using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
@@ -5,17 +7,21 @@ namespace Jolly_Lights_Cinema_Group
 {
     public static class ReservationHandler
     {
+        private static int SelectedIndexY;
+        private static int SelectedIndexX;
+
+        
         public static void ManageReservations()
         {
-            bool inManageReservationsMenu = true;
+            var inManageReservationsMenu = true;
             ReservationMenu reservationMenu = new();
             Console.Clear();
             
             while(inManageReservationsMenu)
             {
-            int userChoice = reservationMenu.Run();
-            inManageReservationsMenu = HandleManageReservationsChoice(userChoice);
-            Console.Clear();
+                var userChoice = reservationMenu.Run();
+                inManageReservationsMenu = HandleManageReservationsChoice(userChoice);
+                Console.Clear();
             }
         }
         private static bool HandleManageReservationsChoice(int choice)
@@ -71,13 +77,11 @@ namespace Jolly_Lights_Cinema_Group
                 Console.Write("Enter email address: ");
                 eMail = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(eMail));
-
-            var seatrow = -1;
-            var seat = -1;
             
             MovieRoomService movieRoomService = new MovieRoomService();
             ReservationService reservationService = new ReservationService();
-
+            
+            
             var roomLayout = movieRoomService.GetRoomLayout(1, 1); //TODO get roomNumber and locationId from selected movie from schedule.
             var reservedSeats = reservationService.GetReservedSeats(1, 1);
 
@@ -97,12 +101,28 @@ namespace Jolly_Lights_Cinema_Group
                 rowCount++;
             }
 
-            var selectedSeat = "";
             do
             {
-                selectedSeat = startSeatSelection(roomLayout);
-            } while (string.IsNullOrWhiteSpace(eMail));
+                StartSeatSelection(roomLayout);
+            } while (!(SelectedIndexY < roomLayout.Count &&
+                      SelectedIndexY >= 0 &&
+                      SelectedIndexX < roomLayout[SelectedIndexY].Count &&
+                      SelectedIndexX >= 0) &&
+                     !(roomLayout[SelectedIndexY][SelectedIndexX] == "#" ||
+                       roomLayout[SelectedIndexY][SelectedIndexX] == "_"));
 
+            Console.Clear();
+            var selectedSeat = $"{SelectedIndexY},{SelectedIndexX}";
+            var selectedSeatValue = roomLayout[SelectedIndexY][SelectedIndexX];
+
+            var seatType = selectedSeatValue switch
+            {
+                "S" => SeatType.RegularSeat,
+                "L" => SeatType.LoveSeat,
+                "P" => SeatType.VipSeat,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
             string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
 
             Reservation reservation = new(firstName, lastName, phoneNumber, eMail, reservationNumber);
@@ -112,6 +132,9 @@ namespace Jolly_Lights_Cinema_Group
             ReservationRepository reservationRepository = new();
             Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
 
+            if (newReservation.Id != null)
+                reservationRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, 1, 14); //TODO add scheduleId and price from real schedule
+            
             Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
             string? response = Console.ReadLine()?.Trim().ToLower();
 
@@ -175,60 +198,57 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadKey();
         }
 
-        private static string startSeatSelection(List<List<string>> seats)
+        private static void StartSeatSelection(List<List<string>> seats)
         {
             ConsoleKey keypressed;
             do
             {
                 Console.Clear();
                 DisplayOptions(seats);
-            
-                var keyInfo = Console.ReadKey(true);
-                keypressed = keyInfo.Key;
 
-                if (keypressed == ConsoleKey.UpArrow)
+                keypressed = Console.ReadKey(true).Key;
+
+                switch (keypressed)
                 {
-                    SelectedIndex--;
-                    if (SelectedIndex < 0)
-                        SelectedIndex = Options.Length - 1;
-                }
-                else if (keypressed == ConsoleKey.DownArrow)
-                {
-                    SelectedIndex++;
-                    if (SelectedIndex >= Options.Length)
-                        SelectedIndex = 0;
+                    case ConsoleKey.UpArrow:
+                        if (SelectedIndexY > 0) SelectedIndexY--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (SelectedIndexY < seats.Count - 1) SelectedIndexY++;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if (SelectedIndexX > 0) SelectedIndexX--;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        
+                        if (SelectedIndexX < seats[SelectedIndexY].Count - 1) SelectedIndexX++;
+                        break;
                 }
 
             } while (keypressed != ConsoleKey.Enter);
-            return SelectedIndex;
         }
         
-        public static void DisplayOptions(List<List<string>> options)
+        private static void DisplayOptions(List<List<string>> grid)
         {
-            Console.WriteLine("Select a seat");
-            foreach (var option in options)
+            Console.Clear();
+            for (var r = 0; r < grid.Count; r++)
             {
-                for (int i = 0; i < option.Count; i++)
+                for (var c = 0; c < grid[r].Count; c++)
                 {
-                    string currentOption = option[i];
-                    string prefix;
-
-                    if (i == SelectedIndex)
+                    if (r == SelectedIndexY && c == SelectedIndexX)
                     {
-                        Console.ForegroundColor = ConsoleColor.Black;
                         Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write($"[{grid[r][c]}]");
+                        Console.ResetColor();
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.Write($" {grid[r][c]} ");
                     }
-
-                    Console.WriteLine($"{currentOption}");
                 }
+                Console.WriteLine();
             }
-
-            Console.ResetColor();
         }
     }
 }

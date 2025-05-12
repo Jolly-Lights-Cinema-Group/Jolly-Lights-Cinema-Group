@@ -37,6 +37,7 @@ namespace Jolly_Lights_Cinema_Group
 
             while (user!.IsAuthenticated)
             {
+                Console.Clear();
                 switch (user.Role)
                 {
                     case Role.Admin:
