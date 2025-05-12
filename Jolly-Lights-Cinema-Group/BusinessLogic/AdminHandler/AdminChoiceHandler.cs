@@ -29,15 +29,18 @@ namespace Jolly_Lights_Cinema_Group
                     ShopManagementHandler.ManageShopManagement();
                     break;
                 case 5:
-                    AdminMovieRoomHandler.ManageMovieRooms();
+                    MovieScheduleHandler.ScheduleMovies();
                     break;
                 case 6:
-                    ViewReports();
+                    AdminMovieRoomHandler.ManageMovieRooms();
                     break;
                 case 7:
-                    AccountSettingsHandler.ManageAccount();
+                    ViewReports();
                     break;
                 case 8:
+                    AccountSettingsHandler.ManageAccount();
+                    break;
+                case 9:
                     user.IsAuthenticated = false;
                     break;
                 default:
