@@ -47,43 +47,18 @@ namespace Jolly_Lights_Cinema_Group
         public static void AddReservation()
         {
             Console.Clear();
-
             Console.WriteLine("Add Reservation:");
-            string? firstName;
-            do
-            {
-                Console.Write("Enter first name: ");
-                firstName = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(firstName));
 
-            string? lastName;
-            do
-            {
-                Console.Write("Enter last name: ");
-                lastName = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(lastName));
-
-            int phoneNumber;
-            string? input;
-            do
-            {
-                Console.Write("Enter telephone number: ");
-                input = Console.ReadLine();
-            } while (!int.TryParse(input, out phoneNumber) || phoneNumber < 0);
-
-            string? eMail;
-            do
-            {
-                Console.Write("Enter email address: ");
-                eMail = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(eMail));
+            //TODO get id's from selecting movie from schedule.
+            var locationId = 1;
+            var roomId = 1;
+            var scheduleId = 1;
             
             MovieRoomService movieRoomService = new MovieRoomService();
             ReservationService reservationService = new ReservationService();
             
-            
-            var roomLayout = movieRoomService.GetRoomLayout(1, 1); //TODO get roomNumber and locationId from selected movie from schedule.
-            var reservedSeats = reservationService.GetReservedSeats(1, 1);
+            var roomLayout = movieRoomService.GetRoomLayout(roomId, locationId);
+            var reservedSeats = reservationService.GetReservedSeats(roomId, locationId);
 
             var rowCount = 1;
             foreach (var row in roomLayout)
@@ -122,6 +97,38 @@ namespace Jolly_Lights_Cinema_Group
                 "P" => SeatType.VipSeat,
                 _ => throw new ArgumentOutOfRangeException()
             };
+
+            //TODO get price from selected seat.
+            var seatPrice = 10;
+            
+            string? firstName;
+            do
+            {
+                Console.Write("Enter first name: ");
+                firstName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(firstName));
+
+            string? lastName;
+            do
+            {
+                Console.Write("Enter last name: ");
+                lastName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(lastName));
+
+            int phoneNumber;
+            string? input;
+            do
+            {
+                Console.Write("Enter telephone number: ");
+                input = Console.ReadLine();
+            } while (!int.TryParse(input, out phoneNumber) || phoneNumber < 0);
+
+            string? eMail;
+            do
+            {
+                Console.Write("Enter email address: ");
+                eMail = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(eMail));
             
             string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
 
@@ -133,7 +140,7 @@ namespace Jolly_Lights_Cinema_Group
             Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
 
             if (newReservation.Id != null)
-                reservationRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, 1, 14); //TODO add scheduleId and price from real schedule
+                reservationRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, scheduleId, seatPrice);
             
             Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
             string? response = Console.ReadLine()?.Trim().ToLower();
