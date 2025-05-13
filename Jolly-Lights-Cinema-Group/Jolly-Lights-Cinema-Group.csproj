@@ -6,11 +6,11 @@
         <RootNamespace>Jolly_Lights_Cinema_Group</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <UseWindowsForms>true</UseWindowsForms>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="GtkSharp" Version="3.22.25.202" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
     </ItemGroup>
 

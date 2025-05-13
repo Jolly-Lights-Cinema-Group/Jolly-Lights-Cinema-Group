@@ -1,4 +1,3 @@
-using System.Windows.Forms.Design;
 using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
