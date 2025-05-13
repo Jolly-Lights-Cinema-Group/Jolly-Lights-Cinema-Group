@@ -53,7 +53,6 @@ namespace JollyLightsCinemaGroup.DataAccess
                     }
                 }
             }
-            Console.WriteLine("Movie with this ID not found.");
             return null;
         }
 
