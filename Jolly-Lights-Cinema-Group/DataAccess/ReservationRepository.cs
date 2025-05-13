@@ -90,5 +90,22 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return null;
         }
+
+        public bool UpdateReservationToPaid(Reservation reservation)
+        {
+            using (SqliteConnection connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                SqliteCommand command = connection.CreateCommand();
+                command.CommandText = @"
+                    UPDATE Reservation
+                    SET Paid = 1
+                    WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", reservation.Id);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

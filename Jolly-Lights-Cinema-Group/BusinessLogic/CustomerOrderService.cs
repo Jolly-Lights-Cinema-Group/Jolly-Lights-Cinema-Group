@@ -10,4 +10,24 @@ public class CustomerOrderService
         _customerOrderRepository.AddCustomerOrder(customerOrder);
     }
 
+    public CustomerOrder CreateCustomerOrderForReservation(Reservation reservation)
+    {
+        OrderLineRepository orderLineRepository = new();
+        List<OrderLine> orderLines = orderLineRepository.GetOrderLinesByReservation(reservation);
+
+        double totalPrice = 0;
+
+        foreach (OrderLine orderLine in orderLines)
+        {
+            totalPrice += orderLine.Price;
+        }
+
+        CustomerOrder customerOrder = new(totalPrice);
+        RegisterCustomerOrder(customerOrder);
+
+        ReservationService reservationService = new();
+        reservationService.PayReservation(reservation);
+
+        return customerOrder;
+    }
 }

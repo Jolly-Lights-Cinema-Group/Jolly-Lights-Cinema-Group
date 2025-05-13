@@ -29,7 +29,7 @@ namespace Jolly_Lights_Cinema_Group
                     DeleteReservation();
                     return true;
                 case 2:
-                    GetReservation();
+                    PayReservation();
                     return true;
                 case 3:
                     return false;
@@ -125,11 +125,9 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadKey();
         }
 
-        public static void GetReservation()
+        public static void PayReservation()
         {
             Console.Clear();
-
-            Console.WriteLine("Find reservation:");
 
             string? reservationNumber;
             do
@@ -138,9 +136,13 @@ namespace Jolly_Lights_Cinema_Group
                 reservationNumber = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(reservationNumber));
 
+            ReservationRepository reservationRepository = new();
+            Reservation reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber)!;
 
-            ReservationService reservationService = new ReservationService();
-            reservationService.FindReservationByReservationNumber(reservationNumber);
+            CustomerOrderService customerOrderService = new();
+            CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(reservation);
+
+            Console.WriteLine($"Total: €{customerOrder.GrandPrice}");
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
