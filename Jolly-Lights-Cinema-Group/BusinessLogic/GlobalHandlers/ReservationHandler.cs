@@ -35,7 +35,7 @@ namespace Jolly_Lights_Cinema_Group
                     DeleteReservation();
                     return true;
                 case 2:
-                    GetReservation();
+                    PayReservation();
                     return true;
                 case 3:
                     return false;
@@ -139,8 +139,10 @@ namespace Jolly_Lights_Cinema_Group
             ReservationRepository reservationRepository = new();
             Reservation newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
 
+            ScheduleSeatRepository scheduleSeatRepository = new();
+
             if (newReservation.Id != null)
-                reservationRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, scheduleId, seatPrice);
+                scheduleSeatRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, scheduleId, seatPrice);
             
             Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
             string? response = Console.ReadLine()?.Trim().ToLower();
@@ -184,11 +186,9 @@ namespace Jolly_Lights_Cinema_Group
             Console.ReadKey();
         }
 
-        public static void GetReservation()
+        public static void PayReservation()
         {
             Console.Clear();
-
-            Console.WriteLine("Find reservation:");
 
             string? reservationNumber;
             do
@@ -197,9 +197,46 @@ namespace Jolly_Lights_Cinema_Group
                 reservationNumber = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(reservationNumber));
 
+            ReservationRepository reservationRepository = new();
+            Reservation reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber)!;
 
-            ReservationService reservationService = new ReservationService();
-            reservationService.FindReservationByReservationNumber(reservationNumber);
+
+            CustomerOrderService customerOrderService = new();
+            CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(reservation);
+
+            ReservationService reservationService = new();
+
+            if (!reservationService.IsReservationPaid(reservation))
+            {
+                Console.WriteLine($"Total: €{customerOrder.GrandPrice}");
+                string? input;
+                do
+                {
+                    Console.Write("Confirm payment? (y/n): ");
+                    input = Console.ReadLine()?.Trim().ToLower();
+
+                    if (input == "y")
+                    {
+                        if (reservationService.PayReservation(reservation) && customerOrderService.RegisterCustomerOrder(customerOrder))
+                        {
+                            Console.WriteLine("Payment confirmed.");
+                            break;
+                        }
+                        Console.WriteLine("Payment could not be confirmed.");
+                        break;
+                    }
+                    else if (input == "n")
+                    {
+                        Console.WriteLine("Payment cancelled.");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                    }
+
+                } while (input != "y" && input != "n");
+            }
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
