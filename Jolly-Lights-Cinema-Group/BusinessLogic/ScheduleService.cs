@@ -30,6 +30,7 @@ public class ScheduleService
         bool scheduleAdded = _scheduleRepo.AddSchedule(schedule);
         if (scheduleAdded)
         {
+            Console.Clear();
             Console.WriteLine("Movie schedule successfully added!");
             _scheduleRepo.UpdateFreeTimeColumn();
         }
@@ -43,17 +44,38 @@ public class ScheduleService
     // Deleting (based on movieid and startdate)
     public void DeleteSchedule(Schedule schedule)
     {
-        Console.WriteLine();
+        Console.Clear();
+        if (_scheduleRepo.DeleteScheduleLine(schedule))
+        {
+            Console.WriteLine("Schedule deleted.");
+        }
+        else
+        {
+            Console.WriteLine("Schedule not deleted.");
+        }
+        Console.ReadKey();
     }
 
     // Show Schedule
 
     public void ShowSchedule(DateTime dateTime)
     {
-        Console.WriteLine();
+        List<Schedule> schedules = _scheduleRepo.ShowSchedule(dateTime);
+
+        if (schedules.Count == 0)
+        {
+            Console.WriteLine("No schedules where found.");
+            return;
+        }
+
+        Console.WriteLine($"Schedule Movies on {dateTime.Date}:");
+        foreach (var schedule in schedules)
+        {
+            Movie? movieinformation = MovieRepository.GetMovieById(schedule.MovieId);
+            // Location information??
+            // Movieroom information??
+            Console.WriteLine($"Room: {schedule.MovieRoomId} Movie: {movieinformation.Title} Date: {schedule.StartDate.ToString("dd/mm/yyyy")} Time: {schedule.StartTime}");
+        }
+        return;
     }
 }
-
-// Should we add a check for checking if id's are valid? I think so, but this can be added later
-
-// 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
@@ -62,6 +63,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
+        // Not needed anymore
         public int GetMovieDuration(int movieId)
         {
             using (var connection = DatabaseManager.GetConnection())
@@ -74,6 +76,57 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var result = command.ExecuteScalar();
                 return result != null ? Convert.ToInt32(result) : 0;
             }
+        }
+
+        public bool DeleteScheduleLine(Schedule schedule)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                                        DELETE FROM Schedule 
+                                        WHERE MovieRoomId = @movieRoomId 
+                                        AND MovieId = @movieId 
+                                        AND StartDate = @startDate 
+                                        AND StartTime = @startTime;";
+
+                command.Parameters.AddWithValue("@movieRoomId", schedule.MovieRoomId);
+                command.Parameters.AddWithValue("@movieId", schedule.MovieId);
+                command.Parameters.AddWithValue("@startDate", schedule.StartDate);
+                command.Parameters.AddWithValue("@startTime", schedule.StartTime);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public List<Schedule> ShowSchedule(DateTime date)
+        {
+            List<Schedule> schedules = new List<Schedule>();
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule WHERE DATE(StartDate) = @startDate;";
+
+                command.Parameters.Add(new SqliteParameter("@startDate", System.Data.DbType.String) { Value = date.ToString("yyyy-MM-dd") });
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Schedule schedule = new(
+                            reader.GetInt32(0),     // Id
+                            reader.GetInt32(1),     // Roomid
+                            reader.GetInt32(2),     // MovieId
+                            reader.GetDateTime(3),  // StartDate
+                            reader.GetTimeSpan(4)); //StartTime
+                        schedules.Add(schedule);
+                    }
+                }
+            }
+            return schedules;
         }
     }
 
