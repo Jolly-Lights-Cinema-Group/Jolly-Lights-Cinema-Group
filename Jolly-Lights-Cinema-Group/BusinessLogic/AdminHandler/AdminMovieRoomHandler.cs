@@ -1,8 +1,8 @@
 using Jolly_Lights_Cinema_Group.Helpers;
-using JollyLightsCinemaGroup.DataAccess;
-using System.Windows.Forms;
-using System.Threading;
 using Jolly_Lights_Cinema_Group.Common;
+using Gtk;
+using System;
+using System.Threading;
 
 namespace Jolly_Lights_Cinema_Group
 {
@@ -62,9 +62,7 @@ namespace Jolly_Lights_Cinema_Group
                 locationId = Convert.ToInt32(Console.ReadLine());
             }
 
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Init();
             
             var inputFilePath = SelectFile();
             if (inputFilePath == null)
@@ -122,16 +120,25 @@ namespace Jolly_Lights_Cinema_Group
         
         private static string? SelectFile()
         {
-            var selectedPath = "";
-            var t = new Thread(() => {
-                using var openFileDialog = new OpenFileDialog();
-                openFileDialog.Title = "Selecteer een bestand";
-                selectedPath = openFileDialog.ShowDialog() == DialogResult.OK ? openFileDialog.FileName : null;
+            string? selectedPath = null;
+
+            Application.Invoke(delegate {
+                using var openFileDialog = new FileChooserDialog(
+                    "Selecteer een bestand",
+                    null,
+                    FileChooserAction.Open,
+                    "Cancel", ResponseType.Cancel,
+                    "Open", ResponseType.Accept
+                );
+
+                if (openFileDialog.Run() == (int)ResponseType.Accept)
+                {
+                    selectedPath = openFileDialog.Filename;
+                }
+
+                openFileDialog.Destroy();
             });
 
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
             return selectedPath;
         }
     }

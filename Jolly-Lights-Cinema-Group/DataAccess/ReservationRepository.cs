@@ -91,49 +91,45 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return null;
         }
-        
-        public List<string> GetReservedSeats(int roomNumber, int locationId)
+
+        public bool UpdateReservationToPaid(Reservation reservation)
         {
-            var result = new List<string>();
-            using (var connection = DatabaseManager.GetConnection())
+            using (SqliteConnection connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
-                var command = connection.CreateCommand();
+                SqliteCommand command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT SeatNumber
-                    FROM ScheduleSeat
-                    LEFT JOIN Schedule ON ScheduleSeat.ScheduleId = Schedule.Id
-                    WHERE Schedule.MovieRoomId = @RoomNumber;";
+                    UPDATE Reservation
+                    SET Paid = 1
+                    WHERE Id = @id;";
 
-                command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                command.Parameters.AddWithValue("@id", reservation.Id);
 
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result.Add(reader.GetString(0));
-                    }
-                }
+                return command.ExecuteNonQuery() > 0;
             }
-            return result;
         }
-        
-        public void AddSeatToReservation(string seat, SeatType type, int reservationId, int scheduleId, double price)
+
+        public bool IsReservationPaid(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO ScheduleSeat (SeatNumber, ReservationId, Price, Type, ScheduleId)
-                    VALUES (@SeatNumber, @ReservationId, @Price, @Type, @ScheduleId);";
+                    SELECT Paid 
+                    FROM Reservation
+                    WHERE Id = @id;";
 
-                command.Parameters.AddWithValue("@SeatNumber", seat);
-                command.Parameters.AddWithValue("@ReservationId", reservationId);
-                command.Parameters.AddWithValue("@Price", price);
-                command.Parameters.AddWithValue("@Type", type);
-                command.Parameters.AddWithValue("@ScheduleId", scheduleId);
-                command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@id", reservation.Id);
+
+                var result = command.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToBoolean(Convert.ToInt32(result));
+                }
+
+                return false;
             }
         }
     }

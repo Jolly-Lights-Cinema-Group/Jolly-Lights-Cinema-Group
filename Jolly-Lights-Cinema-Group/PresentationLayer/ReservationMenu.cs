@@ -2,7 +2,7 @@ namespace Jolly_Lights_Cinema_Group
 {
     public class ReservationMenu : Menu
     {
-        public ReservationMenu() : base("Reservation Menu.", new string[] { "Make Reservation", "Delete Reservation", "Get Reservation" ,"Back" }) { }
+        public ReservationMenu() : base("Reservation Menu.", new string[] { "Make Reservation", "Delete Reservation", "Pay Reservation" ,"Back" }) { }
         
     }
 }
