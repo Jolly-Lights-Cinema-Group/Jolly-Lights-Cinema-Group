@@ -43,5 +43,21 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return customerOrders;
         }
+
+        public bool DeleteCustomerOrderById(CustomerOrder customerOrder)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    DELETE FROM CustomerOrder
+                    WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", customerOrder.Id);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

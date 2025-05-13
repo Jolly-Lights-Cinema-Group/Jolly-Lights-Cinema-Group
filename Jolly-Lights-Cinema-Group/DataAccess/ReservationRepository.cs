@@ -107,5 +107,29 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return command.ExecuteNonQuery() > 0;
             }
         }
+
+        public bool IsReservationPaid(Reservation reservation)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Paid 
+                    FROM Reservation
+                    WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", reservation.Id);
+
+                var result = command.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToBoolean(Convert.ToInt32(result));
+                }
+
+                return false;
+            }
+        }
     }
 }

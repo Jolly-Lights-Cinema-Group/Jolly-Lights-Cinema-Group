@@ -55,13 +55,18 @@ public class ReservationService
         Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");
     }
 
-    public void PayReservation(Reservation reservation)
+    public bool PayReservation(Reservation reservation)
     {
-        if (_reservationRepository.UpdateReservationToPaid(reservation))
+        return _reservationRepository.UpdateReservationToPaid(reservation);
+    }
+
+    public bool IsReservationPaid(Reservation reservation)
+    {
+        if (_reservationRepository.IsReservationPaid(reservation))
         {
             Console.WriteLine($"Reservation: {reservation.ReservationNumber} has been paid");
-            return;
+            return true;
         }
-        Console.WriteLine($"Reservation: {reservation.ReservationNumber} has not been paid");
+        return false;
     }
 }

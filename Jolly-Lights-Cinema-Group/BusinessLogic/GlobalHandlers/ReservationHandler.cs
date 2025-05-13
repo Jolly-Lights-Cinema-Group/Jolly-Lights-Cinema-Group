@@ -139,10 +139,42 @@ namespace Jolly_Lights_Cinema_Group
             ReservationRepository reservationRepository = new();
             Reservation reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber)!;
 
+
             CustomerOrderService customerOrderService = new();
             CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(reservation);
 
-            Console.WriteLine($"Total: €{customerOrder.GrandPrice}");
+            ReservationService reservationService = new();
+            if (!reservationService.IsReservationPaid(reservation))
+            {
+                Console.WriteLine($"Total: €{customerOrder.GrandPrice}");
+                string? input;
+                do
+                {
+                    Console.Write("Confirm payment? (y/n): ");
+                    input = Console.ReadLine()?.Trim().ToLower();
+
+                    if (input == "y")
+                    {
+                        if (reservationService.PayReservation(reservation) && customerOrderService.RegisterCustomerOrder(customerOrder))
+                        {
+                            Console.WriteLine("Payment confirmed.");
+                            break;
+                        }
+                        Console.WriteLine("Payment could not be confirmed.");
+                        break;
+                    }
+                    else if (input == "n")
+                    {
+                        Console.WriteLine("Payment cancelled.");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                    }
+
+                } while (input != "y" && input != "n");
+            }
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();

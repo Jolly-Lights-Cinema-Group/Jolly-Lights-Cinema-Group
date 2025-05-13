@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class CustomerOrderService
 {
     private readonly CustomerOrderRepository _customerOrderRepository = new CustomerOrderRepository();
-    public void RegisterCustomerOrder(CustomerOrder customerOrder)
+    public bool RegisterCustomerOrder(CustomerOrder customerOrder)
     {
-        _customerOrderRepository.AddCustomerOrder(customerOrder);
+        return _customerOrderRepository.AddCustomerOrder(customerOrder);
     }
 
     public CustomerOrder CreateCustomerOrderForReservation(Reservation reservation)
@@ -23,11 +23,6 @@ public class CustomerOrderService
         }
 
         CustomerOrder customerOrder = new(totalPrice);
-        RegisterCustomerOrder(customerOrder);
-
-        ReservationService reservationService = new();
-        reservationService.PayReservation(reservation);
-
         return customerOrder;
     }
 }
