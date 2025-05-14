@@ -128,6 +128,63 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return schedules;
         }
+
+        public List<Schedule> GetAllSchedules()
+        {
+            List<Schedule> schedules = new List<Schedule>();
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule;";
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Schedule schedule = new(
+                            reader.GetInt32(0),
+                            reader.GetInt32(1),
+                            reader.GetInt32(2),
+                            reader.GetDateTime(3),
+                            reader.GetTimeSpan(4));
+                        schedules.Add(schedule);
+                    }
+                }
+            }
+
+            return schedules;
+        }
+
+        public List<Schedule> GetSchedulesByMovie(Movie movie)
+        {
+            List<Schedule> schedules = new List<Schedule>();
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule WHERE MovieId = @movieId;";
+
+                command.Parameters.AddWithValue("@movieId", movie.Id);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Schedule schedule = new(
+                            reader.GetInt32(0),
+                            reader.GetInt32(1),
+                            reader.GetInt32(2),
+                            reader.GetDateTime(3),
+                            reader.GetTimeSpan(4));
+                        schedules.Add(schedule);
+                    }
+                }
+            }
+            return schedules;    
+        }
     }
 
 

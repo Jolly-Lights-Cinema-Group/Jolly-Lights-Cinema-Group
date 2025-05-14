@@ -78,4 +78,27 @@ public class ScheduleService
         }
         return;
     }
+
+    public List<Movie> GetMoviesBySchedule()
+    {
+        List<Schedule> schedules = _scheduleRepo.GetAllSchedules();
+
+        // MovieRepository movieRepository = new();
+        List<Movie> uniqueMovies = new();
+        HashSet<int?> addedMovieIds = new();
+
+        foreach (Schedule schedule in schedules)
+        {
+            if (!addedMovieIds.Contains(schedule.MovieId))
+            {
+                Movie? movie = MovieRepository.GetMovieById(schedule.MovieId);
+                if (movie != null)
+                {
+                    uniqueMovies.Add(movie);
+                    addedMovieIds.Add(movie.Id);
+                }
+            }
+        }
+        return uniqueMovies;
+    }
 }
