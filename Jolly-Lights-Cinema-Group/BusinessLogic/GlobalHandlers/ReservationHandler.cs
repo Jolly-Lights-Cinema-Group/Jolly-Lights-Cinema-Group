@@ -48,10 +48,79 @@ namespace Jolly_Lights_Cinema_Group
             Console.Clear();
             Console.WriteLine("Add Reservation:");
 
+            ScheduleService scheduleService = new();
+            List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule();
+
+            string[] movieMenuItems = scheduledMovies
+                .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu movieMenu = new("Select a movie:", movieMenuItems);
+            int movieChoice = movieMenu.Run();
+
+            if (movieChoice >= scheduledMovies.Count)
+            {
+                Console.WriteLine("Cancelled.");
+                return;
+            }
+
+            Movie selectedMovie = scheduledMovies[movieChoice];
+
+            ScheduleRepository scheduleRepository = new();
+            List<Schedule> schedules = scheduleRepository.GetSchedulesByMovie(selectedMovie);
+
+            var groupedSchedules = schedules
+                .GroupBy(s => s.StartDate.Date)
+                .OrderBy(g => g.Key)
+                .ToList();
+
+            Schedule? selectedSchedule = null;
+
+            while (true)
+            {
+                string[] dateMenuItems = groupedSchedules
+                    .Select(g => g.Key.ToString("dddd dd MMMM yyyy"))
+                    .Append("Cancel")
+                    .ToArray();
+
+                Menu dateMenu = new("Choose a date:", dateMenuItems);
+                int dateChoice = dateMenu.Run();
+
+                if (dateChoice == groupedSchedules.Count)
+                {
+                    Console.WriteLine("Canceled.");
+                    return;
+                }
+
+                var selectedDateGroup = groupedSchedules[dateChoice];
+
+                List<Schedule> timesForDate = selectedDateGroup.OrderBy(s => s.StartTime).ToList();
+
+                string[] timeMenuItems = timesForDate
+                    .Select(s => s.StartTime.ToString(@"hh\:mm"))
+                    .Append("Go back to dates")
+                    .ToArray();
+
+                Menu timeMenu = new("Choose a time:", timeMenuItems);
+                int timeChoice = timeMenu.Run();
+
+                if (timeChoice == timesForDate.Count)
+                {
+                    continue;
+                }
+
+                selectedSchedule = timesForDate[timeChoice];
+                break;
+            }
+
+            MovieRoomRepository movieRoomRepository = new();
+            MovieRoom? movieRoom = movieRoomRepository.GetMovieRoomById(selectedSchedule.MovieRoomId);
             //TODO get id's from selecting movie from schedule.
-            var locationId = 1;
-            var roomId = 1;
-            var scheduleId = 1;
+ 
+            var locationId = movieRoom!.LocationId;
+            var roomId = selectedSchedule.MovieRoomId;
+            var scheduleId = selectedSchedule.Id;
             
             MovieRoomService movieRoomService = new MovieRoomService();
             ReservationService reservationService = new ReservationService();
@@ -60,7 +129,7 @@ namespace Jolly_Lights_Cinema_Group
             var reservedSeats = reservationService.GetReservedSeats(roomId, locationId);
 
             var rowCount = 1;
-            foreach (var row in roomLayout)
+            foreach (var row in roomLayout!)
             {
                 var seatCount = 1;
                 foreach (var item in row)
@@ -141,7 +210,7 @@ namespace Jolly_Lights_Cinema_Group
             ScheduleSeatRepository scheduleSeatRepository = new();
 
             if (newReservation.Id != null)
-                scheduleSeatRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, scheduleId, seatPrice);
+                scheduleSeatRepository.AddSeatToReservation(selectedSeat, seatType, (int)newReservation.Id, (int)scheduleId!, seatPrice);
             
             Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
             string? response = Console.ReadLine()?.Trim().ToLower();
@@ -153,6 +222,10 @@ namespace Jolly_Lights_Cinema_Group
 
             OrderLineService orderLineService = new();
             orderLineService.CreateOrderLineForReservation(newReservation);
+
+            Console.WriteLine($"Reservation Number: {newReservation.ReservationNumber}");
+            Console.WriteLine($"Movie: {selectedMovie.Title}\nDate: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
+            Console.WriteLine($"Seat(s): {selectedSeat}");
 
             Console.WriteLine("\nReservation complete. Press any key to continue.");
             Console.ReadKey();
