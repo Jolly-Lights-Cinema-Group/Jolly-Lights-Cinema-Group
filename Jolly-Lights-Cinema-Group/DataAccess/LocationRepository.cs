@@ -48,13 +48,13 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Name, Address FROM Location;";
+                command.CommandText = "SELECT Id, Name, Address FROM Location;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        Location location = new(reader.GetString(0), reader.GetString(1));
+                        Location location = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
                         locations.Add(location);
                     }
                 }

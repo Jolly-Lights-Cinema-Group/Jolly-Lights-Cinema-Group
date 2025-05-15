@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
@@ -166,8 +167,8 @@ namespace Jolly_Lights_Cinema_Group
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            //TODO get price from selected seat.
-            var seatPrice = 10;
+            var seatRepo = new SeatRepository();
+            var seatPrice = seatRepo.GetSeatPriceForSeatTypeOnLocation(seatType ,locationId);
             
             string? firstName;
             do
