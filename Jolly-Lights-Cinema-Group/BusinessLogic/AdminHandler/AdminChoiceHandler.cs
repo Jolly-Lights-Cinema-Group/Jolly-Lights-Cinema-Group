@@ -1,3 +1,5 @@
+using Jolly_Lights_Cinema_Group.BusinessLogic;
+using Jolly_Lights_Cinema_Group.BusinessLogic.GlobalHandlers;
 using Jolly_Lights_Cinema_Group.Models;
 
 namespace Jolly_Lights_Cinema_Group
@@ -35,12 +37,15 @@ namespace Jolly_Lights_Cinema_Group
                     AdminMovieRoomHandler.ManageMovieRooms();
                     break;
                 case 7:
-                    ViewReports();
+                    SeatService.ManageSeats();
                     break;
                 case 8:
-                    AccountSettingsHandler.ManageAccount();
+                    ViewReports();
                     break;
                 case 9:
+                    AccountSettingsHandler.ManageAccount();
+                    break;
+                case 10:
                     user.IsAuthenticated = false;
                     break;
                 default:
