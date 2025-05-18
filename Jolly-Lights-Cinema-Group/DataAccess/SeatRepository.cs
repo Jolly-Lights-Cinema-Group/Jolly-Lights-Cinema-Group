@@ -21,7 +21,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                     while (reader.Read())
                     {
                         var seat = new Seat
-                        { 
+                        {
                             Id = reader.GetInt32(0),
                             Type = (SeatType)reader.GetInt32(1),
                             Price = reader.GetDouble(2)
@@ -32,7 +32,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return seats;
         }
-        
+
         public double GetSeatPriceForSeatTypeOnLocation(SeatType type, int locationId)
         {
             var price = 0d;
@@ -40,7 +40,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT TOP 1 Price FROM Seats WHERE LocationId = @LocationId AND Type = @Type;";
+                command.CommandText = "SELECT Price FROM Seats WHERE LocationId = @LocationId AND Type = @Type LIMIT 1;";
                 command.Parameters.AddWithValue("@LocationId", locationId);
                 command.Parameters.AddWithValue("@Type", type);
 
@@ -54,7 +54,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return price;
         }
-        
+
         public void ModifySeatPrices(Seat seat, decimal newPrice, int locationId)
         {
             using (var connection = DatabaseManager.GetConnection())
