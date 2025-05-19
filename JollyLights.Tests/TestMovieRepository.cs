@@ -14,7 +14,7 @@ namespace Jolly_Lights.Tests
             _tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(_tempDir);
 
-            string testSchemaPath = Path.Combine(_tempDir, "schema.sql");     
+            string testSchemaPath = Path.Combine(_tempDir, "schema.sql");
 
             var originalSchemaPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Jolly-Lights-Cinema-Group", "Database", "schema.sql");
             File.Copy(originalSchemaPath, testSchemaPath);
@@ -36,7 +36,7 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "Addmovie should return true if insertion was successful.");
 
-            Movie? inserted = movierepository.GetMovieByTitle(movie);
+            Movie? inserted = MovieRepository.GetMovieByTitle(movie.Title);
             Assert.IsNotNull(inserted, "Movie should exist.");
             Assert.AreEqual("TestMovie1", inserted.Title, "TestMovie1 should be the title");
             Assert.AreEqual(90, inserted.Duration, "90 minutes should be the duration.");
@@ -79,9 +79,20 @@ namespace Jolly_Lights.Tests
         [TestCleanup]
         public void Cleanup()
         {
-            if (Directory.Exists(_tempDir))
+            if (_tempDir != null && Directory.Exists(_tempDir))
             {
-                Directory.Delete(_tempDir, recursive: true);
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        Directory.Delete(_tempDir, recursive: true);
+                        break;
+                    }
+                    catch (IOException)
+                    {
+                        Thread.Sleep(1); // If cinemaDB is still busy, then wait 1ms and try again
+                    }
+                }
             }
         }
     }
