@@ -1,3 +1,5 @@
+using Jolly_Lights_Cinema_Group.Common;
+
 namespace JollyLightsCinemaGroup.DataAccess
 {
     public class ShopItemRepository
@@ -9,22 +11,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
 
-                command.CommandText = "SELECT COUNT(*) FROM ShopItem WHERE Name = @name;";
-                command.Parameters.AddWithValue("@name", shopItem.Name);
-
-                if (Convert.ToInt32(command.ExecuteScalar()) > 0)
-                {
-                    return false;
-                }
-
                 command.CommandText = @"
-                    INSERT INTO ShopItem (Name, Price, Stock, MinimumAge)
-                    VALUES (@name, @price, @stock, @minimumAge);";
+                    INSERT INTO ShopItem (Name, Price, Stock, LocationId, MinimumAge)
+                    VALUES (@name, @price, @stock, @locationId, @minimumAge);";
 
                 command.Parameters.Clear();
                 command.Parameters.AddWithValue("@name", shopItem.Name);
                 command.Parameters.AddWithValue("@price", shopItem.Price);
                 command.Parameters.AddWithValue("@stock", shopItem.Stock);
+                command.Parameters.AddWithValue("@locationId", shopItem.LocationId);
                 command.Parameters.AddWithValue("@minimumAge", shopItem.MinimumAge);
 
                 return command.ExecuteNonQuery() > 0;
@@ -38,13 +33,18 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Name, Price, Stock, MinimumAge FROM ShopItem;";
+                command.CommandText = @"
+                    SELECT Id, Name, Price, Stock, LocationId, MinimumAge 
+                    FROM ShopItem 
+                    WHERE LocationId = @locationId;";
+
+                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
                         shopItems.Add(shopItem);
                     }
                 }
@@ -124,15 +124,16 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.CommandText = @"
                     SELECT Id, Name, Price, Stock, MinimumAge
                     FROM ShopItem
-                    WHERE Name = @name;";
+                    WHERE Name = @name AND LocationId = @locationId;";
 
                 command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        ShopItem shopItem =  new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
                         return shopItem;
                     }
                 }
@@ -149,15 +150,16 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.CommandText = @"
                     SELECT Id, Name, Price, Stock, MinimumAge
                     FROM ShopItem
-                    WHERE Id = @id;";
+                    WHERE Id = @id AND LocationId = @locationId;";
 
                 command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        ShopItem shopItem =  new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
                         return shopItem;
                     }
                 }
