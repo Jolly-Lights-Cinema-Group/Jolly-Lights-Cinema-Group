@@ -128,3 +128,4 @@ CREATE TABLE IF NOT EXISTS Seats (
  Price REAL NOT NULL,
  FOREIGN KEY (LocationId) REFERENCES Location (Id) ON DELETE CASCADE
 );
+INSERT INTO Seats (LocationId, Type, Price) VALUES (1, 0, 10), (1, 1, 15), (1, 2, 20)
