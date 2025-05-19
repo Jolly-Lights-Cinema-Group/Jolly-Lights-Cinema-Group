@@ -9,15 +9,26 @@ namespace JollyLightsCinemaGroup.BusinessLogic
         {
             DatabaseManager.InitializeDatabase();
 
+            List<Location> testLocations = new List<Location>();
+
             Location locationRotterdam = new Location("Jolly Lights Rotterdam", "Rotterdam Beurs 112");
             Location locationAmsterdam = new Location("Jolly Lights Amsterdam", "Amsterdam Kalverstraat 113");
             Location locationUtrecht = new Location("Jolly Lights Utrecht", "Utrecht Oudegracht 114");
 
-            LocationRepository locationRepository = new LocationRepository();
+            testLocations.Add(locationRotterdam);
+            testLocations.Add(locationAmsterdam);
+            testLocations.Add(locationUtrecht);
 
-            locationRepository.AddLocation(locationRotterdam);
-            locationRepository.AddLocation(locationAmsterdam);
-            locationRepository.AddLocation(locationUtrecht);
+            LocationRepository locationRepository = new LocationRepository();
+            List<Location> locations = locationRepository.GetAllLocations();
+
+            foreach (Location testLocation in testLocations)
+            {
+                if (!locations.Any(location => location.Name == testLocation.Name))
+                {
+                    locationRepository.AddLocation(testLocation);
+                }
+            }
 
             Console.WriteLine("Test locations added successfully.");
         }
