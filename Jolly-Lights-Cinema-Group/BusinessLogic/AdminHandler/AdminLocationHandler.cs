@@ -1,3 +1,5 @@
+using JollyLightsCinemaGroup.DataAccess;
+
 namespace Jolly_Lights_Cinema_Group
 {
     public static class AdminLocationHandler
@@ -42,6 +44,10 @@ namespace Jolly_Lights_Cinema_Group
         {
             Console.Clear();
 
+            LocationRepository locationRepository = new();
+
+            List<Location> locations = locationRepository.GetAllLocations();
+
             Console.WriteLine("Information to add location:");
             string? name;
             do
@@ -56,6 +62,17 @@ namespace Jolly_Lights_Cinema_Group
                 Console.Write("Enter the address of the location: ");
                 address = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(address));
+
+            foreach (Location l in locations)
+            {
+                if (l.Address == address)
+                {
+                    Console.WriteLine($"Location with address: {address}, already exists");
+                    Console.WriteLine("\nPress any key to continue.");
+                    Console.ReadKey();
+                    return;
+                }
+            }
 
             LocationService locationService = new LocationService();
             Location location = new(name, address);
