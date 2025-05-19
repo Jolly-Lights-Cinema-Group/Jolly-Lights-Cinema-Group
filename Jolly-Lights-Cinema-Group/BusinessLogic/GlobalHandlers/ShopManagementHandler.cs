@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.Common;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -78,11 +79,11 @@ namespace Jolly_Lights_Cinema_Group
             if (!string.IsNullOrWhiteSpace(inputMinimumAge))
             {
                 int minimumAge = int.Parse(inputMinimumAge);
-                shopItem = new(name, price, stock, minimumAge);
+                shopItem = new(name, price, stock, Globals.SessionLocationId, minimumAge);
             }
             else
             {
-                shopItem = new(name, price, stock);
+                shopItem = new(name, price, stock, Globals.SessionLocationId);
             }
 
             ShopItemService shopItemService = new ShopItemService();

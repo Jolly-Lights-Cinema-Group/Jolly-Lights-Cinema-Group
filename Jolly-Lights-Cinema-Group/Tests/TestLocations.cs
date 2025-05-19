@@ -24,7 +24,8 @@ namespace JollyLightsCinemaGroup.BusinessLogic
 
             foreach (Location testLocation in testLocations)
             {
-                if (!locations.Any(location => location.Name == testLocation.Name))
+                bool exists = locations.Any(loc => loc.Address == testLocation.Address);
+                if (!exists)
                 {
                     locationRepository.AddLocation(testLocation);
                 }
