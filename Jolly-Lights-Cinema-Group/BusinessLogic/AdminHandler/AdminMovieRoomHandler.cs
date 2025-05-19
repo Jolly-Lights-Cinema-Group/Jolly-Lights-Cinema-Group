@@ -11,15 +11,15 @@ namespace Jolly_Lights_Cinema_Group
             bool inManageMovieRoomMenu = true;
             AdminManageMovieRoomMenu ManageMovieRoomMenu = new();
             Console.Clear();
-            
-            while(inManageMovieRoomMenu)
+
+            while (inManageMovieRoomMenu)
             {
                 int userChoice = ManageMovieRoomMenu.Run();
                 inManageMovieRoomMenu = HandleManageMovieRoomChoice(userChoice);
                 Console.Clear();
             }
         }
-        
+
         private static bool HandleManageMovieRoomChoice(int choice)
         {
             switch (choice)
@@ -40,7 +40,7 @@ namespace Jolly_Lights_Cinema_Group
                     return true;
             }
         }
-        
+
         [STAThread]
         public static void AddMovieRoom()
         {
@@ -66,10 +66,10 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine("Geen bestand geselecteerd. Programma wordt afgesloten.");
                 return;
             }
-            
+
             var grid = MovieRoomJsonHelper.ReadGridFromFile(inputFilePath);
             var json = MovieRoomJsonHelper.ConvertGridToJson(grid);
-            
+
             var movieRoomService = new MovieRoomService();
             movieRoomService.RegisterMovieRoom(number, json, movieType, locationId);
         }
@@ -77,10 +77,10 @@ namespace Jolly_Lights_Cinema_Group
         public static void DeleteMovieRoom()
         {
             Console.Clear();
-            
+
             Console.WriteLine("What is the number of the room?");
             var number = Convert.ToInt32(Console.ReadLine());
-            
+
             var locationId = 0;
 
             if (Globals.CurrentUser?.Location?.Id > 0)
@@ -90,7 +90,7 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine("Enter locationId for the room");
                 locationId = Convert.ToInt32(Console.ReadLine());
             }
-            
+
             var movieRoomService = new MovieRoomService();
             movieRoomService.DeleteRoom(number, locationId);
 
@@ -109,11 +109,11 @@ namespace Jolly_Lights_Cinema_Group
                 Console.WriteLine("Enter locationId for the room");
                 locationId = Convert.ToInt32(Console.ReadLine());
             }
-            
+
             var movieRoomService = new MovieRoomService();
             movieRoomService.ShowMoviesRoomsLocation(locationId);
         }
-        
+
         private static string? SelectFile()
         {
             var selectedPath = "";
@@ -132,8 +132,19 @@ namespace Jolly_Lights_Cinema_Group
 
             if (fileChooser.Run() == (int)ResponseType.Accept)
             {
-                selectedPath = fileChooser.Filename;
-                Console.WriteLine($"Selected file: {selectedPath}");
+                try
+                {
+                    var fileUri = fileChooser.Uri;
+
+                    var uri = new Uri(fileUri);
+                    selectedPath = uri.LocalPath;
+
+                    Console.WriteLine($"Selected file: {selectedPath}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while trying to fetch filepath: {ex.Message}");
+                }
             }
 
             fileChooser.Destroy();
