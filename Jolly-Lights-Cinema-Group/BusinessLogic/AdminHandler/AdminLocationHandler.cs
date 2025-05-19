@@ -63,15 +63,12 @@ namespace Jolly_Lights_Cinema_Group
                 address = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(address));
 
-            foreach (Location l in locations)
+            if (locations.Any(location => location.Address == address))
             {
-                if (l.Address == address)
-                {
                     Console.WriteLine($"Location with address: {address}, already exists");
                     Console.WriteLine("\nPress any key to continue.");
                     Console.ReadKey();
                     return;
-                }
             }
 
             LocationService locationService = new LocationService();
