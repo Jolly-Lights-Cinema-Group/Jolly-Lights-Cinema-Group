@@ -1,5 +1,6 @@
 using System.Data.Common;
 using System.Reflection;
+using Jolly_Lights_Cinema_Group.Common;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -46,65 +47,45 @@ namespace Jolly_Lights_Cinema_Group
         private static void AddScheduleline()
         {
             Console.Clear();
-            // Testdata for room: (next update has to come from DB)
-            MovieRoom TestDataForMovieRoom = new(id: 1, roomNumber: 1, roomLayoutJson: "aa", supportedMovieType: 1, locationId: 1);
+            Console.Clear();
 
-            ScheduleService scheduleservice = new();
+            MovieRepository movieRepository = new();
+            List<Movie> allMovies = movieRepository.GetAllMovies();
 
-            // Adding MovieId
-            Movie? selectedMovie = null;
-            do
+            string[] movieMenuItems = allMovies
+                .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu movieMenu = new("Select a movie to create a schedule:", movieMenuItems);
+            int movieChoice = movieMenu.Run();
+
+            if (movieChoice >= allMovies.Count)
             {
-                Console.Clear();
-                Console.WriteLine("From the movie DB, What movie do you want to add? (Title or MovieId)");
-                string? input = Console.ReadLine();
+                Console.WriteLine("Cancelled.");
+                return;
+            }
 
-                if (int.TryParse(input, out int movieId))
-                {
-                    selectedMovie = MovieRepository.GetMovieById(movieId);
-                    if (selectedMovie != null)
-                    {
-                        Console.WriteLine($"Movie selected: {selectedMovie.Title}");
-                    }
-                    else
-                    {
-                    }
-                }
-                else if (!string.IsNullOrWhiteSpace(input))
-                {
-                    selectedMovie = MovieRepository.GetMovieByTitle(input);
-                    if (selectedMovie != null)
-                    {
-                        Console.WriteLine($"Movie selected: {selectedMovie.Title}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Movie not found. Please try again.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid movie title or ID.");
-                }
-            } while (selectedMovie == null);
+            Movie selectedMovie = allMovies[movieChoice];
 
+            MovieRoomRepository movieRoomRepository = new();
+            List<MovieRoom> movieRooms = movieRoomRepository.GetAllMovieRooms(Globals.SessionLocationId);
 
-            // Adding RoomNumber
-            int roomNumber = -1;
-            do
+            string[] movieRoomItems = movieRooms
+                .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu movieRoomMenu = new("Select a movie room:", movieRoomItems);
+            int movieRoomChoice = movieRoomMenu.Run();
+
+            if (movieRoomChoice >= movieRooms.Count)
             {
-                Console.Clear();
-                Console.WriteLine("In what room will it play? (Index of available rooms)");
-                string? roomInput = Console.ReadLine();
-                if (int.TryParse(roomInput, out roomNumber))
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid room number.");
-                }
-            } while (roomNumber < 0);
+                Console.WriteLine("Cancelled.");
+                return;
+            }
+
+            MovieRoom selectedMovieRoom = movieRooms[movieRoomChoice];
 
             // Adding StartDate
             DateTime startDate;
@@ -145,11 +126,12 @@ namespace Jolly_Lights_Cinema_Group
                 }
             } while (true);
 
-            Schedule schedule = new(roomNumber, selectedMovie.Id.Value, startDate, startTime);
-            scheduleservice.RegisterSchedule(schedule);
+            ScheduleService scheduleService = new();
+
+            Schedule schedule = new(selectedMovieRoom.RoomNumber, selectedMovie.Id!.Value, startDate, startTime);
+            scheduleService.RegisterSchedule(schedule);
             Console.ReadKey();
         }
-
 
         // Deleting schedule line (delete)
 
