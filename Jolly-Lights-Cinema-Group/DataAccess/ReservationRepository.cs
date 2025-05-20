@@ -37,9 +37,9 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     DELETE FROM Reservation
-                    WHERE ReservationNumber = @reservationNumber;";
+                    WHERE Id = @id;";
 
-                command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
+                command.Parameters.AddWithValue("@id", reservation.Id);
 
                 return command.ExecuteNonQuery() > 0;
             }

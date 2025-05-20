@@ -122,7 +122,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, MinimumAge
+                    SELECT Id, Name, Price, Stock, LocationId, MinimumAge
                     FROM ShopItem
                     WHERE Name = @name AND LocationId = @locationId;";
 
@@ -148,7 +148,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, MinimumAge
+                    SELECT Id, Name, Price, Stock, LocationId, MinimumAge
                     FROM ShopItem
                     WHERE Id = @id AND LocationId = @locationId;";
 
