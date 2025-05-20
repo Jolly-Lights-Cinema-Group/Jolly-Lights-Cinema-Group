@@ -13,11 +13,12 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    INSERT INTO CustomerOrder (GrandPrice, PayDate)
-                    VALUES (@grandPrice, @payDate);";
+                    INSERT INTO CustomerOrder (GrandPrice, PayDate, Tax)
+                    VALUES (@grandPrice, @payDate, @tax);";
 
                 command.Parameters.AddWithValue("@grandPrice", customerOrder.GrandPrice);
                 command.Parameters.AddWithValue("@payDate", customerOrder.PayDate);
+                command.Parameters.AddWithValue("@tax", customerOrder.Tax);
 
                 return command.ExecuteNonQuery() > 0;
             }
@@ -31,13 +32,13 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, GrandPrice, Paydate FROM CustomerOrder;";
+                command.CommandText = "SELECT Id, GrandPrice, Paydate, Tax FROM CustomerOrder;";
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        CustomerOrder customerOrder = new(reader.GetInt32(0), reader.GetInt32(1), reader.GetDateTime(2));
+                        CustomerOrder customerOrder = new(reader.GetInt32(0), reader.GetDouble(1), reader.GetDateTime(2), reader.GetDouble(3));
                         customerOrders.Add(customerOrder);
                     }
                 }
@@ -79,7 +80,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, GrandPrice, PayDate 
+                    SELECT Id, GrandPrice, PayDate, Tax 
                     FROM CustomerOrder
                     WHERE strftime('%Y', PayDate) = @year;";
 
@@ -89,7 +90,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        CustomerOrder customerOrder = new CustomerOrder(reader.GetInt32(0), reader.GetDouble(1), reader.GetDateTime(2));
+                        CustomerOrder customerOrder = new CustomerOrder(reader.GetInt32(0), reader.GetDouble(1), reader.GetDateTime(2), reader.GetDouble(3));
                         orders.Add(customerOrder);
                     }
                 }

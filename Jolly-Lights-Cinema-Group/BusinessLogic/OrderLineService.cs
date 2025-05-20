@@ -34,7 +34,7 @@ public class OrderLineService
             int quantity = group.Count();
             double totalPrice = group.Sum(seat => (double)seat.Price);
 
-            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, seatType.ToString(), 21, totalPrice);
+            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, seatType.ToString(), 9, totalPrice);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }
@@ -61,9 +61,8 @@ public class OrderLineService
                 continue;
 
             double totalPrice = quantity * shopItem.Price;
-            int vatPercentage = 21;
 
-            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, vatPercentage, totalPrice);
+            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, shopItem.VatPercentage, totalPrice);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }

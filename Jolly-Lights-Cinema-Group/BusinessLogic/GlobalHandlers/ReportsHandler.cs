@@ -59,22 +59,15 @@ namespace Jolly_Lights_Cinema_Group
             int selectedYear = years[selectedIndex];
 
             CustomerOrderService customerOrderService = new();
-            double totalIncome = customerOrderService.GetAnualEarnings(selectedYear);
-    
-            string[] grossNetOptions = { "Gross", "Net", "Cancel" };
-            Menu grossNetMenu = new("Select calculation type:", grossNetOptions);
-            int grossNetChoice = grossNetMenu.Run();
+            double grossIncome = customerOrderService.GetGrossAnualEarnings(selectedYear);
+            double netIncome = customerOrderService.GetNetAnualEarnings(selectedYear);
 
-            if (grossNetChoice == 2)
-            {
-                Console.WriteLine("Cancelled.");
-                return;
-            }
-
-            bool isGross = grossNetChoice == 0;
-            double calculatedTotal = isGross ? totalIncome : totalIncome * 0.91;
-
-            Console.WriteLine($"{(isGross ? "Gross" : "Net")} total for {selectedYear}: €{calculatedTotal}");
+            Console.WriteLine($"Year: {selectedYear}");
+            Console.WriteLine($"----------------------------------");
+            Console.WriteLine($"Gross: €{grossIncome}");
+            Console.WriteLine($"Tax: €{Math.Round(grossIncome - netIncome, 2)}");
+            Console.WriteLine($"----------------------------------");
+            Console.WriteLine($"Net: €{netIncome}");
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();

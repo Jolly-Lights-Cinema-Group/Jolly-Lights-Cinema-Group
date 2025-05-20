@@ -15,18 +15,22 @@ public class CustomerOrderService
         OrderLineRepository orderLineRepository = new();
         List<OrderLine> orderLines = orderLineRepository.GetOrderLinesByReservation(reservation);
 
-        double totalPrice = 0;
+        double grandTotal = 0;
+        double tax = 0;
 
         foreach (OrderLine orderLine in orderLines)
         {
-            totalPrice += orderLine.Price;
+            double vat = orderLine.VatPercentage / 100.0; 
+            double taxPerOrderLine = orderLine.Price * vat;
+            tax += taxPerOrderLine;
+            grandTotal += orderLine.Price + taxPerOrderLine;
         }
 
-        CustomerOrder customerOrder = new(totalPrice, DateTime.Now);
+        CustomerOrder customerOrder = new(Math.Round(grandTotal, 2), DateTime.Now, Math.Round(tax, 2));
         return customerOrder;
     }
 
-    public double GetAnualEarnings(int year)
+    public double GetGrossAnualEarnings(int year)
     {
         double total = 0;
         List<CustomerOrder> customerOrders = _customerOrderRepository.GetCustomerOrdersByYear(year);
@@ -35,6 +39,18 @@ public class CustomerOrderService
         {
             total += customerOrder.GrandPrice;
         }
-        return total;
+        return Math.Round(total, 2);
+    }
+
+    public double GetNetAnualEarnings(int year)
+    {
+        double total = 0;
+        List<CustomerOrder> customerOrders = _customerOrderRepository.GetCustomerOrdersByYear(year);
+
+        foreach (CustomerOrder customerOrder in customerOrders)
+        {
+            total += customerOrder.GrandPrice - customerOrder.Tax;
+        }
+        return Math.Round(total, 2);
     }
 }
