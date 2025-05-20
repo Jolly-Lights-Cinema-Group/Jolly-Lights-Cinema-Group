@@ -40,7 +40,7 @@ namespace Jolly_Lights_Cinema_Group
                     SeatService.ManageSeats();
                     break;
                 case 8:
-                    ViewReports();
+                    ReportsHandler.ManageReports();
                     break;
                 case 9:
                     AccountSettingsHandler.ManageAccount();

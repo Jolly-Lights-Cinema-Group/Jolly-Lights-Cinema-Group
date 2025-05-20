@@ -22,7 +22,19 @@ public class CustomerOrderService
             totalPrice += orderLine.Price;
         }
 
-        CustomerOrder customerOrder = new(totalPrice);
+        CustomerOrder customerOrder = new(totalPrice, DateTime.Now);
         return customerOrder;
+    }
+
+    public double GetAnualEarnings(int year)
+    {
+        double total = 0;
+        List<CustomerOrder> customerOrders = _customerOrderRepository.GetCustomerOrdersByYear(year);
+
+        foreach (CustomerOrder customerOrder in customerOrders)
+        {
+            total += customerOrder.GrandPrice;
+        }
+        return total;
     }
 }
