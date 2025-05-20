@@ -28,22 +28,16 @@ public class OrderLineService
             .GroupBy(seat => seat.Type)
             .ToList();
 
-        // foreach (IGrouping<SeatType, ScheduleSeat> group in groupedSeats)
-        // {
-        //     SeatType type = group.Key;
-        //     int quantity = group.Count();
+        foreach (var group in groupedSeats)
+        {
+            SeatType seatType = group.Key;
+            int quantity = group.Count();
+            double totalPrice = group.Sum(seat => (double)seat.Price);
 
-        //     ShopItem shopItem = shopItemRepository.GetShopItemById(shopItemId)!;
-        //     if (shopItem == null)
-        //         continue;
+            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, seatType.ToString(), 21, totalPrice);
 
-        //     double totalPrice = quantity * shopItem.Price;
-        //     int vatPercentage = 21;
-
-        //     OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, vatPercentage, totalPrice);
-
-        //     _orderLineRepo.AddOrderLine(orderLine);
-        // }
+            _orderLineRepo.AddOrderLine(orderLine);
+        }
     }
 
     public void CreateOrderLineForScheduleShopItem(Reservation reservation)
