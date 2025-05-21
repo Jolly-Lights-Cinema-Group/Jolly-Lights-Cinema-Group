@@ -62,6 +62,8 @@ namespace Jolly_Lights_Cinema_Group
             double grossIncome = customerOrderService.GetGrossAnualEarnings(selectedYear);
             double netIncome = customerOrderService.GetNetAnualEarnings(selectedYear);
 
+            Console.Clear();
+
             Console.WriteLine($"Year: {selectedYear}");
             Console.WriteLine($"----------------------------------");
             Console.WriteLine($"Gross: €{grossIncome}");
