@@ -21,32 +21,7 @@ public class EmployeeService
 
     public bool RegisterEmployee(Employee employee)
     {
-        if (string.IsNullOrWhiteSpace(employee.FirstName) || string.IsNullOrWhiteSpace(employee.LastName))
-        {
-            Console.WriteLine("Error: Name cannot be empty.");
-            return false;
-        }
-
-        if (!employee.Email.Contains("@"))
-        {
-            Console.WriteLine("Error: Invalid email format.");
-            return false;
-        }
-
-        if (!Enum.IsDefined(typeof(Role), employee.Role))
-        {
-            Console.WriteLine("Error: Invalid role.");
-            return false;
-        }
-
-        if (_employeeRepo.UserNameAlreadyExist(employee.UserName))
-        {
-            Console.WriteLine("Error: Username already exists.");
-            return false;
-        }
-
-        _employeeRepo.AddEmployee(employee);
-        return true;
+        return _employeeRepo.AddEmployee(employee);
     }
 
     public void DeleteEmployee(Employee employee)
@@ -125,5 +100,10 @@ public class EmployeeService
         {
             Console.WriteLine("password didn't changed.");
         }
+    }
+
+    public bool UserNameExists(string userName)
+    {
+        return _employeeRepo.UserNameAlreadyExist(userName);
     }
 }

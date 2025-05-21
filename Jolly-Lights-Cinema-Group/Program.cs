@@ -46,10 +46,7 @@ namespace Jolly_Lights_Cinema_Group
                 switch (user.Role)
                 {
                     case Role.Admin:
-                        AdminMenu adminMenu = new AdminMenu();
-                        int adminChoice = adminMenu.Run();
-                        AdminChoiceHandler.AdminMainMenu = true;
-                        AdminChoiceHandler.HandleChoice(adminChoice, ref user);
+                        AdminMenu.ShowAdminMenu(ref user);
                         break;
 
                     case Role.Manager:
