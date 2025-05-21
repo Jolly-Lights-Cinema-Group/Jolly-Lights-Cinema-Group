@@ -11,7 +11,9 @@ public class ShopMenu
 
     public void DisplayShop(Reservation reservation)
     {
-        var shopItems = _shopitemService.GetAllShopItems();
+        List<ShopItem> shopItems = _shopitemService.GetAllShopItems();
+
+        if (shopItems.Count <= 0) return;
 
         bool inShop = true;
 

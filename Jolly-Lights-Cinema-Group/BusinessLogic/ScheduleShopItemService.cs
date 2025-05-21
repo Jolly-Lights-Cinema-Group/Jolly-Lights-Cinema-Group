@@ -13,9 +13,9 @@ public class ScheduleShopItemService
         return false; ;
     }
 
-    public bool DeleteScheduleShopItem(ScheduleShopItem scheduleShopItem)
+    public bool DeleteScheduleShopItem(ShopItem shopItem, Reservation reservation)
     {
-        return _scheduleShopItemRepository.RemoveScheduleShopItem(scheduleShopItem);
+        return _scheduleShopItemRepository.RemoveScheduleShopItem(shopItem, reservation);
     }
 
     public List<ScheduleShopItem> GetScheduleShopItemByReservation(Reservation reservation)

@@ -19,7 +19,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public bool RemoveScheduleShopItem(ScheduleShopItem scheduleShopItem)
+        public bool RemoveScheduleShopItem(ShopItem shopItem, Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -27,9 +27,14 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     DELETE FROM ScheduleShopItem
-                    WHERE Id = @id;";
+                    WHERE rowid = (
+                        SELECT rowid FROM ScheduleShopItem
+                        WHERE ShopItemId = @shopItemId AND ReservationId = @reservationId
+                        LIMIT 1
+                    );";
 
-                command.Parameters.AddWithValue("@id", scheduleShopItem.Id);
+                command.Parameters.AddWithValue("@shopItemId", shopItem.Id);
+                command.Parameters.AddWithValue("@reservationId", reservation.Id);
 
                 return command.ExecuteNonQuery() > 0;
             }
