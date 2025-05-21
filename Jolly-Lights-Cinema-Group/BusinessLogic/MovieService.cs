@@ -1,9 +1,9 @@
+using Jolly_Lights_Cinema_Group;
 using JollyLightsCinemaGroup.DataAccess;
 
 public class MovieService
 {
     private readonly MovieRepository _movieRepo;
-
     public MovieService()
     {
         _movieRepo = new MovieRepository();
@@ -43,4 +43,10 @@ public class MovieService
         }
     }
 
+    public Movie? SelectMovieMenu()
+    {
+        MovieScheduleMenu movieScheduleMenu = new();
+        Movie? selectedMovie = movieScheduleMenu.SelectMovieMenu();
+        return selectedMovie;
+    }
 }

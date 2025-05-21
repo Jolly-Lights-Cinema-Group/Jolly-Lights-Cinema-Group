@@ -1,3 +1,4 @@
+using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -5,16 +6,13 @@ using System.Collections.Generic;
 public class ReservationService
 {
     private readonly ReservationRepository _reservationRepository = new ReservationRepository();
-    public void RegisterReservation(Reservation reservation)
+    public bool RegisterReservation(Reservation reservation)
     {
         if (_reservationRepository.AddReservation(reservation))
         {
-            Console.WriteLine("Reservation added successfully.");
-            return;
+            return true;
         }
-
-        Console.WriteLine("Reservation was not added to the database.");
-        return;
+        return false;
     }
 
     public void DeleteReservation(Reservation reservation)
@@ -75,5 +73,22 @@ public class ReservationService
         ScheduleSeatRepository scheduleSeatRepository = new();
         var result = scheduleSeatRepository.GetReservedSeats(roomNumber, locationId);
         return result.Select(x => (x.Split(',')[0], x.Split(',')[1])).ToList();
+    }
+
+    public Reservation? MakeReservation()
+    {
+        MakeReservationMenu makeReservationMenu = new();
+        Reservation? reservation = makeReservationMenu.MakeReservation();
+
+        if (reservation is null) return null;
+
+        Reservation newReservation = _reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
+        return newReservation;
+    }
+
+    public void CompleteReservation(Reservation reservation, Movie selectedMovie, Schedule selectedSchedule, string selectedSeat)
+    {
+        MakeReservationMenu makeReservationMenu = new();
+        makeReservationMenu.CompleteReservation(reservation, selectedMovie, selectedSchedule, selectedSeat);
     }
 }
