@@ -52,7 +52,7 @@ namespace Jolly_Lights_Cinema_Group
             string? inputPrice;
             do
             {
-                Console.Write("Enter the price of the item (€): ");
+                Console.Write("Enter the price of the item (€) (excl. VAT): ");
                 inputPrice = Console.ReadLine();
             } while (!double.TryParse(inputPrice, out price) || price < 0);
 
