@@ -26,23 +26,27 @@ public class EditReservationMenu
         if (reservation is null)
         {
             Console.WriteLine($"No Reservation found with reservation number: {reservationNumber}");
-            return;
         }
 
-        Console.Clear();
-        string[] editReservationOptions = { "Edit shop items", "Cancel reservation", "Cancel" };
-
-        Menu editReservationMenu = new($"Edit reservation: {reservation.ReservationNumber}", editReservationOptions);
-
-        var inEditReservationsMenu = true;
-        Console.Clear();
-
-        while (inEditReservationsMenu)
+        else
         {
-            int choice = editReservationMenu.Run();
-            inEditReservationsMenu = HandleEditReservationMenu(choice, reservation);
             Console.Clear();
+            string[] editReservationOptions = { "Edit shop items", "Cancel reservation", "Finish" };
+
+            Menu editReservationMenu = new($"Edit reservation: {reservation.ReservationNumber}", editReservationOptions);
+
+            var inEditReservationsMenu = true;
+            Console.Clear();
+
+            while (inEditReservationsMenu)
+            {
+                int choice = editReservationMenu.Run();
+                inEditReservationsMenu = HandleEditReservationMenu(choice, reservation);
+            }
         }
+
+        Console.WriteLine("\nPress any key to continue.");
+        Console.ReadKey();
     }
 
     public bool HandleEditReservationMenu(int choice, Reservation reservation)
@@ -138,8 +142,9 @@ public class EditReservationMenu
             {
                 ShopItem selectedItem = shopItems[choice];
 
-                if (shopItemService.RestoreShopItem(selectedItem) && scheduleShopItemService.DeleteScheduleShopItem(selectedItem, reservation))
+                if (scheduleShopItemService.DeleteScheduleShopItem(selectedItem, reservation))
                 {
+                    shopItemService.RestoreShopItem(selectedItem);
                     Console.WriteLine($"{selectedItem.Name} removed from reservation: {reservation.ReservationNumber}.");
                 }
                 else

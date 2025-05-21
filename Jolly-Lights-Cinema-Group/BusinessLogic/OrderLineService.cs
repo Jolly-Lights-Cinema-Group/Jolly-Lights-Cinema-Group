@@ -72,4 +72,9 @@ public class OrderLineService
             _orderLineRepo.AddOrderLine(orderLine);
         }
     }
+
+    public List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
+    {
+        return _orderLineRepo.GetOrderLinesByReservation(reservation);
+    }
 }
