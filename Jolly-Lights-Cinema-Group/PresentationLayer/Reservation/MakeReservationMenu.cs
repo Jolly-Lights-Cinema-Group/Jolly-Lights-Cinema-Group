@@ -60,11 +60,14 @@ public class MakeReservationMenu
 
         if (response == "y")
         {
-            ShopHandler.ManageShop(reservation);
+            ShopMenu shopMenu = new();
+            shopMenu.DisplayShop(reservation);
         }
 
         OrderLineService orderLineService = new();
         orderLineService.CreateOrderLineForReservation(reservation);
+
+        Console.Clear();
 
         Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}");
         Console.WriteLine($"Movie: {selectedMovie.Title}");

@@ -15,22 +15,10 @@ public class ShopItemService
         return;
     }
 
-    public void ShowAllShopItems()
+    public List<ShopItem> GetAllShopItems()
     {
         List<ShopItem> shopItems = _shopItemRepository.GetAllShopItems();
-        if (shopItems.Count == 0)
-        {
-            Console.WriteLine("No items found in shop.");
-            return;
-        }
-
-        Console.WriteLine("Shop items:");
-        foreach (var shopItem in shopItems)
-        {
-            Console.WriteLine($"Name: {shopItem.Name}; Price: €{shopItem.Price}; Stock: {shopItem.Stock}; VAT: {shopItem.VatPercentage}%" +
-                            (shopItem.MinimumAge > 0 ? $" Minimum age: {shopItem.MinimumAge}" : ""));
-        }
-        return;
+        return shopItems;
     }
     public void UpdateShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
     {
@@ -43,30 +31,18 @@ public class ShopItemService
         return;
     }
 
-    public void SellShopItem(ShopItem shopItem, Reservation reservation)
+    public bool SellShopItem(ShopItem shopItem, Reservation reservation)
     {
-        if (shopItem != null)
+        if (shopItem.Id != null && reservation.Id != null)
         {
-            if (shopItem.Stock <= 0)
+            ScheduleShopItem scheduleShopItem = new(shopItem.Id.Value, reservation.Id.Value);
+            ScheduleShopItemRepository scheduleShopItemRepository = new();
+
+            if (_shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock -= 1), "") == true && scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem) == true)
             {
-                Console.WriteLine($"{shopItem.Name} out of stock.");
-                return;
-            }
-
-            if (shopItem.Id != null && reservation.Id != null)
-            {
-                ScheduleShopItem scheduleShopItem = new(shopItem.Id.Value, reservation.Id.Value);
-
-                ScheduleShopItemRepository scheduleShopItemRepository = new();
-
-                if (_shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock -= 1), "") == true && scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem) == true)
-                {
-                    Console.WriteLine($"{shopItem.Name} added to reservation: {reservation.ReservationNumber}.");
-                    return;
-                }
+                return true;
             }
         }
-        Console.WriteLine($"No shop item to add to reservation: {reservation.ReservationNumber}.");
-        return;
+        return false;
     }
 }
