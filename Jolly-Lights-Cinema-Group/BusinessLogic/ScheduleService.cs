@@ -114,11 +114,4 @@ public class ScheduleService
 
         return groupedSchedules;
     }
-
-    public Schedule? SelectScheduleMenu(Movie movie)
-    {
-        ScheduleMenu scheduleMenu = new();
-        Schedule? selectedSchedule = scheduleMenu.SelectSchedule(movie);
-        return selectedSchedule;
-    }
 }

@@ -1,6 +1,5 @@
 using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.Enum;
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -10,48 +9,15 @@ namespace Jolly_Lights_Cinema_Group
         private static int SelectedIndexY;
         private static int SelectedIndexX;
 
-        
-        public static void ManageReservations()
-        {
-            var inManageReservationsMenu = true;
-            ReservationMenu reservationMenu = new();
-            Console.Clear();
-            
-            while(inManageReservationsMenu)
-            {
-                var userChoice = reservationMenu.Run();
-                inManageReservationsMenu = HandleManageReservationsChoice(userChoice);
-                Console.Clear();
-            }
-        }
-        private static bool HandleManageReservationsChoice(int choice)
-        {
-            switch (choice)
-            {
-                case 0:
-                    AddReservation();
-                    return true;
-                case 1:
-                    DeleteReservation();
-                    return true;
-                case 2:
-                    PayReservation();
-                    return true;
-                case 3:
-                    return false;
-                default:
-                    return false;
-            }
-        }
         public static void AddReservation()
         {
-            MovieService movieService = new();
-            Movie? selectedMovie = movieService.SelectMovieMenu();
+            MovieScheduleMenu movieScheduleMenu = new();
+            Movie? selectedMovie = movieScheduleMenu.SelectMovieMenu();
 
             if (selectedMovie is null) return;
 
-            ScheduleService scheduleService = new();
-            Schedule? selectedSchedule = scheduleService.SelectScheduleMenu(selectedMovie);
+            MovieDateTimeMenu movieDateTimeMenu = new();
+            Schedule? selectedSchedule = movieDateTimeMenu.SelectSchedule(selectedMovie);
 
             if (selectedSchedule is null) return;
 
@@ -122,52 +88,6 @@ namespace Jolly_Lights_Cinema_Group
             reservationService.CompleteReservation(reservation, selectedMovie, selectedSchedule, selectedSeat);
         }
 
-        public static void EditReservation()
-        {
-            string? reservationNumber;
-            do
-            {
-                Console.Write("Enter reservation number to edit reservation: ");
-                reservationNumber = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(reservationNumber));
-
-
-            ReservationRepository reservationRepository = new ReservationRepository();
-            Reservation? reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber);
-
-            if (reservation != null)
-            {
-                Menu editReservationMenu = new($"Edit reservation: {reservation.ReservationNumber}", new string[] { "Edit Movie", "Edit schedule", "Edit shop items", "Delete reservation" });
-
-            }
-        }
-
-        public static void DeleteReservation()
-        {
-            Console.Clear();
-
-            Console.WriteLine("Delete reservation:");
-
-            string? reservationNumber;
-            do
-            {
-                Console.Write("Enter reservation number: ");
-                reservationNumber = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(reservationNumber));
-
-
-            ReservationRepository reservationRepository = new ReservationRepository();
-            Reservation? reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber);
-            if (reservation != null)
-            {
-                ReservationService reservationService = new ReservationService();
-                reservationService.DeleteReservation(reservation);
-            }
-
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
-        }
-
         public static void PayReservation()
         {
             Console.Clear();
@@ -181,7 +101,6 @@ namespace Jolly_Lights_Cinema_Group
 
             ReservationRepository reservationRepository = new();
             Reservation reservation = reservationRepository.FindReservationByReservationNumber(reservationNumber)!;
-
 
             CustomerOrderService customerOrderService = new();
             CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(reservation);

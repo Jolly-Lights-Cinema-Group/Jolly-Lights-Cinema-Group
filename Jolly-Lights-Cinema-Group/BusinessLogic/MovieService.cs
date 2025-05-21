@@ -42,11 +42,4 @@ public class MovieService
             }
         }
     }
-
-    public Movie? SelectMovieMenu()
-    {
-        MovieScheduleMenu movieScheduleMenu = new();
-        Movie? selectedMovie = movieScheduleMenu.SelectMovieMenu();
-        return selectedMovie;
-    }
 }

@@ -1,8 +1,41 @@
-namespace Jolly_Lights_Cinema_Group
+namespace Jolly_Lights_Cinema_Group.Presentation
 {
-    public class ReservationMenu : Menu
+    public static class ReservationMenu
     {
-        public ReservationMenu() : base("Reservation Menu.", new string[] { "Make Reservation", "Delete Reservation", "Pay Reservation" ,"Back" }) { }
-        
+        private static Menu _reservationMenu = new("Reservation Menu.", new string[] { "Make Reservation", "Edit Reservation", "Pay Reservation", "Back" });
+        public static void ShowReservationMenu()
+        {
+            var inManageReservationsMenu = true;
+            Console.Clear();
+
+            while (inManageReservationsMenu)
+            {
+                int userChoice = _reservationMenu.Run();
+                inManageReservationsMenu = HandleReservationChoice(userChoice);
+                Console.Clear();
+            }
+        }
+
+        private static bool HandleReservationChoice(int choice)
+        {
+            switch (choice)
+            {
+                case 0:
+                    ReservationHandler.AddReservation();
+                    return true;
+                case 1:
+                    EditReservationMenu editReservationMenu = new();
+                    editReservationMenu.EditReservation();
+                    return true;
+                case 2:
+                    ReservationHandler.PayReservation();
+                    return true;
+                case 3:
+                    return false;
+                default:
+                    Console.WriteLine("Invalid selection.");
+                    return false;
+            }
+        }
     }
 }

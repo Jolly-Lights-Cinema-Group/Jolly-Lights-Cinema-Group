@@ -45,4 +45,14 @@ public class ShopItemService
         }
         return false;
     }
+
+    public ShopItem? GetShopItemById(int id)
+    {
+        return _shopItemRepository.GetShopItemById(id);
+    }
+
+    public bool RestoreShopItem(ShopItem shopItem)
+    {
+        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock += 1), "");
+    }
 }

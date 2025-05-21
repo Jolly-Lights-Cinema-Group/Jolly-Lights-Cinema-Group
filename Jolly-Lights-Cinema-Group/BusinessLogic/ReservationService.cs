@@ -15,42 +15,21 @@ public class ReservationService
         return false;
     }
 
-    public void DeleteReservation(Reservation reservation)
+    public bool DeleteReservation(Reservation reservation)
     {
         if (_reservationRepository.RemoveReservation(reservation))
         {
-            Console.WriteLine("Reservation removed successfully.");
-            return;
+            return true;
         }
-        Console.WriteLine("No matching reservation found to remove.");
-        return;
+        return false;
     }
 
-    public void ShowAllReservations()
-    {
-        List<Reservation> reservations = _reservationRepository.GetAllReservations();
-        if (reservations.Count == 0)
-        {
-            Console.WriteLine("No reservations found.");
-            return;
-        }
-        Console.WriteLine("Reservations:");
-        foreach (Reservation reservation in reservations)
-        {
-            Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}; Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
-        }
-    }
-
-    public void FindReservationByReservationNumber(string reservationNumber)
+    public Reservation? FindReservationByReservationNumber(string reservationNumber)
     {
         Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
-        if (reservation != null)
-        {
-            Console.WriteLine($"{reservationNumber}:");
-            Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number: {reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
-            return;
-        }
-        Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");
+        if (reservation is null) return null;
+
+        return reservation;
     }
 
     public bool PayReservation(Reservation reservation)

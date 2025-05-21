@@ -3,26 +3,23 @@ using JollyLightsCinemaGroup.DataAccess;
 public class ScheduleShopItemService
 {
     private readonly ScheduleShopItemRepository _scheduleShopItemRepository = new ScheduleShopItemRepository();
-    public void RegisterScheduleShopItem(ScheduleShopItem scheduleShopItem)
+    public bool RegisterScheduleShopItem(ScheduleShopItem scheduleShopItem)
     {
         if (_scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem))
         {
-            Console.WriteLine("Item successfully added to reservation");
-            return;
+            return true;
         }
 
-        Console.WriteLine("Item could not be added to reservation.");
-        return;
+        return false; ;
     }
 
-    public void DeleteScheduleShopItem(ScheduleShopItem scheduleShopItem)
+    public bool DeleteScheduleShopItem(ScheduleShopItem scheduleShopItem)
     {
-        if (_scheduleShopItemRepository.RemoveScheduleShopItem(scheduleShopItem))
-        {
-            Console.WriteLine("Item successfully removed from reservation.");
-            return;
-        }
-        Console.WriteLine("No matching items found to remove.");
-        return;
+        return _scheduleShopItemRepository.RemoveScheduleShopItem(scheduleShopItem);
+    }
+
+    public List<ScheduleShopItem> GetScheduleShopItemByReservation(Reservation reservation)
+    {
+        return _scheduleShopItemRepository.GetScheduleShopItemByReservation(reservation);
     }
 }
