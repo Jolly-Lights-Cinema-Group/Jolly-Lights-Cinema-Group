@@ -52,7 +52,7 @@ namespace Jolly_Lights_Cinema_Group
             string? inputPrice;
             do
             {
-                Console.Write("Enter the price of the item (€): ");
+                Console.Write("Enter the price of the item (€) (excl. VAT): ");
                 inputPrice = Console.ReadLine();
             } while (!double.TryParse(inputPrice, out price) || price < 0);
 
@@ -63,6 +63,21 @@ namespace Jolly_Lights_Cinema_Group
                 Console.Write("Enter the stock: ");
                 inputStock = Console.ReadLine();
             } while (!Int32.TryParse(inputStock, out stock) || stock < 0);
+
+
+            string[] vatOptions = { "9%", "21%" };
+            Menu vatmenu = new("Select VAT percentage:", vatOptions);
+            int vatChoice = vatmenu.Run();
+
+            int vat;
+            if (vatChoice == 0)
+            {
+                vat = 9;
+            }
+            else
+            {
+                vat = 21;
+            }
 
             string? inputMinimumAge;
             do
@@ -79,11 +94,11 @@ namespace Jolly_Lights_Cinema_Group
             if (!string.IsNullOrWhiteSpace(inputMinimumAge))
             {
                 int minimumAge = int.Parse(inputMinimumAge);
-                shopItem = new(name, price, stock, Globals.SessionLocationId, minimumAge);
+                shopItem = new(name, price, stock, Globals.SessionLocationId, vat, minimumAge);
             }
             else
             {
-                shopItem = new(name, price, stock, Globals.SessionLocationId);
+                shopItem = new(name, price, stock, Globals.SessionLocationId, vat);
             }
 
             ShopItemService shopItemService = new ShopItemService();
@@ -101,7 +116,7 @@ namespace Jolly_Lights_Cinema_Group
             List<ShopItem> shopItems = shopItemRepository.GetAllShopItems();
 
             string[] menuItems = shopItems
-                .Select(item => $"Name: {item.Name}; Price: €{item.Price}; Stock: {item.Stock}; Minimum age: {item.MinimumAge}")
+                .Select(item => $"Name: {item.Name}; Price: €{item.Price}; Stock: {item.Stock}; VAT: {item.VatPercentage}%; Minimum age: {item.MinimumAge}")
                 .Append("Finish")
                 .ToArray();
             

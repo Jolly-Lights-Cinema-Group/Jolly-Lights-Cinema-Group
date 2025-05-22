@@ -27,7 +27,7 @@ public class ShopItemService
         Console.WriteLine("Shop items:");
         foreach (var shopItem in shopItems)
         {
-            Console.WriteLine($"Id: {shopItem.Id}; Name: {shopItem.Name}; Price: €{shopItem.Price}; Stock: {shopItem.Stock};" +
+            Console.WriteLine($"Name: {shopItem.Name}; Price: €{shopItem.Price}; Stock: {shopItem.Stock}; VAT: {shopItem.VatPercentage}%" +
                             (shopItem.MinimumAge > 0 ? $" Minimum age: {shopItem.MinimumAge}" : ""));
         }
         return;
