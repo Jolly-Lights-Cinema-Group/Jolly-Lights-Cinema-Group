@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group;
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -100,5 +101,17 @@ public class ScheduleService
             }
         }
         return uniqueMovies;
+    }
+
+    public List<IGrouping<DateTime, Schedule>> GroupedSchedules(Movie selectedMovie)
+    {
+        List<Schedule> schedules = _scheduleRepo.GetSchedulesByMovie(selectedMovie);
+
+        var groupedSchedules = schedules
+            .GroupBy(s => s.StartDate.Date)
+            .OrderBy(g => g.Key)
+            .ToList();
+
+        return groupedSchedules;
     }
 }
