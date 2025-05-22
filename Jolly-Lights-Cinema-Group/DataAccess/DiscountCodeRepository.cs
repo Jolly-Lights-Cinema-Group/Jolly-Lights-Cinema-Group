@@ -11,12 +11,14 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT * FROM DiscountCode WHERE Code = @code";
+                    SELECT 1 FROM DiscountCode WHERE Code = @code LIMIT 1";
 
                 command.Parameters.AddWithValue("@code", code);
 
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                using (var reader = command.ExecuteReader())
+                {
+                    return reader.HasRows;
+                }
             }
         }
 
