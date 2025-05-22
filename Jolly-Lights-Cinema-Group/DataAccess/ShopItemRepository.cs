@@ -12,14 +12,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
 
                 command.CommandText = @"
-                    INSERT INTO ShopItem (Name, Price, Stock, LocationId, MinimumAge)
-                    VALUES (@name, @price, @stock, @locationId, @minimumAge);";
+                    INSERT INTO ShopItem (Name, Price, Stock, LocationId, VatPercentage, MinimumAge)
+                    VALUES (@name, @price, @stock, @locationId, @vatPercentage, @minimumAge);";
 
                 command.Parameters.Clear();
                 command.Parameters.AddWithValue("@name", shopItem.Name);
                 command.Parameters.AddWithValue("@price", shopItem.Price);
                 command.Parameters.AddWithValue("@stock", shopItem.Stock);
                 command.Parameters.AddWithValue("@locationId", shopItem.LocationId);
+                command.Parameters.AddWithValue("@vatPercentage", shopItem.VatPercentage);
                 command.Parameters.AddWithValue("@minimumAge", shopItem.MinimumAge);
 
                 return command.ExecuteNonQuery() > 0;
@@ -34,7 +35,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, LocationId, MinimumAge 
+                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge 
                     FROM ShopItem 
                     WHERE LocationId = @locationId;";
 
@@ -44,7 +45,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
                         shopItems.Add(shopItem);
                     }
                 }
@@ -122,7 +123,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, MinimumAge
+                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
                     FROM ShopItem
                     WHERE Name = @name AND LocationId = @locationId;";
 
@@ -133,7 +134,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     if (reader.Read())
                     {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
                         return shopItem;
                     }
                 }
@@ -148,7 +149,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, MinimumAge
+                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
                     FROM ShopItem
                     WHERE Id = @id AND LocationId = @locationId;";
 
@@ -159,7 +160,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     if (reader.Read())
                     {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
                         return shopItem;
                     }
                 }

@@ -281,7 +281,18 @@ namespace Jolly_Lights_Cinema_Group
 
             if (!reservationService.IsReservationPaid(reservation))
             {
-                Console.WriteLine($"Total: €{customerOrder.GrandPrice}");
+                OrderLineRepository orderLineRepository = new();
+                List<OrderLine> orderLines = orderLineRepository.GetOrderLinesByReservation(reservation);
+
+                foreach (OrderLine orderLine in orderLines)
+                {
+                    Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
+                }
+                Console.WriteLine($"-----------------------------------------------------------------------");
+                Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
+                Console.WriteLine($"VAT: €{customerOrder.Tax}");
+                Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
+
                 string? input;
                 do
                 {

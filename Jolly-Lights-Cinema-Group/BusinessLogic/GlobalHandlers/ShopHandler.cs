@@ -11,7 +11,7 @@ namespace Jolly_Lights_Cinema_Group
             _shopItems = shopItemRepository.GetAllShopItems();
 
             string[] menuItems = _shopItems
-                .Select(item => $"{item.Name}: €{item.Price}")
+                .Select(item => $"{item.Name}: €{Math.Round(item.Price * (1.0 + ((double)item.VatPercentage / 100)), 2)}")
                 .Append("Finish")
                 .ToArray();
             
