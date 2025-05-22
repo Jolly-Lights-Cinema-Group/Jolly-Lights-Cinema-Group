@@ -1,6 +1,7 @@
 using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.BusinessLogic.GlobalHandlers;
 using Jolly_Lights_Cinema_Group.Models;
+using Jolly_Lights_Cinema_Group.Presentation;
 
 namespace Jolly_Lights_Cinema_Group
 {
@@ -16,7 +17,7 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ReservationHandler.ManageReservations();
+                    ReservationMenu.ShowReservationMenu();
                     break;
                 case 1:
                     AdminUserHandler.ManageUsers();

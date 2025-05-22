@@ -52,5 +52,20 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return orderLines;
         }
+
+        public bool DeleteOrderLineByReservation(Reservation reservation)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    DELETE FROM OrderLine WHERE ReservationId = @reservationId;";
+
+                command.Parameters.AddWithValue("@reservationId", reservation.Id);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

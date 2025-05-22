@@ -1,3 +1,4 @@
+using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -5,54 +6,30 @@ using System.Collections.Generic;
 public class ReservationService
 {
     private readonly ReservationRepository _reservationRepository = new ReservationRepository();
-    public void RegisterReservation(Reservation reservation)
+    public bool RegisterReservation(Reservation reservation)
     {
         if (_reservationRepository.AddReservation(reservation))
         {
-            Console.WriteLine("Reservation added successfully.");
-            return;
+            return true;
         }
-
-        Console.WriteLine("Reservation was not added to the database.");
-        return;
+        return false;
     }
 
-    public void DeleteReservation(Reservation reservation)
+    public bool DeleteReservation(Reservation reservation)
     {
         if (_reservationRepository.RemoveReservation(reservation))
         {
-            Console.WriteLine("Reservation removed successfully.");
-            return;
+            return true;
         }
-        Console.WriteLine("No matching reservation found to remove.");
-        return;
+        return false;
     }
 
-    public void ShowAllReservations()
-    {
-        List<Reservation> reservations = _reservationRepository.GetAllReservations();
-        if (reservations.Count == 0)
-        {
-            Console.WriteLine("No reservations found.");
-            return;
-        }
-        Console.WriteLine("Reservations:");
-        foreach (Reservation reservation in reservations)
-        {
-            Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}; Name: {reservation.FirstName} {reservation.LastName}; Phone Number{reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
-        }
-    }
-
-    public void FindReservationByReservationNumber(string reservationNumber)
+    public Reservation? FindReservationByReservationNumber(string reservationNumber)
     {
         Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
-        if (reservation != null)
-        {
-            Console.WriteLine($"{reservationNumber}:");
-            Console.WriteLine($"Name: {reservation.FirstName} {reservation.LastName}; Phone Number: {reservation.PhoneNumber}; EMail: {reservation.EMail}; Paid: {reservation.Paid}");
-            return;
-        }
-        Console.WriteLine($"No reservation was found with reservation number: {reservationNumber}");
+        if (reservation is null) return null;
+
+        return reservation;
     }
 
     public bool PayReservation(Reservation reservation)
@@ -75,5 +52,22 @@ public class ReservationService
         ScheduleSeatRepository scheduleSeatRepository = new();
         var result = scheduleSeatRepository.GetReservedSeats(roomNumber, locationId);
         return result.Select(x => (x.Split(',')[0], x.Split(',')[1])).ToList();
+    }
+
+    public Reservation? MakeReservation()
+    {
+        MakeReservationMenu makeReservationMenu = new();
+        Reservation? reservation = makeReservationMenu.MakeReservation();
+
+        if (reservation is null) return null;
+
+        Reservation newReservation = _reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
+        return newReservation;
+    }
+
+    public void CompleteReservation(Reservation reservation, Movie selectedMovie, Schedule selectedSchedule, string selectedSeat)
+    {
+        MakeReservationMenu makeReservationMenu = new();
+        makeReservationMenu.CompleteReservation(reservation, selectedMovie, selectedSchedule, selectedSeat);
     }
 }

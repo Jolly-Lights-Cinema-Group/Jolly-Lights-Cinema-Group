@@ -11,6 +11,11 @@ public class OrderLineService
     {
         _orderLineRepo.AddOrderLine(orderLine);
     }
+
+    public bool DeleteOrderLineByReservation(Reservation reservation)
+    {
+        return _orderLineRepo.DeleteOrderLineByReservation(reservation);
+    }
     public void CreateOrderLineForReservation(Reservation reservation)
     {
         CreateOrderLineForScheduleShopItem(reservation);
