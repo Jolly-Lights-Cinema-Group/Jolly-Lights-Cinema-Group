@@ -75,7 +75,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return result;
         }
-        
+
         public void AddSeatToReservation(string seat, SeatType type, int reservationId, int scheduleId, double price)
         {
             using (var connection = DatabaseManager.GetConnection())
@@ -93,6 +93,33 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@ScheduleId", scheduleId);
                 command.ExecuteNonQuery();
             }
+        }
+
+        public List<ScheduleSeat> GetSeatsByReservation(Reservation reservation)
+        {
+            List<ScheduleSeat> scheduleSeats = new List<ScheduleSeat>();
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Id, ScheduleId, ReservationId, Price, Type, SeatNumber
+                    FROM ScheduleSeat
+                    WHERE ReservationId = @reservationId;";
+
+                command.Parameters.AddWithValue("@reservationId", reservation.Id);
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ScheduleSeat scheduleSeat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5));
+                        scheduleSeats.Add(scheduleSeat);
+                    }
+                }
+            }
+            return scheduleSeats;
         }
     }
 }
