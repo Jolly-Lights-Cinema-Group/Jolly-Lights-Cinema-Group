@@ -24,33 +24,15 @@ public class EmployeeService
         return _employeeRepo.AddEmployee(employee);
     }
 
-    public void DeleteEmployee(Employee employee)
+    public bool DeleteEmployee(Employee employee)
     {
 
-        if (_employeeRepo.DeleteEmployee(employee))
-        { Console.WriteLine("Employee Deleted Successfully"); }
-        else
-        {
-            Console.WriteLine("Employee not found.");
-        }
-
+        return _employeeRepo.DeleteEmployee(employee);
     }
 
-    public void ShowAllEmployees()
+    public List<Employee> ShowAllEmployees()
     {
-        List<Employee> employees = _employeeRepo.GetAllEmployees();
-        if (employees.Count == 0)
-        {
-            Console.WriteLine("No employees found.");
-        }
-        else
-        {
-            Console.WriteLine("Employees:");
-            foreach (var emp in employees)
-            {
-                Console.WriteLine($"Firstname: {emp.FirstName} Lastname: {emp.LastName} Date of birth: {emp.DateofBirth} Adress: {emp.Address} Email: {emp.Email} Username: {emp.UserName} Password: J0llyL1ghtC1nem@R0cks!@ Role: {emp.Role}");
-            }
-        }
+        return _employeeRepo.GetAllEmployees();
     }
 
     public void ChangeFirstName(string firstname, string username)
@@ -105,5 +87,10 @@ public class EmployeeService
     public bool UserNameExists(string userName)
     {
         return _employeeRepo.UserNameAlreadyExist(userName);
+    }
+
+    public Employee? GetEmployeeByUserName(string userName, string firstName, string lastName)
+    {
+        return _employeeRepo.GetEmployeeByUsername(userName, firstName, lastName);
     }
 }

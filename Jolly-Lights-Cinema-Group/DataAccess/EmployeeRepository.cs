@@ -41,10 +41,9 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM Employee WHERE FirstName = @firstName AND LastName = @lastName";
+                command.CommandText = "DELETE FROM Employee WHERE Id = @id";
 
-                command.Parameters.AddWithValue("@firstName", employee.FirstName);
-                command.Parameters.AddWithValue("@lastName", employee.LastName);
+                command.Parameters.AddWithValue("@id", employee.Id);
 
                 int rowsAffected = command.ExecuteNonQuery();
                 return rowsAffected > 0;
@@ -66,32 +65,36 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public Employee? GetEmployeeByUsername(Employee employee)  // not implemented yet. Only used for tests
+        public Employee? GetEmployeeByUsername(string userName, string firstName, string lastName)  // not implemented yet. Only used for tests
         {
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText = @"
-                SELECT FirstName, LastName, DateOfBirth, Address, Email, UserName, Password, Role
+                SELECT Id, FirstName, LastName, DateOfBirth, Address, Email, UserName, Password, Role
                 FROM Employee
-                WHERE UserName = @username;";
+                WHERE UserName = @username AND FirstName = @firstName AND LastName = @lastName;";
 
-                command.Parameters.AddWithValue("@username", employee.UserName);
+                command.Parameters.AddWithValue("@username", userName);
+                command.Parameters.AddWithValue("@firstName", firstName);
+                command.Parameters.AddWithValue("@lastName", lastName);
+
 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
                         return new Employee(
-                            reader.GetString(0), // FirstName
-                            reader.GetString(1), // LastName
-                            reader.GetString(2), // DateOfBirth
-                            reader.GetString(3), // Address
-                            reader.GetString(4), // Email
-                            reader.GetString(5), // Username
-                            reader.GetString(6), // Password
-                            (Role)Enum.Parse(typeof(Role), reader.GetString(7)) // Role
+                            reader.GetInt32(0),
+                            reader.GetString(1), // FirstName
+                            reader.GetString(2), // LastName
+                            reader.GetString(3), // DateOfBirth
+                            reader.GetString(4), // Address
+                            reader.GetString(5), // Email
+                            reader.GetString(6), // Username
+                            reader.GetString(7), // Password
+                            (Role)Enum.Parse(typeof(Role), reader.GetString(8)) // Role
                         );
                     }
                 }

@@ -55,7 +55,8 @@ namespace Jolly_Lights.Tests
             ReservationRepository reservationRepository = new ReservationRepository();
 
             reservationRepository.AddReservation(reservation);
-            bool result = reservationRepository.RemoveReservation(reservation);
+            Reservation? newReservation = reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber);
+            bool result = reservationRepository.RemoveReservation(newReservation!);
 
             Assert.IsTrue(result, "Reservation not removed from database");
         }
