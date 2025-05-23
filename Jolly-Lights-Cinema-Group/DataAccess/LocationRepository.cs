@@ -31,13 +31,38 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     DELETE FROM Location
+                    WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", location.Id);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public Location? GetLocation(Location location)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Id, Name, Address
+                    FROM Location
                     WHERE Name = @name AND Address = @address;";
 
                 command.Parameters.AddWithValue("@name", location.Name);
                 command.Parameters.AddWithValue("@address", location.Address);
 
-                return command.ExecuteNonQuery() > 0;
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        Location newLocation = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
+                        return newLocation;
+                    }
+                }
             }
+            return null;
         }
 
         public List<Location> GetAllLocations()

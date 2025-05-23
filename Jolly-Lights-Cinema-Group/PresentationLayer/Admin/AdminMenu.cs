@@ -32,7 +32,7 @@ namespace Jolly_Lights_Cinema_Group
                     ManageEmployeeMenu.ShowManageEmployeeMenu();
                     return true;
                 case 2:
-                    AdminLocationHandler.ManageLocations();
+                    ManageLocationMenu.ShowManageLocationMenu();
                     return true;
                 case 3:
                     AdminMovieHandler.ManageMovies();

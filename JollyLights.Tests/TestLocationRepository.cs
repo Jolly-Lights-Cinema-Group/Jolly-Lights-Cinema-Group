@@ -80,7 +80,9 @@ namespace Jolly_Lights.Tests
 
             locationRepository.AddLocation(location);
 
-            bool result = locationRepository.RemoveLocation(location);
+            Location? addedLocation = locationRepository.GetLocation(location);
+
+            bool result = locationRepository.RemoveLocation(addedLocation!);
 
             Assert.IsTrue(result, "Location could not be deleted.");
         }

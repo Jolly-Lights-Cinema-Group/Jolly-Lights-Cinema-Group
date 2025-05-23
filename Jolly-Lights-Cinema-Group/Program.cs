@@ -17,8 +17,8 @@ namespace Jolly_Lights_Cinema_Group
             LocationMenu location = new();
             int selectedLocation = location.Run();
 
-            LocationRepository locationRepository = new LocationRepository();
-            List<Location> locations = locationRepository.GetAllLocations();
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
 
             Globals.SessionLocationId = (int)locations[selectedLocation].Id!;
 
