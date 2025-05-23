@@ -1,8 +1,6 @@
 ﻿using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.Common;
 using Jolly_Lights_Cinema_Group.Enum;
-using Jolly_Lights_Cinema_Group.Models;
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group

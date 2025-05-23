@@ -25,7 +25,7 @@ namespace Jolly_Lights_Cinema_Group
                     ReportsHandler.ManageReports();
                     break;
                 case 4:
-                    AccountSettingsHandler.ManageAccount();
+                    AccountSettingsMenu.ShowAccountSettingsMenu();
                     break;
                 case 5:
                     user.IsAuthenticated = false;

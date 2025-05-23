@@ -1,14 +1,4 @@
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
-using Jolly_Lights_Cinema_Group.Enum;
-using Microsoft.VisualBasic;
-using Jolly_Lights_Cinema_Group.Models;
-using Jolly_Lights_Cinema_Group.Common;
-
-// Business Service that will validate Userinput. For now it won't do much, except that it will Verify user registration (RegisterEmployee) input. 
-//
 
 public class EmployeeService
 {
@@ -35,53 +25,24 @@ public class EmployeeService
         return _employeeRepo.GetAllEmployees();
     }
 
-    public void ChangeFirstName(string firstname, string username)
+    public bool ChangeFirstName(string firstname, string username)
     {
-        if (_employeeRepo.ChangeFirstNameDB(firstname, username))
-        {
-            Console.WriteLine("Firstname changed.");
-        }
-        else
-        {
-            Console.WriteLine("Firstname didn't changed.");
-        }
-
+        return _employeeRepo.ChangeFirstNameDB(firstname, username);
     }
 
-    public void ChangeLastName(string lastname, string username)
+    public bool ChangeLastName(string lastname, string username)
     {
-        if (_employeeRepo.ChangeLastNameDB(lastname, username))
-        {
-            Console.WriteLine("Lastname changed.");
-        }
-        else
-        {
-            Console.WriteLine("Lastname didn't changed.");
-        }
+        return _employeeRepo.ChangeLastNameDB(lastname, username);
     }
 
-    public void ChangeEmail(string email, string username)
+    public bool ChangeEmail(string email, string username)
     {
-        if (_employeeRepo.ChangeEmailDB(email, username))
-        {
-            Console.WriteLine("email changed.");
-        }
-        else
-        {
-            Console.WriteLine("email didn't changed.");
-        }
+        return _employeeRepo.ChangeEmailDB(email, username);
     }
 
-    public void ChangePassword(string password, string username)
+    public bool ChangePassword(string password, string username)
     {
-        if (_employeeRepo.ChangePasswordDB(password, username))
-        {
-            Console.WriteLine("password changed.");
-        }
-        else
-        {
-            Console.WriteLine("password didn't changed.");
-        }
+        return _employeeRepo.ChangePasswordDB(password, username);
     }
 
     public bool UserNameExists(string userName)
