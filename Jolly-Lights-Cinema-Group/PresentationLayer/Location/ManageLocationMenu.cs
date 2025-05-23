@@ -1,6 +1,4 @@
 using Jolly_Lights_Cinema_Group;
-using Jolly_Lights_Cinema_Group.Enum;
-using JollyLightsCinemaGroup.BusinessLogic;
 
 public static class ManageLocationMenu
 {
@@ -199,6 +197,6 @@ public static class ManageLocationMenu
         }
 
         Console.WriteLine("\nPress any key to continue.");
-        Console.ReadKey();   
+        Console.ReadKey();
     }
 }
