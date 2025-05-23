@@ -26,7 +26,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public void UpdateFreeTimeColumn()
+        public bool UpdateFreeTimeColumn()
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -37,7 +37,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                     SET FreeAfter = time(StartTime, '+' || (SELECT Duration + 15 FROM Movie WHERE Id = Schedule.MovieId) || ' minutes')
                     WHERE EXISTS (SELECT 1 FROM Movie WHERE Id = Schedule.MovieId);";
 
-                command.ExecuteNonQuery();
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
@@ -86,15 +86,9 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                                         DELETE FROM Schedule 
-                                        WHERE MovieRoomId = @movieRoomId 
-                                        AND MovieId = @movieId 
-                                        AND StartDate = @startDate 
-                                        AND StartTime = @startTime;";
+                                        WHERE Id = @id ;";
 
-                command.Parameters.AddWithValue("@movieRoomId", schedule.MovieRoomId);
-                command.Parameters.AddWithValue("@movieId", schedule.MovieId);
-                command.Parameters.AddWithValue("@startDate", schedule.StartDate);
-                command.Parameters.AddWithValue("@startTime", schedule.StartTime);
+                command.Parameters.AddWithValue("@id", schedule.Id);
 
                 return command.ExecuteNonQuery() > 0;
             }
@@ -183,9 +177,37 @@ namespace JollyLightsCinemaGroup.DataAccess
                     }
                 }
             }
-            return schedules;    
+            return schedules;
+        }
+
+        public List<Schedule> GetScheduleByMovieAndRoom(Movie movie, MovieRoom movieRoom)
+        {
+            List<Schedule> schedules = new List<Schedule>();
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule WHERE MovieId = @movieId AND MovieRoomId = @movieRoomId;";
+
+                command.Parameters.AddWithValue("@movieId", movie.Id);
+                command.Parameters.AddWithValue("@movieRoomId", movieRoom.Id);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Schedule schedule = new(
+                            reader.GetInt32(0),
+                            reader.GetInt32(1),
+                            reader.GetInt32(2),
+                            reader.GetDateTime(3),
+                            reader.GetTimeSpan(4));
+                        schedules.Add(schedule);
+                    }
+                }
+            }
+            return schedules;
         }
     }
-
-
 }

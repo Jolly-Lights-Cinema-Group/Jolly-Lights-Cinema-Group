@@ -38,7 +38,7 @@ public class MovieRoomService
             }
         }
     }
-    
+
     public void DeleteRoom(int roomNumber, int locationId)
     {
         _movieRoomRepo.DeleteMovieRoom(roomNumber, locationId);
@@ -46,7 +46,12 @@ public class MovieRoomService
 
     public List<List<string>>? GetRoomLayout(int roomNumber, int locationId)
     {
-        var roomLayoutJson =  _movieRoomRepo.GetRoomLayoutJson(roomNumber, locationId);
+        var roomLayoutJson = _movieRoomRepo.GetRoomLayoutJson(roomNumber, locationId);
         return MovieRoomJsonHelper.ConvertJsonToGrid(roomLayoutJson);
+    }
+
+    public List<MovieRoom> GetMovieRooms(int locationId)
+    {
+        return _movieRoomRepo.GetAllMovieRooms(locationId);
     }
 }

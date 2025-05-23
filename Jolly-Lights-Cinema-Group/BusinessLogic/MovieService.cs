@@ -17,4 +17,14 @@ public class MovieService
     {
         return _movieRepo.GetAllMovies();
     }
+
+    public Movie? GetMovieById(int id)
+    {
+        return _movieRepo.GetMovieById(id);
+    }
+
+    public Movie? GetMovieTitle(string title)
+    {
+        return _movieRepo.GetMovieByTitle(title);
+    }
 }
