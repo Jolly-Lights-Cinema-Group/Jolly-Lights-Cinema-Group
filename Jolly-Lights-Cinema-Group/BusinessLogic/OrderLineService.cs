@@ -75,4 +75,43 @@ public class OrderLineService
     {
         return _orderLineRepo.GetOrderLinesByReservation(reservation);
     }
+
+    public List<OrderLine> CreateOrderLineForScheduleShopItem(Reservation reservation, List<ShopItem> shopItems)
+    {
+        List<OrderLine> orderLines = new List<OrderLine>();
+
+        for (int i = 0; i < shopItems.Count; i++)
+        {
+            ShopItem item = shopItems[i];
+            if (item.Id is null)
+            {
+                shopItems.Remove(item);
+            }
+        }
+
+        List<IGrouping<int, ShopItem>> groupedItems = shopItems
+            .Where(item => item.Id.HasValue)
+            .GroupBy(item => item.Id!.Value)
+            .ToList();
+
+        foreach (IGrouping<int, ShopItem> group in groupedItems)
+        {
+            int shopItemId = group.Key;
+            int quantity = group.Count();
+
+            ShopItemRepository shopItemRepository = new();
+
+            ShopItem shopItem = shopItemRepository.GetShopItemById(shopItemId)!;
+            if (shopItem == null)
+                continue;
+
+            double totalPrice = quantity * shopItem.Price;
+
+            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, shopItem.VatPercentage, totalPrice);
+
+            _orderLineRepo.AddOrderLine(orderLine);
+            orderLines.Add(orderLine);
+        }
+        return orderLines;
+    }
 }

@@ -28,6 +28,23 @@ public class CustomerOrderService
         return customerOrder;
     }
 
+    public CustomerOrder CreateCustomerOrderForCashDesk(List<OrderLine> orderLines)
+    {
+        double grandTotal = 0;
+        double tax = 0;
+
+        foreach (OrderLine orderLine in orderLines)
+        {
+            double vat = orderLine.VatPercentage / 100.0;
+            double taxPerOrderLine = orderLine.Price * vat;
+            tax += taxPerOrderLine;
+            grandTotal += orderLine.Price + taxPerOrderLine;
+        }
+
+        CustomerOrder customerOrder = new(Math.Round(grandTotal, 2), DateTime.Now, Math.Round(tax, 2));
+        return customerOrder;
+    }
+
     public double GetGrossAnualEarnings(int year)
     {
         double total = 0;
