@@ -125,10 +125,10 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.CommandText = @"
                     SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
                     FROM ShopItem
-                    WHERE Name = @name AND LocationId = @locationId;";
+                    WHERE Name = @name;";
 
                 command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
+                // command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
 
                 using (var reader = command.ExecuteReader())
                 {

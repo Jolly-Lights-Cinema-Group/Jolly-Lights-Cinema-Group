@@ -109,7 +109,7 @@ namespace Jolly_Lights.Tests
             Assert.AreEqual("Test2", FirstnameNotchanged.FirstName, "Username should be Test2.");
 
             employeerepository.ChangeFirstNameDB("ChangedUser", employee.UserName);
-            Employee? FirstnameChanged = employeerepository.GetEmployeeByUsername(employee.UserName, employee.FirstName, employee.LastName);
+            Employee? FirstnameChanged = employeerepository.GetEmployeeByUsername(employee.UserName, "ChangedUser", employee.LastName);
 
             Assert.IsNotNull(FirstnameChanged, "Employee with first name changed not found in database");
             Assert.AreEqual("ChangedUser", FirstnameChanged.FirstName, "Test2 should be changed to ChangedUser");
@@ -128,7 +128,7 @@ namespace Jolly_Lights.Tests
             Assert.AreEqual("Employee", LastnameNotchanged.LastName, "Lastname should be Employee.");
 
             employeerepository.ChangeLastNameDB("ChangedUser", employee.UserName);
-            Employee? LastnameChanged = employeerepository.GetEmployeeByUsername(employee.UserName, employee.FirstName, employee.LastName);
+            Employee? LastnameChanged = employeerepository.GetEmployeeByUsername(employee.UserName, employee.FirstName, "ChangedUser");
 
             Assert.IsNotNull(LastnameChanged, "Employee with last name changed not found in database");
             Assert.AreEqual("ChangedUser", LastnameChanged.LastName, "Employee should be changed to ChangedUser");

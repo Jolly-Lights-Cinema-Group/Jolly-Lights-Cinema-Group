@@ -16,7 +16,7 @@ namespace Jolly_Lights_Cinema_Group
                     ReservationMenu.ShowReservationMenu();
                     break;
                 case 1:
-                    ShopManagementHandler.ManageShopManagement();
+                    ShopManagementMenu.ShowShopManagementMenu();
                     break;
                 case 2:
                     ManageUsers();

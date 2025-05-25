@@ -19,7 +19,7 @@ namespace Jolly_Lights_Cinema_Group
                     DiscountCodeHandler.ManageDiscountCode();
                     break;
                 case 2:
-                    ShopManagementHandler.ManageShopManagement();
+                    ShopManagementMenu.ShowShopManagementMenu();
                     break;
                 case 3:
                     ReportsHandler.ManageReports();
