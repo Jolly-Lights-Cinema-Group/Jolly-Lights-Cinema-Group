@@ -22,7 +22,7 @@ namespace Jolly_Lights_Cinema_Group
                     ShopManagementMenu.ShowShopManagementMenu();
                     break;
                 case 3:
-                    ReportsHandler.ManageReports();
+                    ReportsMenu.ShowReportsMenu();
                     break;
                 case 4:
                     AccountSettingsMenu.ShowAccountSettingsMenu();

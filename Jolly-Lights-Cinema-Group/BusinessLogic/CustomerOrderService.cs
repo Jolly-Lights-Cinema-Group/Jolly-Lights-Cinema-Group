@@ -20,7 +20,7 @@ public class CustomerOrderService
 
         foreach (OrderLine orderLine in orderLines)
         {
-            double vat = orderLine.VatPercentage / 100.0; 
+            double vat = orderLine.VatPercentage / 100.0;
             double taxPerOrderLine = orderLine.Price * vat;
             tax += taxPerOrderLine;
             grandTotal += orderLine.Price + taxPerOrderLine;
@@ -52,5 +52,10 @@ public class CustomerOrderService
             total += customerOrder.GrandPrice - customerOrder.Tax;
         }
         return Math.Round(total, 2);
+    }
+
+    public List<int> GetAvailableYears()
+    {
+        return _customerOrderRepository.GetAvailableYears();
     }
 }

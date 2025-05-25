@@ -1,9 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
-using System.Xml.Serialization;
-using Jolly_Lights_Cinema_Group.Common;
-using Jolly_Lights_Cinema_Group.Models;
 using System.Text;
 
 

@@ -1,5 +1,4 @@
 using Jolly_Lights_Cinema_Group;
-using JollyLightsCinemaGroup.BusinessLogic;
 
 public class EditReservationMenu
 {

@@ -1,5 +1,3 @@
-using Gtk;
-using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.Models;
 using Jolly_Lights_Cinema_Group.Presentation;
 
@@ -50,7 +48,7 @@ namespace Jolly_Lights_Cinema_Group
                     ManageSeatsMenu.ManageSeats();
                     return true;
                 case 8:
-                    ReportsHandler.ManageReports();
+                    ReportsMenu.ShowReportsMenu();
                     return true;
                 case 9:
                     AccountSettingsMenu.ShowAccountSettingsMenu();
