@@ -44,7 +44,7 @@ namespace Jolly_Lights_Cinema_Group
                     ManageScheduleMenu.ShowScheduleManagementMenu();
                     return true;
                 case 6:
-                    AdminMovieRoomHandler.ManageMovieRooms();
+                    ManageMovieRoomMenu.ShowManageMovieRoomMenu();
                     return true;
                 case 7:
                     SeatService.ManageSeats();
