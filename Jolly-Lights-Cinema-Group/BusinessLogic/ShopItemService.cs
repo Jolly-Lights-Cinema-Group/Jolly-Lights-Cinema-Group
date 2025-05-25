@@ -3,16 +3,9 @@ using JollyLightsCinemaGroup.DataAccess;
 public class ShopItemService
 {
     private readonly ShopItemRepository _shopItemRepository = new ShopItemRepository();
-    public void RegisterShopItem(ShopItem shopItem)
+    public bool RegisterShopItem(ShopItem shopItem)
     {
-        if (_shopItemRepository.AddShopItem(shopItem))
-        {
-            Console.WriteLine("Item successfully added to the shop.");
-            return;
-        }
-
-        Console.WriteLine("Item was not added to the shop.");
-        return;
+        return _shopItemRepository.AddShopItem(shopItem);
     }
 
     public List<ShopItem> GetAllShopItems()
@@ -20,15 +13,9 @@ public class ShopItemService
         List<ShopItem> shopItems = _shopItemRepository.GetAllShopItems();
         return shopItems;
     }
-    public void UpdateShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
+    public bool UpdateShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
     {
-        if (_shopItemRepository.ModifyShopItem(shopItem, newName, newPrice, newStock, newMinimumAge))
-        {
-            Console.WriteLine($"{shopItem.Name} is updated");
-            return;
-        }
-        Console.WriteLine("No item found in shop to update.");
-        return;
+        return _shopItemRepository.ModifyShopItem(shopItem, newName, newPrice, newStock, newMinimumAge);
     }
 
     public bool SellShopItem(ShopItem shopItem, Reservation reservation)

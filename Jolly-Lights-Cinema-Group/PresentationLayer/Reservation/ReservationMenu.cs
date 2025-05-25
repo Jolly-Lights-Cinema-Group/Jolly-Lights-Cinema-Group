@@ -28,7 +28,8 @@ namespace Jolly_Lights_Cinema_Group.Presentation
                     editReservationMenu.EditReservation();
                     return true;
                 case 2:
-                    ReservationHandler.PayReservation();
+                    PayReservationMenu payReservationMenu = new();
+                    payReservationMenu.PayReservation();
                     return true;
                 case 3:
                     return false;

@@ -26,7 +26,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return command.ExecuteNonQuery() > 0;
             }
         }
-        public List<ShopItem> GetAllShopItems()
+        public List<ShopItem> GetAllShopItems(int locationId)
         {
             List<ShopItem> shopItems = new List<ShopItem>();
 
@@ -39,7 +39,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                     FROM ShopItem 
                     WHERE LocationId = @locationId;";
 
-                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
+                command.Parameters.AddWithValue("@locationId", locationId);
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -52,6 +52,12 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
             return shopItems;
         }
+
+        public List<ShopItem> GetAllShopItems()
+        {
+            return GetAllShopItems(Globals.SessionLocationId);
+        }
+
         public bool ModifyShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
         {
             using (var connection = DatabaseManager.GetConnection())
@@ -125,10 +131,36 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.CommandText = @"
                     SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
                     FROM ShopItem
-                    WHERE Name = @name AND LocationId = @locationId;";
+                    WHERE Name = @name;";
 
                 command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
+                // command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
+                        return shopItem;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public ShopItem? GetShopItemById(int id, int locationId)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
+                    FROM ShopItem
+                    WHERE Id = @id AND LocationId = @locationId;";
+
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@locationId", locationId);
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -144,28 +176,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 
         public ShopItem? GetShopItemById(int id)
         {
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
-                    FROM ShopItem
-                    WHERE Id = @id AND LocationId = @locationId;";
-
-                command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
-                        return shopItem;
-                    }
-                }
-            }
-            return null;
+            return GetShopItemById(id, Globals.SessionLocationId);
         }
     }
 }

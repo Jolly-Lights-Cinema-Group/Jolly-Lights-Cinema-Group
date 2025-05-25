@@ -1,4 +1,3 @@
-using Jolly_Lights_Cinema_Group;
 using JollyLightsCinemaGroup.DataAccess;
 
 public class MovieService
@@ -8,38 +7,23 @@ public class MovieService
     {
         _movieRepo = new MovieRepository();
     }
-    public void RegisterMovie(Movie movie)
+    public bool RegisterMovie(Movie movie)
     {
-        if (string.IsNullOrWhiteSpace(movie.Title))
-        {
-            Console.WriteLine("Error: Title cannot be empty.");
-            return;
-        }
-
-        if (_movieRepo.AddMovie(movie))
-        {
-            Console.WriteLine("Movie has been added.");
-        }
-        else
-        {
-            Console.WriteLine("Something went wrong.");
-        }
+        return _movieRepo.AddMovie(movie);
     }
 
-    public void ShowAllMovies()
+    public List<Movie> ShowAllMovies()
     {
-        List<Movie> movies = _movieRepo.GetAllMovies();
-        if (movies.Count == 0)
-        {
-            Console.WriteLine("No movies found.");
-        }
-        else
-        {
-            Console.WriteLine("Movies:");
-            foreach (var movie in movies)
-            {
-                Console.WriteLine($"Title:{movie.Title}; Duration: {movie.Duration}; MinimumAge: {movie.MinimumAge}; ReleaseDate: {movie.ReleaseDate}; Case: {movie.MovieCast}");
-            }
-        }
+        return _movieRepo.GetAllMovies();
+    }
+
+    public Movie? GetMovieById(int id)
+    {
+        return _movieRepo.GetMovieById(id);
+    }
+
+    public Movie? GetMovieTitle(string title)
+    {
+        return _movieRepo.GetMovieByTitle(title);
     }
 }

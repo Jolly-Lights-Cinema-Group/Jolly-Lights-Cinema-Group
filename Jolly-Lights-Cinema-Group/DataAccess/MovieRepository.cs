@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
@@ -26,7 +24,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public static Movie? GetMovieById(int index)
+        public Movie? GetMovieById(int index)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -56,7 +54,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return null;
         }
 
-        public static Movie? GetMovieByTitle(string Title)
+        public Movie? GetMovieByTitle(string Title)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -83,7 +81,6 @@ namespace JollyLightsCinemaGroup.DataAccess
                     }
                 }
             }
-            Console.WriteLine("Movie with this Title not found.");
             return null;
         }
 

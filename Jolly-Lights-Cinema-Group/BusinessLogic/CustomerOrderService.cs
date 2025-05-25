@@ -1,6 +1,4 @@
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 
 public class CustomerOrderService
 {
@@ -20,7 +18,24 @@ public class CustomerOrderService
 
         foreach (OrderLine orderLine in orderLines)
         {
-            double vat = orderLine.VatPercentage / 100.0; 
+            double vat = orderLine.VatPercentage / 100.0;
+            double taxPerOrderLine = orderLine.Price * vat;
+            tax += taxPerOrderLine;
+            grandTotal += orderLine.Price + taxPerOrderLine;
+        }
+
+        CustomerOrder customerOrder = new(Math.Round(grandTotal, 2), DateTime.Now, Math.Round(tax, 2));
+        return customerOrder;
+    }
+
+    public CustomerOrder CreateCustomerOrderForCashDesk(List<OrderLine> orderLines)
+    {
+        double grandTotal = 0;
+        double tax = 0;
+
+        foreach (OrderLine orderLine in orderLines)
+        {
+            double vat = orderLine.VatPercentage / 100.0;
             double taxPerOrderLine = orderLine.Price * vat;
             tax += taxPerOrderLine;
             grandTotal += orderLine.Price + taxPerOrderLine;
@@ -52,5 +67,10 @@ public class CustomerOrderService
             total += customerOrder.GrandPrice - customerOrder.Tax;
         }
         return Math.Round(total, 2);
+    }
+
+    public List<int> GetAvailableYears()
+    {
+        return _customerOrderRepository.GetAvailableYears();
     }
 }

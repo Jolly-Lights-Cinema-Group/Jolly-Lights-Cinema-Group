@@ -31,9 +31,11 @@ namespace Jolly_Lights.Tests
             MovieRoomRepository movieRoomRepository = new MovieRoomRepository();
             LocationRepository locationRepository = new LocationRepository();
 
+            MovieRoom movieRoom = new(1, "[a:a]", MovieType.Regular, 1);
+
             locationRepository.AddLocation(location);
             movieRepository.AddMovie(movie);
-            movieRoomRepository.AddMovieRoom(1, "[a:a]", 1, 1);
+            movieRoomRepository.AddMovieRoom(movieRoom);
         }
         // AddSchedule
         [TestMethod]
@@ -53,7 +55,7 @@ namespace Jolly_Lights.Tests
         public void Test_DeleteSchedule_DeleteScheduletoDB()
         {
 
-            Schedule schedule = new Schedule(1, 1, DateTime.Today, TimeSpan.FromMinutes(60));
+            Schedule schedule = new Schedule(1, 1, 1, DateTime.Today, TimeSpan.FromMinutes(60));
             ScheduleRepository scheduleRepository = new ScheduleRepository();
             scheduleRepository.AddSchedule(schedule);
 

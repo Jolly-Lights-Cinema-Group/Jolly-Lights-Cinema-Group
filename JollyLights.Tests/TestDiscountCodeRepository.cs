@@ -34,7 +34,8 @@ namespace Jolly_Lights.Tests
 
             locationRepository.AddLocation(location);
             movieRepository.AddMovie(movie);
-            movieRoomRepository.AddMovieRoom(1, "[a:a]", 1, 1);
+            MovieRoom movieRoom = new(1, "[a:a]", MovieType.Regular, 1);
+            movieRoomRepository.AddMovieRoom(movieRoom);
             string firstName = "Jane";
             string lastName = "Doe";
             int phoneNumber = 123456789;
@@ -59,7 +60,7 @@ namespace Jolly_Lights.Tests
 
             discountCodeRepository.AddDiscountCode(discountcode);
 
-            bool result = discountCodeRepository.CheckIfCodeExist(discountcode.Code);
+            bool result = discountCodeRepository.CheckIfCodeExist(discountcode.Code!);
 
             Assert.IsTrue(result, "Code should be in the DB. Should return true if insertion was successfull.");
 
@@ -85,7 +86,7 @@ namespace Jolly_Lights.Tests
 
             discountCodeRepository.AddDiscountCode(discountcode);
 
-            bool result = discountCodeRepository.DeleteDiscountCode(discountcode.Code);
+            bool result = discountCodeRepository.DeleteDiscountCode(discountcode.Code!);
 
             Assert.IsTrue(result, "Code should be in the DB. Should have been deleted.");
         }

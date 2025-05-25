@@ -1,8 +1,6 @@
 ﻿using Jolly_Lights_Cinema_Group.BusinessLogic;
 using Jolly_Lights_Cinema_Group.Common;
 using Jolly_Lights_Cinema_Group.Enum;
-using Jolly_Lights_Cinema_Group.Models;
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
 
 namespace Jolly_Lights_Cinema_Group
@@ -17,8 +15,8 @@ namespace Jolly_Lights_Cinema_Group
             LocationMenu location = new();
             int selectedLocation = location.Run();
 
-            LocationRepository locationRepository = new LocationRepository();
-            List<Location> locations = locationRepository.GetAllLocations();
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
 
             Globals.SessionLocationId = (int)locations[selectedLocation].Id!;
 
@@ -46,22 +44,15 @@ namespace Jolly_Lights_Cinema_Group
                 switch (user.Role)
                 {
                     case Role.Admin:
-                        AdminMenu adminMenu = new AdminMenu();
-                        int adminChoice = adminMenu.Run();
-                        AdminChoiceHandler.AdminMainMenu = true;
-                        AdminChoiceHandler.HandleChoice(adminChoice, ref user);
+                        AdminMenu.ShowAdminMenu(ref user);
                         break;
 
                     case Role.Manager:
-                        ManagerMenu managerMenu = new ManagerMenu();
-                        int managerChoice = managerMenu.Run();
-                        ManagerChoiceHandler.HandleChoice(managerChoice, ref user);
+                        ManagerMenu.ShowManagerMenu(ref user);
                         break;
 
                     case Role.Employee:
-                        EmployeeMenu employeeMenu = new EmployeeMenu();
-                        int employeeChoice = employeeMenu.Run();
-                        EmployeeChoiceHandler.HandleChoice(employeeChoice, ref user);
+                        EmployeeMenu.ShowEmployeerMenu(ref user);
                         break;
 
                     default:

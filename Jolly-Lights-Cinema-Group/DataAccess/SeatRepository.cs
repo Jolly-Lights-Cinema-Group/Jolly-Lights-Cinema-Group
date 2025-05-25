@@ -55,7 +55,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return price;
         }
 
-        public void ModifySeatPrices(Seat seat, decimal newPrice, int locationId)
+        public bool ModifySeatPrices(Seat seat, decimal newPrice, int locationId)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -67,7 +67,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@SeatId", seat.Id);
                 command.Parameters.AddWithValue("@LocationId", locationId);
 
-                command.ExecuteNonQuery();
+                return command.ExecuteNonQuery() > 0;
             }
         }
     }

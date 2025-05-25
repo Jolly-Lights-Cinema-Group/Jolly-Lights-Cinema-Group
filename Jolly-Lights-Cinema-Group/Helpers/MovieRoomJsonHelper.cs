@@ -7,7 +7,7 @@ public class MovieRoomJsonHelper
     public static List<List<string>> ReadGridFromFile(string? path)
     {
         var grid = new List<List<string>>();
-        foreach (var line in File.ReadLines(path))
+        foreach (var line in File.ReadLines(path!))
         {
             var row = new List<string>();
             var elements = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);

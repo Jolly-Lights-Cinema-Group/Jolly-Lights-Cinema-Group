@@ -1,8 +1,10 @@
+using Jolly_Lights_Cinema_Group.Enum;
+
 namespace JollyLightsCinemaGroup.DataAccess;
 
 public class MovieRoomRepository
 {
-    public void AddMovieRoom(int roomNumber, string roomLayoutJson, int supportedMovieType, int locationId)
+    public bool AddMovieRoom(MovieRoom movieRoom)
     {
         using (var connection = DatabaseManager.GetConnection())
         {
@@ -12,13 +14,12 @@ public class MovieRoomRepository
                     INSERT INTO MovieRoom (RoomNumber, RoomLayoutJson, SupportedMovieType, LocationId)
                     VALUES (@roomNumber, @roomLayoutJson, @supportedMovieType, @locationId);";
 
-            command.Parameters.AddWithValue("@roomNumber", roomNumber);
-            command.Parameters.AddWithValue("@roomLayoutJson", roomLayoutJson);
-            command.Parameters.AddWithValue("@supportedMovieType", supportedMovieType);
-            command.Parameters.AddWithValue("@locationId", locationId);
+            command.Parameters.AddWithValue("@roomNumber", movieRoom.RoomNumber);
+            command.Parameters.AddWithValue("@roomLayoutJson", movieRoom.RoomLayoutJson);
+            command.Parameters.AddWithValue("@supportedMovieType", movieRoom.SupportedMovieType);
+            command.Parameters.AddWithValue("@locationId", movieRoom.LocationId);
 
-            command.ExecuteNonQuery();
-            Console.WriteLine("Movie room added successfully.");
+            return command.ExecuteNonQuery() > 0;
         }
     }
 
@@ -38,8 +39,7 @@ public class MovieRoomRepository
             {
                 while (reader.Read())
                 {
-                    var room = new MovieRoom(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2),
-                        reader.GetInt32(3), reader.GetInt32(4));
+                    var room = new MovieRoom(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), (MovieType)reader.GetInt32(3), reader.GetInt32(4));
                     movieRooms.Add(room);
                 }
             }
@@ -48,15 +48,16 @@ public class MovieRoomRepository
         return movieRooms;
     }
 
-    public void DeleteMovieRoom(int roomNumber, int locationId)
+    public bool DeleteMovieRoom(MovieRoom movieRoom)
     {
         using var connection = DatabaseManager.GetConnection();
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM MovieRoom WHERE RoomNumber = @RoomNumber AND LocationId = @LocationId;";
-        command.Parameters.AddWithValue("@RoomNumber", roomNumber);
-        command.Parameters.AddWithValue("@LocationId", locationId);
+        command.CommandText = "DELETE FROM MovieRoom WHERE Id = @id;";
+        command.Parameters.AddWithValue("@id", movieRoom.Id);
+
+        return command.ExecuteNonQuery() > 0;
     }    
     
     public string GetRoomLayoutJson(int roomNumber, int locationId)
@@ -102,7 +103,7 @@ public class MovieRoomRepository
                     if (reader.Read())
                     {
                         MovieRoom movieRoom = new MovieRoom(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2),
-                            reader.GetInt32(3), reader.GetInt32(4));
+                            (MovieType)reader.GetInt32(3), reader.GetInt32(4));
                         return movieRoom;
                     }
                 }
