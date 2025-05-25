@@ -1,6 +1,4 @@
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 
 public class LocationService
 {

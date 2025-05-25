@@ -1,6 +1,4 @@
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 using Jolly_Lights_Cinema_Group.Helpers;
 
 public class MovieRoomService

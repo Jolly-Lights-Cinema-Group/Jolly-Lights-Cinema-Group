@@ -73,6 +73,7 @@ public class PayReservationMenu
 
                 } while (input != "y" && input != "n");
             }
+            else Console.WriteLine($"Reservation: {reservation.ReservationNumber} has been paid");
         }
 
         Console.WriteLine("\nPress any key to continue.");

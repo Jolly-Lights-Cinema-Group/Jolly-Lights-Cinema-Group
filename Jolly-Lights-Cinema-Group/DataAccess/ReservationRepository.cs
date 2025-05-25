@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Jolly_Lights_Cinema_Group.Enum;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess

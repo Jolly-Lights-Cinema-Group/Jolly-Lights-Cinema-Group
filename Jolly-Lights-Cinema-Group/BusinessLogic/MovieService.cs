@@ -1,4 +1,3 @@
-using Jolly_Lights_Cinema_Group;
 using JollyLightsCinemaGroup.DataAccess;
 
 public class MovieService

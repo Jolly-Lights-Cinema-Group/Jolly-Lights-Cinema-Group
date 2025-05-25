@@ -22,7 +22,7 @@ public class ShopMenu
             .Select(item => $"{item.Name}: €{Math.Round(item.Price * (1.0 + ((double)item.VatPercentage / 100)), 2)}")
             .Append("Finish")
             .ToArray();
-        
+
         Menu shopMenu = new("Shop", menuItems);
 
         while (inShop)
@@ -44,7 +44,7 @@ public class ShopMenu
                     Console.ReadKey();
                     continue;
                 }
-                
+
                 if (_shopitemService.SellShopItem(selectedItem, reservation))
                 {
                     Console.WriteLine($"{selectedItem.Name} added to reservation: {reservation.ReservationNumber}.");
@@ -63,5 +63,33 @@ public class ShopMenu
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }
+    }
+
+    public void CashDeskShop()
+    {
+        Reservation? reservation = null;
+        ReservationService reservationService = new();
+
+        do
+        {
+            Console.Write("Enter reservation number: ");
+            string? reservationNumberInput = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(reservationNumberInput))
+            {
+                Console.WriteLine("Reservation number cannot be empty. Please try again.");
+                continue;
+            }
+
+            reservation = reservationService.FindReservationByReservationNumber(reservationNumberInput);
+
+            if (reservation == null)
+            {
+                Console.WriteLine("Reservation not found. Please try again.");
+            }
+
+        } while (reservation == null);
+
+        DisplayShop(reservation);
     }
 }

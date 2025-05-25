@@ -1,7 +1,5 @@
 using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 
 public class OrderLineService
 {

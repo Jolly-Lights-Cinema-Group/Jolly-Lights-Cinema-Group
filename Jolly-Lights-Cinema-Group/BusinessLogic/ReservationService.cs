@@ -1,7 +1,4 @@
-using JollyLightsCinemaGroup.BusinessLogic;
 using JollyLightsCinemaGroup.DataAccess;
-using System;
-using System.Collections.Generic;
 
 public class ReservationService
 {
@@ -39,12 +36,7 @@ public class ReservationService
 
     public bool IsReservationPaid(Reservation reservation)
     {
-        if (_reservationRepository.IsReservationPaid(reservation))
-        {
-            Console.WriteLine($"Reservation: {reservation.ReservationNumber} has been paid");
-            return true;
-        }
-        return false;
+        return _reservationRepository.IsReservationPaid(reservation);
     }
 
     public List<(string, string)> GetReservedSeats(int roomNumber, int locationId)
