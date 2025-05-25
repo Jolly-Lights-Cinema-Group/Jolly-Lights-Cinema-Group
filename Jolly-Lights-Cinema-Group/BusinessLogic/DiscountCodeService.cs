@@ -1,3 +1,4 @@
+using System.Text;
 using JollyLightsCinemaGroup.DataAccess;
 
 public class DiscountCodeService
@@ -12,62 +13,62 @@ public class DiscountCodeService
         _discountCodeRepo = new DiscountCodeRepository();
     }
 
-    public void RegisterDiscountCode(string code, double discountAmount, string discountType, DateTime experationDate, int orderId)
+    public bool RegisterDiscountCode(string code, double discountAmount, string discountType, DateTime experationDate, int orderId)
     {
         DiscountCode discountcode = new DiscountCode(code, discountAmount, discountType, experationDate, orderId);
-        if (_discountCodeRepo.AddDiscountCode(discountcode))
+        if (!_discountCodeRepo.CheckIfCodeExist(discountcode.Code!))
         {
-            Console.Clear();
-            Console.WriteLine($"Discount code has been added:\nCode: {code}\nDiscount Amount: {discountAmount * 100}%\nDiscount Type/name: {discountType}\nValid till: {experationDate}");
+            return _discountCodeRepo.AddDiscountCode(discountcode);
         }
-        else
-        {
-            Console.Clear();
-            { Console.WriteLine($"Discount code has not been added. Something went wrong."); }
-        }
+        return false;
     }
 
-    public void RegisterDiscountCode(DiscountCode discountCode)
+    public bool RegisterDiscountCode(DiscountCode discountCode)
     {
-        if (_discountCodeRepo.AddDiscountCode(discountCode))
+        if (!_discountCodeRepo.CheckIfCodeExist(discountCode.Code!))
         {
-            Console.Clear();
-            Console.WriteLine($"Discount code has been added:\nCode: {discountCode.Code}\nDiscount Amount: {discountCode.DiscountAmount * 100}%\nDiscount Type/name: {discountCode.DiscountType}\nValid till: {discountCode.ExperationDate}");
+            return _discountCodeRepo.AddDiscountCode(discountCode);
         }
-        else
-        {
-            Console.Clear();
-            { Console.WriteLine($"Discount code has not been added. Something went wrong."); }
-        }
+        return false;
     }
 
-    public void GetDiscountCodeFromDB(string code) // Getting a discount code back. Delete the messages.
+    public DiscountCode? MakeCompensationDiscountCode()
     {
         Console.Clear();
+        StringBuilder code = new();
+        int length = 10;
 
-        DiscountCode? Discount = _discountCodeRepo.GetDiscountCode(code);
+        for (int i = 0; i < length; i++)
+        {
+            char character = AllowedChars[random.Next(AllowedChars.Length)];
+            code.Append(character);
+        }
 
-        if (Discount != null)
+        string? Code = code.ToString();
+
+        DiscountCode discountcode = new DiscountCode(Code, 0.2, "Compensation", DateTime.Now.AddYears(1), null);
+
+        DiscountCodeService discountcodeservice = new();
+        if (_discountCodeRepo.AddDiscountCode(discountcode))
         {
-            Console.WriteLine($"Discount exists:\nCode: {Discount.Code}\nAmount:{Discount.DiscountAmount * 100}%\nType: {Discount.DiscountType}\nValid till:{Discount.ExperationDate}");
+            return discountcode;
         }
-        else
-        {
-            Console.WriteLine($"Discount code {code} not found");
-        }
+
+        return null;
     }
 
-    public void DeleteDiscountCode(string code)
+    public DiscountCode? GetDiscountCodeFromDB(string code) // Getting a discount code back. Delete the messages.
     {
-        if (_discountCodeRepo.DeleteDiscountCode(code))
-        {
-            Console.Clear();
-            Console.WriteLine($"Discount has been deleted.");
-        }
-        else
-        {
-            Console.Clear();
-            { Console.WriteLine($"Discount code has not been deleted. Something went wrong."); }
-        }
+        return _discountCodeRepo.GetDiscountCode(code);
+    }
+
+    public bool DeleteDiscountCode(string code)
+    {
+        return _discountCodeRepo.DeleteDiscountCode(code);
+    }
+
+    public bool CheckIfCodeExist(string code)
+    {
+        return _discountCodeRepo.CheckIfCodeExist(code);
     }
 }

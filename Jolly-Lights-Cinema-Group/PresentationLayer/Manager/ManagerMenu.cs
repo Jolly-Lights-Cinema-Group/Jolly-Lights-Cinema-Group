@@ -27,7 +27,7 @@ namespace Jolly_Lights_Cinema_Group
                     ReservationMenu.ShowReservationMenu();
                     return true;
                 case 1:
-                    DiscountCodeHandler.ManageDiscountCode();
+                    ManageDiscountCodeMenu.ShowManageDiscountCodeMenu();
                     return true;
                 case 2:
                     ShopManagementMenu.ShowShopManagementMenu();

@@ -2,8 +2,6 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class DiscountCodeRepository
     {
-
-
         public bool CheckIfCodeExist(string code)
         {
             using (var connection = DatabaseManager.GetConnection())
@@ -24,7 +22,6 @@ namespace JollyLightsCinemaGroup.DataAccess
 
         public DiscountCode? GetDiscountCode(string code)
         {
-
             using (var connection = DatabaseManager.GetConnection())
             {
                 connection.Open();
@@ -83,8 +80,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 
                 command.Parameters.AddWithValue("@code", code);
 
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected == 1;
+                return command.ExecuteNonQuery() > 0;
             }
         }
     }
