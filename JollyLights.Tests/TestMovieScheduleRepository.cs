@@ -55,7 +55,7 @@ namespace Jolly_Lights.Tests
         public void Test_DeleteSchedule_DeleteScheduletoDB()
         {
 
-            Schedule schedule = new Schedule(1, 1, DateTime.Today, TimeSpan.FromMinutes(60));
+            Schedule schedule = new Schedule(1, 1, 1, DateTime.Today, TimeSpan.FromMinutes(60));
             ScheduleRepository scheduleRepository = new ScheduleRepository();
             scheduleRepository.AddSchedule(schedule);
 

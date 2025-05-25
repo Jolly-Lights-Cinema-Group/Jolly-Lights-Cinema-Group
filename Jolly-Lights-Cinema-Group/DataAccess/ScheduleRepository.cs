@@ -12,7 +12,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 var command = connection.CreateCommand();
                 command.CommandText = @"
                     INSERT INTO Schedule (MovieRoomId, MovieId, StartDate, StartTime)
-                    VALUES (@movieRoomId, @movieId, @startDate,@startTime);";
+                    VALUES (@movieRoomId, @movieId, @startDate, @startTime);";
 
                 command.Parameters.AddWithValue("@movieRoomId", schedule.MovieRoomId);
                 command.Parameters.AddWithValue("@movieId", schedule.MovieId);
