@@ -31,9 +31,11 @@ namespace Jolly_Lights.Tests
             MovieRoomRepository movieRoomRepository = new MovieRoomRepository();
             LocationRepository locationRepository = new LocationRepository();
 
+            MovieRoom movieRoom = new(1, "[a:a]", MovieType.Regular, 1);
+
             locationRepository.AddLocation(location);
             movieRepository.AddMovie(movie);
-            movieRoomRepository.AddMovieRoom(1, "[a:a]", 1, 1);
+            movieRoomRepository.AddMovieRoom(movieRoom);
         }
         // AddSchedule
         [TestMethod]

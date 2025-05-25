@@ -27,7 +27,6 @@ namespace Jolly_Lights.Tests
         [TestMethod]
         public void Test_Addmovie_AddmovietoDB()
         {
-
             Movie movie = new Movie("TestMovie1", 90, 18, DateTime.Now, "Jason Mamoa");
 
             MovieRepository movierepository = new MovieRepository();
@@ -36,7 +35,7 @@ namespace Jolly_Lights.Tests
 
             Assert.IsTrue(result, "Addmovie should return true if insertion was successful.");
 
-            Movie? inserted = MovieRepository.GetMovieByTitle(movie.Title);
+            Movie? inserted = movierepository.GetMovieByTitle(movie.Title!);
             Assert.IsNotNull(inserted, "Movie should exist.");
             Assert.AreEqual("TestMovie1", inserted.Title, "TestMovie1 should be the title");
             Assert.AreEqual(90, inserted.Duration, "90 minutes should be the duration.");
