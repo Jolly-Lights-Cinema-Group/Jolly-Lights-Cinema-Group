@@ -1,4 +1,5 @@
 using Jolly_Lights_Cinema_Group;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class ManageDiscountCodeMenu
 {
@@ -90,13 +91,9 @@ public static class ManageDiscountCodeMenu
         DateTime expirationDate;
         do
         {
-            Console.Clear();
             Console.WriteLine("What is the expiration date? (dd/MM/yyyy): ");
-            string? inputDate = Console.ReadLine();
-            if (DateTime.TryParseExact(inputDate, "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out expirationDate))
+            string? inputExpirationDate = Console.ReadLine();
+            if (DateTimeValidator.TryParseDate(inputExpirationDate, out expirationDate))
             {
                 break;
             }

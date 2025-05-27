@@ -1,4 +1,5 @@
 using Jolly_Lights_Cinema_Group;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class ManageMovieMenu
 {
@@ -65,12 +66,19 @@ public static class ManageMovieMenu
         } while (!int.TryParse(inputMinAge, out minimumAge) || minimumAge < 0);
 
         DateTime releaseDate;
-        string? inputReleasedate;
         do
         {
-            Console.Write("Enter release date of the movie (dd-MM-yyyy): ");
-            inputReleasedate = Console.ReadLine();
-        } while (!DateTime.TryParse(inputReleasedate, out releaseDate));
+            Console.WriteLine("Enter release date: ");
+            string? inputReleasedate = Console.ReadLine();
+            if (DateTimeValidator.TryParseDate(inputReleasedate, out releaseDate))
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid format. Please use dd/MM/yyyy (e.g., 09/05/2025).");
+            }
+        } while (true);
 
         Console.WriteLine("who are in the movie cast?");
         string movieCast = Console.ReadLine()!;

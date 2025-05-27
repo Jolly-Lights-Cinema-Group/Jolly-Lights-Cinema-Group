@@ -1,5 +1,6 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class ManageScheduleMenu
 {
@@ -83,52 +84,47 @@ public static class ManageScheduleMenu
         DateTime startDate;
         do
         {
-            Console.Clear();
             Console.WriteLine("What is the start date? (dd/MM/yyyy)");
             string? inputDate = Console.ReadLine();
-            if (DateTime.TryParseExact(inputDate, "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out startDate))
+            if (DateTimeValidator.TryParseDate(inputDate, out startDate))
             {
-                break;
+                if (startDate >= selectedMovie.ReleaseDate) break;
+
+                else
+                {
+                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}");
+                }
             }
-            else
-            {
-                Console.WriteLine("Invalid format. Please use dd/MM/yyyy (e.g., 09/05/2025).");
-            }
+
+            else Console.WriteLine("Invalid format. Please use dd/MM/yyyy (e.g., 09/05/2025).");
         } while (true);
 
-        // Adding StartTime
         TimeSpan startTime;
-        do
+        while (true)
         {
-            Console.Clear();
             Console.WriteLine("What is the start time? (HH:mm:ss)");
             string? inputTime = Console.ReadLine();
-            if (TimeSpan.TryParseExact(inputTime, "hh\\:mm\\:ss",
-                System.Globalization.CultureInfo.InvariantCulture,
-                out startTime))
-            {
-                break;
-            }
-            else
+
+            if (!DateTimeValidator.TryParseTime(inputTime, out startTime))
             {
                 Console.WriteLine("Invalid format. Please use HH:mm:ss (e.g., 14:30:00).");
             }
-        } while (true);
+
+            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime))
+            {
+                Console.WriteLine("Schedule overlaps with another movie in the same room.");
+            }
+
+            else break;
+        }
 
         Schedule schedule = new(selectedMovieRoom.RoomNumber, selectedMovie.Id!.Value, startDate, startTime);
-        if (_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime))
+        if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
         {
-            if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
-            {
-                Console.Clear();
-                Console.WriteLine("Movie schedule successfully added!");
-            }
-            else Console.WriteLine("Schedule could not be added");
+            Console.Clear();
+            Console.WriteLine("Movie schedule successfully added!");
         }
-        else Console.WriteLine("Schedule overlaps with another movie in the same room.");
+        else Console.WriteLine("Schedule could not be added");
 
         Console.WriteLine("\nPress any key to continue");
         Console.ReadKey();
@@ -212,16 +208,14 @@ public static class ManageScheduleMenu
 
     public static void ShowScheduleByDate()
     {
+        Console.Clear();
+
         DateTime SearchDate;
         do
         {
-            Console.Clear();
             Console.WriteLine("Search Date: (dd/MM/yyyy)");
             string? inputSearchDate = Console.ReadLine();
-            if (DateTime.TryParseExact(inputSearchDate, "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out SearchDate))
+            if (DateTimeValidator.TryParseDate(inputSearchDate, out SearchDate))
             {
                 break;
             }
