@@ -91,7 +91,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<Schedule> ShowSchedule(DateTime date)
+        public List<Schedule> ShowSchedule(DateTime date, int locationId)
         {
             List<Schedule> schedules = new List<Schedule>();
 
@@ -99,9 +99,18 @@ namespace JollyLightsCinemaGroup.DataAccess
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule WHERE DATE(StartDate) = @startDate;";
 
-                command.Parameters.Add(new SqliteParameter("@startDate", System.Data.DbType.String) { Value = date.ToString("yyyy-MM-dd") });
+                command.CommandText = @"
+                    SELECT s.Id, s.MovieRoomId, s.MovieId, s.StartDate, s.StartTime
+                    FROM Schedule s
+                    JOIN MovieRoom mr ON s.MovieRoomId = mr.Id
+                    WHERE DATE(s.StartDate) = @startDate AND mr.LocationId = @locationId;";
+
+                command.Parameters.Add(new SqliteParameter("@startDate", System.Data.DbType.String)
+                {
+                    Value = date.ToString("yyyy-MM-dd")
+                });
+                command.Parameters.Add(new SqliteParameter("@locationId", locationId));
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -109,14 +118,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                     {
                         Schedule schedule = new(
                             reader.GetInt32(0),     // Id
-                            reader.GetInt32(1),     // Roomid
+                            reader.GetInt32(1),     // MovieRoomId
                             reader.GetInt32(2),     // MovieId
                             reader.GetDateTime(3),  // StartDate
-                            reader.GetTimeSpan(4)); //StartTime
+                            reader.GetTimeSpan(4)); // StartTime
                         schedules.Add(schedule);
                     }
                 }
             }
+
             return schedules;
         }
 
@@ -204,6 +214,47 @@ namespace JollyLightsCinemaGroup.DataAccess
                     }
                 }
             }
+            return schedules;
+        }
+
+        public List<Schedule> GetAllUpcomingSchedules(int locationId)
+        {
+            List<Schedule> schedules = new();
+
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT s.Id, s.MovieRoomId, s.MovieId, s.StartDate, s.StartTime
+                    FROM Schedule s
+                    JOIN MovieRoom mr ON s.MovieRoomId = mr.Id
+                    WHERE mr.LocationId = @locationId;";
+
+                command.Parameters.AddWithValue("@locationId", locationId);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        DateTime startDate = reader.GetDateTime(3);
+                        TimeSpan startTime = reader.GetTimeSpan(4);
+                        DateTime fullStartDateTime = startDate.Add(startTime);
+
+                        if (fullStartDateTime >= DateTime.Now)
+                        {
+                            schedules.Add(new Schedule(
+                                reader.GetInt32(0),
+                                reader.GetInt32(1),
+                                reader.GetInt32(2),
+                                startDate,
+                                startTime
+                            ));
+                        }
+                    }
+                }
+            }
+
             return schedules;
         }
     }

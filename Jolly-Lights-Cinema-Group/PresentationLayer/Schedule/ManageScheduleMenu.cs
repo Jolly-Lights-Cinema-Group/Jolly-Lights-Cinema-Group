@@ -43,6 +43,14 @@ public static class ManageScheduleMenu
     {
         Console.Clear();
 
+        LocationMenu location = new();
+        int selectedLocation = location.Run();
+
+        LocationService locationService = new LocationService();
+        List<Location> locations = locationService.GetAllLocations();
+
+        int locationId = (int)locations[selectedLocation].Id!;
+
         MovieService movieService = new();
         List<Movie> allMovies = movieService.ShowAllMovies();
 
@@ -63,7 +71,7 @@ public static class ManageScheduleMenu
         Movie selectedMovie = allMovies[movieChoice];
 
         MovieRoomService movieRoomService = new();
-        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
 
         string[] movieRoomItems = movieRooms
             .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
@@ -118,7 +126,7 @@ public static class ManageScheduleMenu
             else break;
         }
 
-        Schedule schedule = new(selectedMovieRoom.RoomNumber, selectedMovie.Id!.Value, startDate, startTime);
+        Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, startDate, startTime);
         if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
         {
             Console.Clear();
@@ -210,6 +218,14 @@ public static class ManageScheduleMenu
     {
         Console.Clear();
 
+        LocationMenu location = new();
+        int selectedLocation = location.Run();
+
+        LocationService locationService = new LocationService();
+        List<Location> locations = locationService.GetAllLocations();
+
+        int locationId = (int)locations[selectedLocation].Id!;
+
         DateTime SearchDate;
         do
         {
@@ -227,12 +243,11 @@ public static class ManageScheduleMenu
 
         Console.Clear();
 
-        List<Schedule> schedules = _scheduleService.ShowScheduleByDate(SearchDate);
+        List<Schedule> schedules = _scheduleService.ShowScheduleByDate(SearchDate, locationId);
 
         if (schedules.Count == 0)
         {
             Console.WriteLine("No schedules where found.");
-            return;
         }
 
         else
@@ -240,11 +255,14 @@ public static class ManageScheduleMenu
             Console.WriteLine($"Schedule Movies on {SearchDate.ToString("dd-MM-yyyy")}:");
 
             MovieService movieService = new();
+            MovieRoomService movieRoomService = new();
 
             foreach (Schedule schedule in schedules)
             {
                 Movie? movieinformation = movieService.GetMovieById(schedule.MovieId);
-                Console.WriteLine($"Room: {schedule.MovieRoomId}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime}");
+                MovieRoom? movieRoom = movieRoomService.GetMovieRoomById(schedule.MovieRoomId);
+
+                Console.WriteLine($"Room number: {movieRoom!.RoomNumber}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime}");
             }
         }
 

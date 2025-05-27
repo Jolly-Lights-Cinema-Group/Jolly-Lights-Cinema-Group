@@ -46,8 +46,22 @@ public static class ManageMovieRoomMenu
     private static void AddMovieRoom()
     {
         Console.Clear();
+        var locationId = 0;
 
-        List<MovieRoom> existingRooms = _movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+        if (Globals.CurrentUser?.Location?.Id > 0)
+            locationId = (int)Globals.CurrentUser.Location!.Id;
+        else
+        {
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+
+        List<MovieRoom> existingRooms = _movieRoomService.GetMovieRooms(locationId);
 
         int roomNumber;
         string? inputRoomNumber;
@@ -64,7 +78,7 @@ public static class ManageMovieRoomMenu
 
             if (existingRooms.Any(r => r.RoomNumber == roomNumber))
             {
-                Console.WriteLine("Room number already exists. Enter a different number.");
+                Console.WriteLine("Room number already exists at this lcoation. Enter a different number.");
                 inputRoomNumber = null;
             }
 
@@ -93,21 +107,6 @@ public static class ManageMovieRoomMenu
             default:
                 Console.WriteLine("Invalid selection.");
                 return;
-        }
-
-        var locationId = 0;
-
-        if (Globals.CurrentUser?.Location?.Id > 0)
-            locationId = (int)Globals.CurrentUser.Location!.Id;
-        else
-        {
-            LocationMenu location = new();
-            int selectedLocation = location.Run();
-
-            LocationService locationService = new LocationService();
-            List<Location> locations = locationService.GetAllLocations();
-
-            locationId = (int)locations[selectedLocation].Id!;
         }
 
         var inputFilePath = SelectFile();

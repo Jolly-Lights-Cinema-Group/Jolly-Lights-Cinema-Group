@@ -1,4 +1,5 @@
 using Jolly_Lights_Cinema_Group;
+using Jolly_Lights_Cinema_Group.Common;
 
 public class MovieScheduleMenu
 {
@@ -12,7 +13,7 @@ public class MovieScheduleMenu
     public Movie? SelectMovieMenu()
     {
         ScheduleService scheduleService = new();
-        List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule();
+        List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule(Globals.SessionLocationId);
 
         string[] movieMenuItems = scheduledMovies
             .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")

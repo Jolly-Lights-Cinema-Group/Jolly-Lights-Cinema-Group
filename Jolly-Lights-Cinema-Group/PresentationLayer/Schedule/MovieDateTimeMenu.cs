@@ -1,3 +1,5 @@
+using Jolly_Lights_Cinema_Group.Common;
+
 namespace Jolly_Lights_Cinema_Group
 {
     public class MovieDateTimeMenu
@@ -6,7 +8,7 @@ namespace Jolly_Lights_Cinema_Group
 
         public Schedule? SelectSchedule(Movie selectedMovie)
         {
-            var groupedSchedules = _scheduleService.GroupedSchedules(selectedMovie);
+            var groupedSchedules = _scheduleService.GroupedSchedules(selectedMovie, Globals.SessionLocationId);
             Schedule? selectedSchedule = null;
 
             while (true)

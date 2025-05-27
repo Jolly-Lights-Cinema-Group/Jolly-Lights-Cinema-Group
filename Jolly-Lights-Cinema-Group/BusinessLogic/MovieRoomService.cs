@@ -29,4 +29,9 @@ public class MovieRoomService
     {
         return _movieRoomRepo.GetAllMovieRooms(locationId);
     }
+
+    public MovieRoom? GetMovieRoomById(int id)
+    {
+        return _movieRoomRepo.GetMovieRoomById(id);
+    }
 }
