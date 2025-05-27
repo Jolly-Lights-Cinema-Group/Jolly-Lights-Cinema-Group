@@ -32,10 +32,9 @@ public static class ManageScheduleMenu
                 ShowScheduleByDate();
                 return true;
             case 3:
-                return false;
-            default:
-                Console.WriteLine("Invalid selection.");
                 return true;
+            default:
+                return false;
         }
     }
 
