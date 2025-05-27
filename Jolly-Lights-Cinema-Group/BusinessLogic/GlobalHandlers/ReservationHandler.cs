@@ -46,7 +46,7 @@ namespace Jolly_Lights_Cinema_Group
             MovieRoomService movieRoomService = new MovieRoomService();
             ReservationService reservationService = new ReservationService();
             
-            var roomLayout = movieRoomService.GetRoomLayout(roomId, locationId);
+            var roomLayout = movieRoomService.GetRoomLayout(movieRoom.Id!.Value);
             var reservedSeats = reservationService.GetReservedSeats(roomId, locationId);
 
             var rowCount = 1;

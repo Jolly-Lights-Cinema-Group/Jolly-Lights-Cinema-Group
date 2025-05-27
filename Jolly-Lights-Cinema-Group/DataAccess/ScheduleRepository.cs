@@ -38,7 +38,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public bool CanAddSchedule(int roomId, DateTime startDate, TimeSpan startTime)
+        public bool CanAddScheduleAfter(int roomId, DateTime startDate, TimeSpan startTime)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -59,8 +59,45 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return count == 0;
             }
         }
+        public bool CanAddScheduleBefore(int roomId, DateTime startDate, TimeSpan startTime, int movieId)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
 
-        // Not needed anymore
+                command.CommandText = @"
+                    SELECT StartTime
+                    FROM Schedule
+                    WHERE MovieRoomId = @roomId
+                    AND StartDate = @startDate
+                    AND StartTime > @startTime
+                    ORDER BY StartTime ASC
+                    LIMIT 1;";
+
+                command.Parameters.AddWithValue("@roomId", roomId);
+                command.Parameters.AddWithValue("@startDate", startDate);
+                command.Parameters.AddWithValue("@startTime", startTime);
+
+                var reader = command.ExecuteReader();
+
+                int movieDuration = GetMovieDuration(movieId);
+
+                DateTime startDateTime = startDate.Date + startTime;
+                DateTime newMovieEndTime = startDateTime.AddMinutes(movieDuration + 15);
+
+                if (reader.Read())
+                {
+                    TimeSpan nextScheduleStartTime = reader.GetTimeSpan(0);
+                    DateTime nextMovieStartDateTime = startDate.Date + nextScheduleStartTime;
+
+                    return newMovieEndTime <= nextMovieStartDateTime;
+                }
+
+                return true;
+            }
+        }
+
         public int GetMovieDuration(int movieId)
         {
             using (var connection = DatabaseManager.GetConnection())

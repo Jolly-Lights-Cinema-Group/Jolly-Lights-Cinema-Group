@@ -124,7 +124,7 @@ public static class ManageScheduleMenu
                 Console.WriteLine("Invalid format. Please use HH:mm:ss (e.g., 14:30:00).");
             }
 
-            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime))
+            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime, selectedMovie.Id!.Value))
             {
                 Console.WriteLine("Schedule overlaps with another movie in the same room.");
             }
@@ -270,6 +270,7 @@ public static class ManageScheduleMenu
         Console.Clear();
 
         List<Schedule> schedules = _scheduleService.ShowScheduleByDate(SearchDate, locationId);
+        schedules = schedules.OrderBy(s => s.StartTime).ToList();
 
         if (schedules.Count == 0)
         {

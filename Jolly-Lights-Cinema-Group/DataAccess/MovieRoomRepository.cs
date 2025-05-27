@@ -60,7 +60,7 @@ public class MovieRoomRepository
         return command.ExecuteNonQuery() > 0;
     }    
     
-    public string GetRoomLayoutJson(int roomNumber, int locationId)
+    public string GetRoomLayoutJson(int id)
     {
         var movieRoomLayout = "";
 
@@ -69,9 +69,8 @@ public class MovieRoomRepository
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
-                "SELECT RoomLayoutJson FROM MovieRoom WHERE LocationId = @LocationId AND RoomNumber = @RoomNumber;";
-            command.Parameters.AddWithValue("@LocationId", locationId);
-            command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                "SELECT RoomLayoutJson FROM MovieRoom WHERE Id = @id;";
+            command.Parameters.AddWithValue("@id", id);
 
             using (var reader = command.ExecuteReader())
             {
