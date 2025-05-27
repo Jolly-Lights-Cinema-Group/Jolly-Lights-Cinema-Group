@@ -12,57 +12,59 @@ namespace Jolly_Lights_Cinema_Group
             DatabaseManager.InitializeDatabase();
 
             // Main menu / Asking for location
-            LocationMenu location = new();
-            int selectedLocation = location.Run();
-
-            LocationService locationService = new LocationService();
-            List<Location> locations = locationService.GetAllLocations();
-
-            Globals.SessionLocationId = (int)locations[selectedLocation].Id!;
-
-            Console.Clear();
-
-            string userName;
-            string password;
-            do
+            while (true)
             {
-                Console.WriteLine("Login.");
-                Console.WriteLine("Username: ");
-                userName = Console.ReadLine()!;
-                Console.WriteLine("Password: ");
-                password = Console.ReadLine()!;
-            } while (!AuthenticationService.Login(userName: userName, password: password));
+                LocationMenu location = new();
+                int selectedLocation = location.Run();
 
-            Console.Clear();
-            Console.WriteLine($"Login successfull!");
+                LocationService locationService = new LocationService();
+                List<Location> locations = locationService.GetAllLocations();
 
-            var user = Globals.CurrentUser;
+                Globals.SessionLocationId = (int)locations[selectedLocation].Id!;
 
-            while (user!.IsAuthenticated)
-            {
                 Console.Clear();
-                switch (user.Role)
+
+                string userName;
+                string password;
+                do
                 {
-                    case Role.Admin:
-                        AdminMenu.ShowAdminMenu(ref user);
-                        break;
+                    Console.WriteLine("Login.");
+                    Console.WriteLine("Username: ");
+                    userName = Console.ReadLine()!;
+                    Console.WriteLine("Password: ");
+                    password = Console.ReadLine()!;
+                } while (!AuthenticationService.Login(userName: userName, password: password));
 
-                    case Role.Manager:
-                        ManagerMenu.ShowManagerMenu(ref user);
-                        break;
+                Console.Clear();
+                Console.WriteLine($"Login successfull!");
 
-                    case Role.Employee:
-                        EmployeeMenu.ShowEmployeerMenu(ref user);
-                        break;
+                var user = Globals.CurrentUser;
 
-                    default:
-                        Console.WriteLine("Invalid role selected.");
-                        break;
+                while (user!.IsAuthenticated)
+                {
+                    Console.Clear();
+                    switch (user.Role)
+                    {
+                        case Role.Admin:
+                            AdminMenu.ShowAdminMenu(ref user);
+                            break;
+
+                        case Role.Manager:
+                            ManagerMenu.ShowManagerMenu(ref user);
+                            break;
+
+                        case Role.Employee:
+                            EmployeeMenu.ShowEmployeerMenu(ref user);
+                            break;
+
+                        default:
+                            Console.WriteLine("Invalid role selected.");
+                            break;
+                    }
                 }
+                Console.Clear();
+                AuthenticationService.Logout();
             }
-            Console.Clear();
-            AuthenticationService.Logout();
-            Console.WriteLine($"Succesfully logged out!");
         }
     }
 }
