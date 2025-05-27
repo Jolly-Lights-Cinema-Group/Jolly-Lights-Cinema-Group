@@ -47,7 +47,21 @@ public static class ManageMovieRoomMenu
     {
         Console.Clear();
 
-        List<MovieRoom> existingRooms = _movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
+        List<MovieRoom> existingRooms = _movieRoomService.GetMovieRooms(locationId);
 
         int roomNumber;
         string? inputRoomNumber;
@@ -64,7 +78,7 @@ public static class ManageMovieRoomMenu
 
             if (existingRooms.Any(r => r.RoomNumber == roomNumber))
             {
-                Console.WriteLine("Room number already exists. Enter a different number.");
+                Console.WriteLine("Room number already exists at this lcoation. Enter a different number.");
                 inputRoomNumber = null;
             }
 
@@ -93,21 +107,6 @@ public static class ManageMovieRoomMenu
             default:
                 Console.WriteLine("Invalid selection.");
                 return;
-        }
-
-        var locationId = 0;
-
-        if (Globals.CurrentUser?.Location?.Id > 0)
-            locationId = (int)Globals.CurrentUser.Location!.Id;
-        else
-        {
-            LocationMenu location = new();
-            int selectedLocation = location.Run();
-
-            LocationService locationService = new LocationService();
-            List<Location> locations = locationService.GetAllLocations();
-
-            locationId = (int)locations[selectedLocation].Id!;
         }
 
         var inputFilePath = SelectFile();
@@ -184,13 +183,19 @@ public static class ManageMovieRoomMenu
         Console.Clear();
         Console.WriteLine("Delete Movieroom:");
 
-        LocationMenu location = new();
-        int selectedLocation = location.Run();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
 
-        LocationService locationService = new LocationService();
-        List<Location> locations = locationService.GetAllLocations();
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
 
-        int locationId = (int)locations[selectedLocation].Id!;
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         List<MovieRoom> existingRooms = _movieRoomService.GetMovieRooms(locationId);
 
@@ -226,13 +231,19 @@ public static class ManageMovieRoomMenu
     {
         Console.Clear();
 
-        LocationMenu location = new();
-        int selectedLocation = location.Run();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
 
-        LocationService locationService = new LocationService();
-        List<Location> locations = locationService.GetAllLocations();
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
 
-        int locationId = (int)locations[selectedLocation].Id!;
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         List<MovieRoom> movieRooms = _movieRoomService.GetMovieRooms(locationId);
         Console.Clear();

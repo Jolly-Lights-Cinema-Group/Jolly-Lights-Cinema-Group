@@ -13,6 +13,12 @@ public class ShopItemService
         List<ShopItem> shopItems = _shopItemRepository.GetAllShopItems();
         return shopItems;
     }
+    public List<ShopItem> GetAllShopItems(int locationId)
+    {
+        List<ShopItem> shopItems = _shopItemRepository.GetAllShopItems(locationId);
+        return shopItems;
+    }
+    
     public bool UpdateShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
     {
         return _shopItemRepository.ModifyShopItem(shopItem, newName, newPrice, newStock, newMinimumAge);

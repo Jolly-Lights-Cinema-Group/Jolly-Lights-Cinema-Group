@@ -26,15 +26,15 @@ public class ScheduleService
 
     // Show Schedule
 
-    public List<Schedule> ShowScheduleByDate(DateTime dateTime)
+    public List<Schedule> ShowScheduleByDate(DateTime dateTime, int locationId)
     {
-        List<Schedule> schedules = _scheduleRepo.ShowSchedule(dateTime);
+        List<Schedule> schedules = _scheduleRepo.ShowSchedule(dateTime, locationId);
         return schedules;
     }
 
-    public List<Movie> GetMoviesBySchedule()
+    public List<Movie> GetMoviesBySchedule(int locationId)
     {
-        List<Schedule> schedules = _scheduleRepo.GetAllSchedules();
+        List<Schedule> schedules = _scheduleRepo.GetAllUpcomingSchedules(locationId);
 
         MovieRepository movieRepository = new();
 
@@ -57,9 +57,18 @@ public class ScheduleService
         return uniqueMovies;
     }
 
-    public List<IGrouping<DateTime, Schedule>> GroupedSchedules(Movie selectedMovie)
+    public List<IGrouping<DateTime, Schedule>> GroupedSchedules(Movie selectedMovie, int locationId)
     {
         List<Schedule> schedules = _scheduleRepo.GetSchedulesByMovie(selectedMovie);
+
+        MovieRoomRepository movieRoomRepository = new();
+
+        schedules = schedules
+            .Where(s => 
+                s.StartDate.Add(s.StartTime) >= DateTime.Now &&
+                movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId
+            )
+            .ToList();
 
         var groupedSchedules = schedules
             .GroupBy(s => s.StartDate.Date)

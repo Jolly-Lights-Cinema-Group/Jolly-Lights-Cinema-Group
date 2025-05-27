@@ -1,5 +1,7 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Enum;
+using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class ManageScheduleMenu
 {
@@ -41,6 +43,19 @@ public static class ManageScheduleMenu
     private static void ManualPlanning()
     {
         Console.Clear();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         MovieService movieService = new();
         List<Movie> allMovies = movieService.ShowAllMovies();
@@ -62,7 +77,7 @@ public static class ManageScheduleMenu
         Movie selectedMovie = allMovies[movieChoice];
 
         MovieRoomService movieRoomService = new();
-        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
 
         string[] movieRoomItems = movieRooms
             .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
@@ -83,52 +98,47 @@ public static class ManageScheduleMenu
         DateTime startDate;
         do
         {
-            Console.Clear();
             Console.WriteLine("What is the start date? (dd/MM/yyyy)");
             string? inputDate = Console.ReadLine();
-            if (DateTime.TryParseExact(inputDate, "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out startDate))
+            if (DateTimeValidator.TryParseDate(inputDate, out startDate))
             {
-                break;
+                if (startDate >= selectedMovie.ReleaseDate) break;
+
+                else
+                {
+                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}");
+                }
             }
-            else
-            {
-                Console.WriteLine("Invalid format. Please use dd/MM/yyyy (e.g., 09/05/2025).");
-            }
+
+            else Console.WriteLine("Invalid format. Please use dd/MM/yyyy (e.g., 09/05/2025).");
         } while (true);
 
-        // Adding StartTime
         TimeSpan startTime;
-        do
+        while (true)
         {
-            Console.Clear();
             Console.WriteLine("What is the start time? (HH:mm:ss)");
             string? inputTime = Console.ReadLine();
-            if (TimeSpan.TryParseExact(inputTime, "hh\\:mm\\:ss",
-                System.Globalization.CultureInfo.InvariantCulture,
-                out startTime))
-            {
-                break;
-            }
-            else
+
+            if (!DateTimeValidator.TryParseTime(inputTime, out startTime))
             {
                 Console.WriteLine("Invalid format. Please use HH:mm:ss (e.g., 14:30:00).");
             }
-        } while (true);
 
-        Schedule schedule = new(selectedMovieRoom.RoomNumber, selectedMovie.Id!.Value, startDate, startTime);
-        if (_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime))
-        {
-            if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
+            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime))
             {
-                Console.Clear();
-                Console.WriteLine("Movie schedule successfully added!");
+                Console.WriteLine("Schedule overlaps with another movie in the same room.");
             }
-            else Console.WriteLine("Schedule could not be added");
+
+            else break;
         }
-        else Console.WriteLine("Schedule overlaps with another movie in the same room.");
+
+        Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, startDate, startTime);
+        if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
+        {
+            Console.Clear();
+            Console.WriteLine("Movie schedule successfully added!");
+        }
+        else Console.WriteLine("Schedule could not be added");
 
         Console.WriteLine("\nPress any key to continue");
         Console.ReadKey();
@@ -138,6 +148,20 @@ public static class ManageScheduleMenu
     {
         Console.Clear();
         Console.WriteLine("Delete schedule");
+
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         string? title;
         do
@@ -162,7 +186,7 @@ public static class ManageScheduleMenu
             else
             {
                 MovieRoomService movieRoomService = new();
-                List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+                List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
 
                 string[] movieRoomItems = movieRooms
                     .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
@@ -212,16 +236,28 @@ public static class ManageScheduleMenu
 
     public static void ShowScheduleByDate()
     {
+        Console.Clear();
+
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
         DateTime SearchDate;
         do
         {
-            Console.Clear();
             Console.WriteLine("Search Date: (dd/MM/yyyy)");
             string? inputSearchDate = Console.ReadLine();
-            if (DateTime.TryParseExact(inputSearchDate, "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out SearchDate))
+            if (DateTimeValidator.TryParseDate(inputSearchDate, out SearchDate))
             {
                 break;
             }
@@ -233,12 +269,11 @@ public static class ManageScheduleMenu
 
         Console.Clear();
 
-        List<Schedule> schedules = _scheduleService.ShowScheduleByDate(SearchDate);
+        List<Schedule> schedules = _scheduleService.ShowScheduleByDate(SearchDate, locationId);
 
         if (schedules.Count == 0)
         {
             Console.WriteLine("No schedules where found.");
-            return;
         }
 
         else
@@ -246,11 +281,14 @@ public static class ManageScheduleMenu
             Console.WriteLine($"Schedule Movies on {SearchDate.ToString("dd-MM-yyyy")}:");
 
             MovieService movieService = new();
+            MovieRoomService movieRoomService = new();
 
             foreach (Schedule schedule in schedules)
             {
                 Movie? movieinformation = movieService.GetMovieById(schedule.MovieId);
-                Console.WriteLine($"Room: {schedule.MovieRoomId}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime}");
+                MovieRoom? movieRoom = movieRoomService.GetMovieRoomById(schedule.MovieRoomId);
+
+                Console.WriteLine($"Room number: {movieRoom!.RoomNumber}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime}");
             }
         }
 
