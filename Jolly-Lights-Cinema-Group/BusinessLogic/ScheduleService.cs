@@ -14,9 +14,13 @@ public class ScheduleService
         return _scheduleRepo.AddSchedule(schedule);
     }
 
-    public bool CanAddSchedule(int roomId, DateTime startDate, TimeSpan startTime)
+    public bool CanAddSchedule(int roomId, DateTime startDate, TimeSpan startTime, int movieId)
     {
-        return _scheduleRepo.CanAddSchedule(roomId, startDate, startTime);
+        if (_scheduleRepo.CanAddScheduleAfter(roomId, startDate, startTime) || _scheduleRepo.CanAddScheduleBefore(roomId, startDate, startTime, movieId))
+        {
+            return true;
+        }
+        return false;
     }
 
     public bool DeleteSchedule(Schedule schedule)
