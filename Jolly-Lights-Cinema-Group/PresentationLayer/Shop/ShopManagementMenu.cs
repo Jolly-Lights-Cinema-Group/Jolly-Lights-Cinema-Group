@@ -1,5 +1,6 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Enum;
 
 public static class ShopManagementMenu
 {
@@ -40,6 +41,21 @@ public static class ShopManagementMenu
     {
         Console.Clear();
         Console.WriteLine("Information to add item to shop:");
+
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
         ShopItem shopItem;
 
         string? name;
@@ -95,11 +111,11 @@ public static class ShopManagementMenu
         if (!string.IsNullOrWhiteSpace(inputMinimumAge))
         {
             int minimumAge = int.Parse(inputMinimumAge);
-            shopItem = new(name, price, stock, Globals.SessionLocationId, vat, minimumAge);
+            shopItem = new(name, price, stock, locationId, vat, minimumAge);
         }
         else
         {
-            shopItem = new(name, price, stock, Globals.SessionLocationId, vat);
+            shopItem = new(name, price, stock, locationId, vat);
         }
 
         if (_shopItemService.RegisterShopItem(shopItem))
@@ -118,7 +134,23 @@ public static class ShopManagementMenu
     {
         Console.Clear();
 
-        List<ShopItem> shopItems = _shopItemService.GetAllShopItems();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
+        Console.Clear();
+
+        List<ShopItem> shopItems = _shopItemService.GetAllShopItems(locationId);
 
         string[] menuItems = shopItems
             .Select(item => $"Name: {item.Name}; Price: €{item.Price}; Stock: {item.Stock}; VAT: {item.VatPercentage}%; Minimum age: {item.MinimumAge}")

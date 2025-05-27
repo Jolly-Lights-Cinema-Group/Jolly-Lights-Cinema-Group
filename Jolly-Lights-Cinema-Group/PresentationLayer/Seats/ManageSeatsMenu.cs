@@ -1,5 +1,7 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.BusinessLogic;
+using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Enum;
 using Jolly_Lights_Cinema_Group.Models;
 
 public static class ManageSeatsMenu
@@ -11,13 +13,19 @@ public static class ManageSeatsMenu
     {
         Console.Clear();
 
-        LocationMenu location = new();
-        int selectedLocation = location.Run();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
 
-        LocationService locationService = new LocationService();
-        List<Location> locations = locationService.GetAllLocations();
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
 
-        int locationId = (int)locations[selectedLocation].Id!;
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         _seats = _seatService.GetSeatPrices(locationId);
 

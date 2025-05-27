@@ -1,5 +1,6 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Common;
+using Jolly_Lights_Cinema_Group.Enum;
 using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class ManageScheduleMenu
@@ -42,14 +43,19 @@ public static class ManageScheduleMenu
     private static void ManualPlanning()
     {
         Console.Clear();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
 
-        LocationMenu location = new();
-        int selectedLocation = location.Run();
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
 
-        LocationService locationService = new LocationService();
-        List<Location> locations = locationService.GetAllLocations();
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
 
-        int locationId = (int)locations[selectedLocation].Id!;
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         MovieService movieService = new();
         List<Movie> allMovies = movieService.ShowAllMovies();
@@ -143,6 +149,20 @@ public static class ManageScheduleMenu
         Console.Clear();
         Console.WriteLine("Delete schedule");
 
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
         string? title;
         do
         {
@@ -166,7 +186,7 @@ public static class ManageScheduleMenu
             else
             {
                 MovieRoomService movieRoomService = new();
-                List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(Globals.SessionLocationId);
+                List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
 
                 string[] movieRoomItems = movieRooms
                     .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
@@ -218,13 +238,19 @@ public static class ManageScheduleMenu
     {
         Console.Clear();
 
-        LocationMenu location = new();
-        int selectedLocation = location.Run();
+        int locationId;
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
 
-        LocationService locationService = new LocationService();
-        List<Location> locations = locationService.GetAllLocations();
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
 
-        int locationId = (int)locations[selectedLocation].Id!;
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
 
         DateTime SearchDate;
         do

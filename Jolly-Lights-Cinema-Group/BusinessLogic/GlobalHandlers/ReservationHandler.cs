@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.Common;
 using Jolly_Lights_Cinema_Group.Enum;
 using JollyLightsCinemaGroup.DataAccess;
 
@@ -10,13 +11,27 @@ namespace Jolly_Lights_Cinema_Group
 
         public static void AddReservation()
         {
+            int locationId;
+            if (Globals.CurrentUser!.Role == Role.Admin)
+            {
+
+                LocationMenu location = new();
+                int selectedLocation = location.Run();
+
+                LocationService locationService = new LocationService();
+                List<Location> locations = locationService.GetAllLocations();
+
+                locationId = (int)locations[selectedLocation].Id!;
+            }
+            else locationId = Globals.SessionLocationId;
+
             MovieScheduleMenu movieScheduleMenu = new();
-            Movie? selectedMovie = movieScheduleMenu.SelectMovieMenu();
+            Movie? selectedMovie = movieScheduleMenu.SelectMovieMenu(locationId);
 
             if (selectedMovie is null) return;
 
             MovieDateTimeMenu movieDateTimeMenu = new();
-            Schedule? selectedSchedule = movieDateTimeMenu.SelectSchedule(selectedMovie);
+            Schedule? selectedSchedule = movieDateTimeMenu.SelectSchedule(selectedMovie, locationId);
 
             if (selectedSchedule is null) return;
 
@@ -24,8 +39,7 @@ namespace Jolly_Lights_Cinema_Group
             MovieRoom? movieRoom = movieRoomRepository.GetMovieRoomById(selectedSchedule.MovieRoomId);
 
             if (movieRoom is null) return;
- 
-            var locationId = movieRoom.LocationId;
+
             var roomId = selectedSchedule.MovieRoomId;
             var scheduleId = selectedSchedule.Id;
             

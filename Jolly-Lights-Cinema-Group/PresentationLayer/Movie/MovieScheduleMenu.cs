@@ -10,10 +10,10 @@ public class MovieScheduleMenu
         _movieService = new MovieService();
     }
 
-    public Movie? SelectMovieMenu()
+    public Movie? SelectMovieMenu(int locationId)
     {
         ScheduleService scheduleService = new();
-        List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule(Globals.SessionLocationId);
+        List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule(locationId);
 
         string[] movieMenuItems = scheduledMovies
             .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
