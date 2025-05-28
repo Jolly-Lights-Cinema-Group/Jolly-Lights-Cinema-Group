@@ -21,7 +21,8 @@ namespace Jolly_Lights_Cinema_Group.Presentation
             switch (choice)
             {
                 case 0:
-                    ReservationHandler.AddReservation();
+                    MakeReservationMenu makeReservationMenu = new();
+                    makeReservationMenu.MakeReservation();
                     return true;
                 case 1:
                     EditReservationMenu editReservationMenu = new();
