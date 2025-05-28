@@ -57,7 +57,7 @@ public class EditReservationMenu
                 return true;
             case 1:
                 DeleteReservation(reservation);
-                return true;
+                return false;
             case 2:
                 return false;
             default:

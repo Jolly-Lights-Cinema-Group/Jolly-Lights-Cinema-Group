@@ -6,57 +6,50 @@ public class SeatSelection
     private readonly SeatService _seatService;
     private static int SelectedIndexY;
     private static int SelectedIndexX;
+    private static int SelectionAmount = 1;
 
     public SeatSelection()
     {
         _seatService = new SeatService();
     }
 
-    public ScheduleSeat SelectSeatsMenu(int locationId, MovieRoom movieRoom, Schedule schedule)
+    public List<ScheduleSeat> SelectSeatsMenu(int locationId, MovieRoom movieRoom, Schedule schedule, int amount)
     {
-        MovieRoomService movieRoomService = new MovieRoomService();
         ReservationService reservationService = new ReservationService();
+        SelectionAmount = amount;
 
-        var roomLayout = movieRoomService.GetRoomLayout(movieRoom.Id!.Value);
         var reservedSeats = reservationService.GetReservedSeats(movieRoom.Id!.Value);
-
-        var rowCount = 1;
-        foreach (var row in roomLayout!)
-        {
-            var seatCount = 1;
-            foreach (var item in row)
-            {
-                if (reservedSeats.Contains((rowCount.ToString(), item)))
-                {
-                    roomLayout[rowCount][seatCount] = "X";
-                }
-                seatCount++;
-            }
-
-            rowCount++;
-        }
+        var roomLayout = PrepareRoomLayoutWithReservations(movieRoom, reservedSeats);
 
         do
         {
             StartSeatSelection(roomLayout);
-        } while (!IsValidSelection(roomLayout, SelectedIndexY, SelectedIndexX));
+        } while (!IsValidSelection(roomLayout, SelectedIndexY, SelectedIndexX, amount));
 
         Console.Clear();
-        var selectedSeat = $"{SelectedIndexY},{SelectedIndexX}";
-        var selectedSeatValue = roomLayout[SelectedIndexY][SelectedIndexX];
 
-        var seatType = selectedSeatValue switch
+        List<ScheduleSeat> selectedSeats = new List<ScheduleSeat>();
+
+        for (int i = 0; i < SelectionAmount; i++)
         {
-            "S" => SeatType.RegularSeat,
-            "L" => SeatType.LoveSeat,
-            "P" => SeatType.VipSeat,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            var y = SelectedIndexY;
+            var x = SelectedIndexX + i;
+            var selectedSeatValue = roomLayout[y][x];
 
-        var seatPrice = _seatService.GetSeatPriceForSeatTypeOnLocation(seatType, locationId);
+            var seatType = selectedSeatValue switch
+            {
+                "S" => SeatType.RegularSeat,
+                "L" => SeatType.LoveSeat,
+                "P" => SeatType.VipSeat,
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-        ScheduleSeat scheduleSeat = new(schedule.Id!.Value, seatPrice, seatType, selectedSeat);
-        return scheduleSeat;
+            var seatPrice = _seatService.GetSeatPriceForSeatTypeOnLocation(seatType, locationId);
+            var seatCoord = $"{y},{x}";
+            selectedSeats.Add(new ScheduleSeat(schedule.Id!.Value, seatPrice, seatType, seatCoord));
+        }
+
+        return selectedSeats;
     }
 
     private static void StartSeatSelection(List<List<string>> seats)
@@ -81,8 +74,7 @@ public class SeatSelection
                     if (SelectedIndexX > 0) SelectedIndexX--;
                     break;
                 case ConsoleKey.RightArrow:
-
-                    if (SelectedIndexX < seats[SelectedIndexY].Count - 1) SelectedIndexX++;
+                    if (SelectedIndexX < seats[SelectedIndexY].Count - SelectionAmount) SelectedIndexX++;
                     break;
             }
 
@@ -96,27 +88,75 @@ public class SeatSelection
         {
             for (var c = 0; c < grid[r].Count; c++)
             {
-                if (r == SelectedIndexY && c == SelectedIndexX)
+                string displayValue = grid[r][c];
+
+                displayValue = displayValue switch
+                {
+                    "S" => "[_]",
+                    "L" => "[L]",
+                    "P" => "[V]",
+                    "[X]" => "[X]",
+                    "_" => "   ",
+                    "#" => "   ",
+                    _ => $"[{displayValue}]"
+                };
+
+                bool isSelected = r == SelectedIndexY && c >= SelectedIndexX && c < SelectedIndexX + SelectionAmount;
+
+                if (isSelected)
                 {
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.Write($"[{grid[r][c]}]");
+                    Console.Write("[*]");
+                    Console.ResetColor();
+                }
+                else if (displayValue == "[X]")
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(displayValue);
                     Console.ResetColor();
                 }
                 else
                 {
-                    Console.Write($" {grid[r][c]} ");
+                    Console.Write(displayValue);
                 }
             }
             Console.WriteLine();
         }
     }
-    private static bool IsValidSelection(List<List<string>> layout, int y, int x)
+    private static bool IsValidSelection(List<List<string>> layout, int y, int x, int amount)
     {
         if (y < 0 || y >= layout.Count) return false;
-        if (x < 0 || x >= layout[y].Count) return false;
+        if (x < 0 || x + amount > layout[y].Count) return false;
 
-        string seat = layout[y][x];
-        return seat != "#" && seat != "_";
+        for (int i = 0; i < amount; i++)
+        {
+            string seat = layout[y][x + i];
+
+            if (seat == "#" || seat == "_" || seat == "[X]") 
+                return false;
+        }
+
+        return true;
+    }
+
+    private static List<List<string>> PrepareRoomLayoutWithReservations(MovieRoom movieRoom, List<(string, string)> reservedSeats)
+    {
+        MovieRoomService movieRoomService = new MovieRoomService();
+        var roomLayout = movieRoomService.GetRoomLayout(movieRoom.Id!.Value);
+
+        for (int y = 0; y < roomLayout!.Count; y++)
+        {
+            for (int x = 0; x < roomLayout[y].Count; x++)
+            {
+                string seatCoord = $"{y},{x}";
+                if (reservedSeats.Any(s => $"{s.Item1},{s.Item2}" == seatCoord))
+                {
+                    roomLayout[y][x] = "[X]";
+                }
+            }
+        }
+
+        return roomLayout;
     }
 }
