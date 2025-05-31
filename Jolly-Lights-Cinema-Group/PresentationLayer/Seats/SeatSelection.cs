@@ -18,25 +18,24 @@ public class SeatSelection
         ReservationService reservationService = new ReservationService();
         SelectionAmount = amount;
 
-        var reservedSeats = reservationService.GetReservedSeats(movieRoom.Id!.Value);
+        var reservedSeats = reservationService.GetReservedSeats(schedule);
         var roomLayout = PrepareRoomLayoutWithReservations(movieRoom, reservedSeats);
 
-        do
+        var selectedSeatsCoords = new List<(int y, int x)>();
+
+        while (selectedSeatsCoords.Count < SelectionAmount)
         {
-            StartSeatSelection(roomLayout);
-        } while (!IsValidSelection(roomLayout, SelectedIndexY, SelectedIndexX, amount));
+            StartSeatSelection(roomLayout, selectedSeatsCoords);
+        }
 
         Console.Clear();
 
         List<ScheduleSeat> selectedSeats = new List<ScheduleSeat>();
 
-        for (int i = 0; i < SelectionAmount; i++)
+        foreach (var (y, x) in selectedSeatsCoords)
         {
-            var y = SelectedIndexY;
-            var x = SelectedIndexX + i;
-            var selectedSeatValue = roomLayout[y][x];
-
-            var seatType = selectedSeatValue switch
+            var seatValue = roomLayout[y][x];
+            var seatType = seatValue switch
             {
                 "S" => SeatType.RegularSeat,
                 "L" => SeatType.LoveSeat,
@@ -45,78 +44,48 @@ public class SeatSelection
             };
 
             var seatPrice = _seatService.GetSeatPriceForSeatTypeOnLocation(seatType, locationId);
-            var seatCoord = $"{y},{x}";
-            selectedSeats.Add(new ScheduleSeat(schedule.Id!.Value, seatPrice, seatType, seatCoord));
+            selectedSeats.Add(new ScheduleSeat(schedule.Id!.Value, seatPrice, seatType, $"{y},{x}"));
         }
 
         return selectedSeats;
     }
 
-    private void StartSeatSelection(List<List<string>> seats)
+    private void StartSeatSelection(List<List<string>> seats, List<(int y, int x)> alreadySelected)
     {
-        MoveToNextValidPosition(seats);
+        MoveToNextValidPosition(seats, alreadySelected);
 
-        ConsoleKey keypressed;
+        ConsoleKey keyPressed;
         do
         {
-            DisplayOptions(seats);
+            DisplayOptions(seats, alreadySelected);
 
-            keypressed = Console.ReadKey(true).Key;
+            keyPressed = Console.ReadKey(true).Key;
 
-            switch (keypressed)
+            switch (keyPressed)
             {
                 case ConsoleKey.UpArrow:
-                    do
-                    {
-                        SelectedIndexY--;
-                    }
-                    while (SelectedIndexY >= 0 &&
-                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
-                    if (SelectedIndexY < 0) SelectedIndexY = 0;
+                    (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, -1, 0, alreadySelected);
                     break;
 
                 case ConsoleKey.DownArrow:
-                    do
-                    {
-                        SelectedIndexY++;
-                    }
-                    while (SelectedIndexY < seats.Count &&
-                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
-                    if (SelectedIndexY >= seats.Count) SelectedIndexY = seats.Count - 1;
+                    (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, 1, 0, alreadySelected);
                     break;
 
                 case ConsoleKey.LeftArrow:
-                    do
-                    {
-                        SelectedIndexX--;
-                    }
-                    while (SelectedIndexX >= 0 &&
-                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
-                    if (SelectedIndexX < 0) SelectedIndexX = 0;
+                    (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, 0, -1, alreadySelected);
                     break;
 
                 case ConsoleKey.RightArrow:
-                    do
-                    {
-                        SelectedIndexX++;
-                    }
-                    while (SelectedIndexX < seats[SelectedIndexY].Count - SelectionAmount &&
-                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
-                    if (SelectedIndexX >= seats[SelectedIndexY].Count - SelectionAmount)
-                        SelectedIndexX = seats[SelectedIndexY].Count - SelectionAmount;
+                    (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, 0, 1, alreadySelected);
                     break;
             }
+        } while (keyPressed != ConsoleKey.Enter ||
+                 !IsSelectablePosition(seats, SelectedIndexY, SelectedIndexX, alreadySelected));
 
-            if (!IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount))
-                {
-                    MoveToNextValidPosition(seats);
-                }
-
-        } while (keypressed != ConsoleKey.Enter);
-        
+        alreadySelected.Add((SelectedIndexY, SelectedIndexX));
     }
 
-    private void DisplayOptions(List<List<string>> grid)
+    private void DisplayOptions(List<List<string>> grid, List<(int y, int x)> alreadySelected)
     {
         Console.Clear();
         for (var r = 0; r < grid.Count; r++)
@@ -135,12 +104,20 @@ public class SeatSelection
                     _ => $"[{displayValue}]"
                 };
 
-                bool isSelected = r == SelectedIndexY && c >= SelectedIndexX && c < SelectedIndexX + SelectionAmount;
+                bool isCurrent = r == SelectedIndexY && c == SelectedIndexX;
+                bool isChosen = alreadySelected.Contains((r, c));
 
-                if (isSelected)
+
+                if (isCurrent)
                 {
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write("[*]");
+                    Console.ResetColor();
+                }
+                else if (isChosen)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.Write("[*]");
                     Console.ResetColor();
                 }
@@ -157,21 +134,6 @@ public class SeatSelection
             }
             Console.WriteLine();
         }
-    }
-    private bool IsValidSelection(List<List<string>> layout, int y, int x, int amount)
-    {
-        if (y < 0 || y >= layout.Count) return false;
-        if (x < 0 || x + amount > layout[y].Count) return false;
-
-        for (int i = 0; i < amount; i++)
-        {
-            string seat = layout[y][x + i];
-
-            if (seat == "#" || seat == "_" || seat == "[X]")
-                return false;
-        }
-
-        return true;
     }
 
     private List<List<string>> PrepareRoomLayoutWithReservations(MovieRoom movieRoom, List<(string, string)> reservedSeats)
@@ -194,20 +156,83 @@ public class SeatSelection
         return roomLayout;
     }
 
-    private void MoveToNextValidPosition(List<List<string>> layout)
+    private void MoveToNextValidPosition(List<List<string>> layout, List<(int y, int x)> alreadySelected)
     {
-        while (!IsValidSelection(layout, SelectedIndexY, SelectedIndexX, SelectionAmount))
+        int totalRows = layout.Count;
+        int totalCols = layout[0].Count;
+
+        while (!IsSelectablePosition(layout, SelectedIndexY, SelectedIndexX, alreadySelected))
         {
             SelectedIndexX++;
-            if (SelectedIndexX >= layout[SelectedIndexY].Count)
+            if (SelectedIndexX >= totalCols)
             {
                 SelectedIndexX = 0;
                 SelectedIndexY++;
-                if (SelectedIndexY >= layout.Count)
+                if (SelectedIndexY >= totalRows)
                 {
                     SelectedIndexY = 0;
                 }
             }
         }
+    }
+
+    private bool IsSelectablePosition(List<List<string>> layout, int y, int x, List<(int y, int x)> alreadySelected)
+    {
+        if (y < 0 || y >= layout.Count) return false;
+        if (x < 0 || x >= layout[y].Count) return false;
+
+        string seat = layout[y][x];
+
+        if (seat == "#" || seat == "_" || seat == "[X]") return false;
+        if (alreadySelected.Contains((y, x))) return false;
+
+        return true;
+    }
+
+    private (int newY, int newX) MoveCursor(List<List<string>> layout, int startY, int startX, int deltaY, int deltaX, List<(int y, int x)> alreadySelected)
+    {
+        int maxRows = layout.Count;
+        int maxCols = layout[0].Count;
+
+        int y = startY;
+        int x = startX;
+
+        while (true)
+        {
+            y += deltaY;
+            x += deltaX;
+
+            if (y < 0 || y >= maxRows || x < 0 || x >= maxCols)
+                break;
+
+            if (IsSelectablePosition(layout, y, x, alreadySelected))
+                return (y, x);
+        }
+
+        if (deltaY != 0)
+        {
+            for (int row = startY + deltaY; row >= 0 && row < maxRows; row += deltaY)
+            {
+                for (int col = 0; col < maxCols; col++)
+                {
+                    if (IsSelectablePosition(layout, row, col, alreadySelected))
+                        return (row, col);
+                }
+            }
+        }
+
+        else if (deltaX != 0)
+        {
+            for (int col = startX + deltaX; col >= 0 && col < maxCols; col += deltaX)
+            {
+                for (int row = 0; row < maxRows; row++)
+                {
+                    if (IsSelectablePosition(layout, row, col, alreadySelected))
+                        return (row, col);
+                }
+            }
+        }
+
+        return (startY, startX);
     }
 }

@@ -39,10 +39,22 @@ public class ReservationService
         return _reservationRepository.IsReservationPaid(reservation);
     }
 
-    public List<(string, string)> GetReservedSeats(int movieRoomId)
+    public List<(string, string)> GetReservedSeats(Schedule schedule)
     {
         ScheduleSeatRepository scheduleSeatRepository = new();
-        var result = scheduleSeatRepository.GetReservedSeats(movieRoomId);
-        return result.Select(x => (x.Split(',')[0], x.Split(',')[1])).ToList();
+        List<ScheduleSeat> result = scheduleSeatRepository.GetSeatsBySchedule(schedule.Id!.Value);
+
+        List<(string, string)> reservedSeats = new List<(string, string)>();
+
+        foreach (var seat in result)
+        {
+            var parts = seat.SeatNumber!.Split(',');
+            var row = parts[0].Trim();
+            var col = parts[1].Trim();
+
+            reservedSeats.Add((row, col));
+        }
+
+        return reservedSeats;
     }
 }
