@@ -103,11 +103,11 @@ public static class ManageScheduleMenu
             string? inputDate = Console.ReadLine();
             if (DateTimeValidator.TryParseDate(inputDate, out startDate))
             {
-                if (startDate >= selectedMovie.ReleaseDate) break;
+                if (startDate >= selectedMovie.ReleaseDate && startDate >= DateTime.Today) break;
 
                 else
                 {
-                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}");
+                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}, or in the past");
                 }
             }
 
@@ -125,7 +125,12 @@ public static class ManageScheduleMenu
                 Console.WriteLine("Invalid format. Please use HH:mm:ss (e.g., 14:30:00).");
             }
 
-            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime, selectedMovie.Id!.Value, selectedMovie.Duration.Value))
+            else if (startDate == DateTime.Today && startTime <= DateTime.Now.TimeOfDay)
+            {
+                Console.WriteLine("The time must be in the future.");
+            }
+
+            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime, selectedMovie.Id!.Value, selectedMovie.Duration!.Value))
             {
                 Console.WriteLine("Schedule overlaps with another movie in the same room.");
             }
@@ -380,9 +385,9 @@ public static class ManageScheduleMenu
                 Console.WriteLine("Cancelled.");
                 return;
             }
-            if (!DateTime.TryParseExact(input, allowedFormats, null, System.Globalization.DateTimeStyles.None, out scheduleDate))
+            if (!DateTimeValidator.TryParseDate(input, out scheduleDate))
             {
-                Console.WriteLine("Invalid date format. Please use yyyy-MM-dd or dd/MM/yyyy.");
+                Console.WriteLine("Invalid date format. Please use dd/MM/yyyy.");
                 continue;
             }
             if (scheduleDate < DateTime.Today || scheduleDate < selectedMovie.ReleaseDate)
@@ -413,14 +418,14 @@ public static class ManageScheduleMenu
             }
         } while (requestedShowings <= 0);
 
-        while (currentTime + TimeSpan.FromMinutes(selectedMovie.Duration.Value) <= closingTime && scheduledCount < requestedShowings)
+        while (currentTime + TimeSpan.FromMinutes(selectedMovie.Duration!.Value) <= closingTime && scheduledCount < requestedShowings)
         {
-            if (_scheduleService.CanAddSchedule(1, scheduleDate, currentTime, selectedMovie.Id!.Value, selectedMovie.Duration.Value))
+            if (_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, scheduleDate, currentTime, selectedMovie.Id!.Value, selectedMovie.Duration.Value))
             {
                 Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, scheduleDate, currentTime);
                 if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
                 {
-                    Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate} {currentTime} !");
+                    Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate} {currentTime}");
                     scheduledCount++;
                     currentTime += gapBetweenShowings;
                 }
