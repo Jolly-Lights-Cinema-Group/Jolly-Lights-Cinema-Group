@@ -14,9 +14,9 @@ public class ScheduleService
         return _scheduleRepo.AddSchedule(schedule);
     }
 
-    public bool CanAddSchedule(int roomId, DateTime startDate, TimeSpan startTime, int movieId)
+    public bool CanAddSchedule(int roomId, DateTime startDate, TimeSpan startTime, int movieId, int movieDuration)
     {
-        if (_scheduleRepo.CanAddScheduleAfter(roomId, startDate, startTime) || _scheduleRepo.CanAddScheduleBefore(roomId, startDate, startTime, movieId))
+        if (_scheduleRepo.CanAddScheduleAfter(roomId, startDate, startTime, movieDuration) && _scheduleRepo.CanAddScheduleBefore(roomId, startDate, startTime, movieId))
         {
             return true;
         }
@@ -68,7 +68,7 @@ public class ScheduleService
         MovieRoomRepository movieRoomRepository = new();
 
         schedules = schedules
-            .Where(s => 
+            .Where(s =>
                 s.StartDate.Add(s.StartTime) >= DateTime.Now &&
                 movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId
             )

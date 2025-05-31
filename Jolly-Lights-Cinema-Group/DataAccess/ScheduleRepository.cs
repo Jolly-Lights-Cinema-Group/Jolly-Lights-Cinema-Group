@@ -38,7 +38,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public bool CanAddScheduleAfter(int roomId, DateTime startDate, TimeSpan startTime)
+        public bool CanAddScheduleAfter(int roomId, DateTime startDate, TimeSpan startTime, int minutes)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -48,12 +48,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                     SELECT COUNT(*)
                     FROM Schedule
                     WHERE MovieRoomId = @roomId
-                    AND StartDate = @startDate
-                    AND @startTime < FreeAfter";
+                        AND StartDate = @startDate
+                        AND @startTime < FreeAfter
+                        AND time(@startTime, '+' || @durationMinutes || ' minutes') > StartTime;";
+
 
                 command.Parameters.AddWithValue("@roomId", roomId);
                 command.Parameters.AddWithValue("@startDate", startDate);
                 command.Parameters.AddWithValue("@startTime", startTime);
+                command.Parameters.AddWithValue("@durationMinutes", minutes);
 
                 var count = Convert.ToInt32(command.ExecuteScalar());
                 return count == 0;

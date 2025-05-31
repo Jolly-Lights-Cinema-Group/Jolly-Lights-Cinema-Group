@@ -34,6 +34,7 @@ public static class ManageScheduleMenu
                 ShowScheduleByDate();
                 return true;
             case 3:
+                AutomaticMovieSchedule();
                 return true;
             default:
                 return false;
@@ -102,11 +103,11 @@ public static class ManageScheduleMenu
             string? inputDate = Console.ReadLine();
             if (DateTimeValidator.TryParseDate(inputDate, out startDate))
             {
-                if (startDate >= selectedMovie.ReleaseDate) break;
+                if (startDate >= selectedMovie.ReleaseDate && startDate >= DateTime.Today) break;
 
                 else
                 {
-                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}");
+                    Console.WriteLine($"The start date cannot take place before the release date: {selectedMovie.ReleaseDate:dd/MM/yyyy}, or in the past");
                 }
             }
 
@@ -124,7 +125,12 @@ public static class ManageScheduleMenu
                 Console.WriteLine("Invalid format. Please use HH:mm:ss (e.g., 14:30:00).");
             }
 
-            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime, selectedMovie.Id!.Value))
+            else if (startDate == DateTime.Today && startTime <= DateTime.Now.TimeOfDay)
+            {
+                Console.WriteLine("The time must be in the future.");
+            }
+
+            else if (!_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, startDate, startTime, selectedMovie.Id!.Value, selectedMovie.Duration!.Value))
             {
                 Console.WriteLine("Schedule overlaps with another movie in the same room.");
             }
@@ -295,5 +301,143 @@ public static class ManageScheduleMenu
 
         Console.WriteLine($"\nPress any key to continue");
         Console.Read();
+    }
+
+    // Basically asks for user input and then loop x time over the time from openingtime (09:00) - closing time (02:00) with buffers of 15 minutes. 
+    // 180 minutes if a movie has been added so that it's not possible to get the same 3 movies in a row. 
+    public static void AutomaticMovieSchedule()
+    {
+        int requestedShowings;
+        int locationId;
+        int scheduledCount = 0;
+
+        DateTime scheduleDate;
+        string[] allowedFormats = { "yyyy-MM-dd", "dd/MM/yyyy" };
+
+        TimeSpan openingTime = TimeSpan.FromHours(9);
+        TimeSpan closingTime = TimeSpan.FromHours(26);
+        TimeSpan currentTime = openingTime;
+        TimeSpan gapBetweenShowings = TimeSpan.FromHours(3);
+
+        MovieService movieService = new();
+        List<Movie> allMovies = movieService.ShowAllMovies();
+
+        // Selecting room
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
+        MovieRoomService movieRoomService = new();
+        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
+
+        string[] movieRoomItems = movieRooms
+            .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
+            .Append("Cancel")
+            .ToArray();
+
+        Menu movieRoomMenu = new("Select a movie room:", movieRoomItems);
+        int movieRoomChoice = movieRoomMenu.Run();
+
+        if (movieRoomChoice >= movieRooms.Count)
+        {
+            Console.WriteLine("Cancelled.");
+            return;
+        }
+
+        MovieRoom selectedMovieRoom = movieRooms[movieRoomChoice];
+
+        // Selecting movie
+        string[] movieMenuItems = allMovies
+            .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
+            .Append("Cancel")
+            .ToArray();
+
+        Menu movieMenu = new("Select a movie to create a Automatic Schedule:", movieMenuItems);
+        int movieChoice = movieMenu.Run();
+
+        Console.Clear();
+
+        if (movieChoice >= allMovies.Count)
+        {
+            Console.WriteLine("Cancelled.");
+            return;
+        }
+
+        Movie selectedMovie = allMovies[movieChoice];
+
+        // Loop of getting the date for the schedule.
+        do
+        {
+            Console.Write("Enter the date for the schedule (yyyy-MM-dd), or type 'cancel' to exit: ");
+            string? input = Console.ReadLine();
+
+            if (input?.Trim().ToLower() == "cancel")
+            {
+                Console.WriteLine("Cancelled.");
+                return;
+            }
+            if (!DateTimeValidator.TryParseDate(input, out scheduleDate))
+            {
+                Console.WriteLine("Invalid date format. Please use dd/MM/yyyy.");
+                continue;
+            }
+            if (scheduleDate < DateTime.Today || scheduleDate < selectedMovie.ReleaseDate)
+            {
+                Console.WriteLine($"Date cannot be in the past or before the Release date of: {selectedMovie.ReleaseDate.ToString("dd-mm-yyyy")}.");
+                continue;
+            }
+
+            break;
+
+        } while (true);
+
+        Console.Clear();
+
+        // Loop for how many times the movie has to be shown
+        do
+        {
+            Console.Write("How many times should the movie be shown? (Enter 0 to cancel): ");
+            if (!int.TryParse(Console.ReadLine(), out requestedShowings))
+            {
+                Console.WriteLine("Please enter a valid number.");
+                continue;
+            }
+            if (requestedShowings == 0)
+            {
+                Console.WriteLine("Cancelled.");
+                return;
+            }
+        } while (requestedShowings <= 0);
+
+        while (currentTime + TimeSpan.FromMinutes(selectedMovie.Duration!.Value) <= closingTime && scheduledCount < requestedShowings)
+        {
+            if (_scheduleService.CanAddSchedule(selectedMovieRoom.Id!.Value, scheduleDate, currentTime, selectedMovie.Id!.Value, selectedMovie.Duration.Value))
+            {
+                Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, scheduleDate, currentTime);
+                if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
+                {
+                    Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate} {currentTime}");
+                    scheduledCount++;
+                    currentTime += gapBetweenShowings;
+                }
+            }
+            else
+            {
+                currentTime += TimeSpan.FromMinutes(15);
+            }
+        }
+
+        Console.WriteLine($"Total Schedule added: {scheduledCount}");
+        Console.ReadKey();
+
     }
 }
