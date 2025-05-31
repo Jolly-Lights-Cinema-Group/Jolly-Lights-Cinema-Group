@@ -299,13 +299,11 @@ public static class ManageScheduleMenu
     }
 
     // Basically asks for user input and then loop x time over the time from openingtime (09:00) - closing time (02:00) with buffers of 15 minutes. 
-    // 180 minutes if a movie has been added so that it's not possible to get the same 3 movies in a row.
-
-    // ToDo: Adding rooms to this function. Now it only uses hardcoded room 1.
-    // We want to do this for mulitple rooms.  
+    // 180 minutes if a movie has been added so that it's not possible to get the same 3 movies in a row. 
     public static void AutomaticMovieSchedule()
     {
         int requestedShowings;
+        int locationId;
         int scheduledCount = 0;
 
         DateTime scheduleDate;
@@ -319,6 +317,40 @@ public static class ManageScheduleMenu
         MovieService movieService = new();
         List<Movie> allMovies = movieService.ShowAllMovies();
 
+        // Selecting room
+        if (Globals.CurrentUser!.Role == Role.Admin)
+        {
+
+            LocationMenu location = new();
+            int selectedLocation = location.Run();
+
+            LocationService locationService = new LocationService();
+            List<Location> locations = locationService.GetAllLocations();
+
+            locationId = (int)locations[selectedLocation].Id!;
+        }
+        else locationId = Globals.SessionLocationId;
+
+        MovieRoomService movieRoomService = new();
+        List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
+
+        string[] movieRoomItems = movieRooms
+            .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
+            .Append("Cancel")
+            .ToArray();
+
+        Menu movieRoomMenu = new("Select a movie room:", movieRoomItems);
+        int movieRoomChoice = movieRoomMenu.Run();
+
+        if (movieRoomChoice >= movieRooms.Count)
+        {
+            Console.WriteLine("Cancelled.");
+            return;
+        }
+
+        MovieRoom selectedMovieRoom = movieRooms[movieRoomChoice];
+
+        // Selecting movie
         string[] movieMenuItems = allMovies
             .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
             .Append("Cancel")
@@ -341,7 +373,7 @@ public static class ManageScheduleMenu
         do
         {
             Console.Write("Enter the date for the schedule (yyyy-MM-dd), or type 'cancel' to exit: ");
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
 
             if (input?.Trim().ToLower() == "cancel")
             {
@@ -385,7 +417,7 @@ public static class ManageScheduleMenu
         {
             if (_scheduleService.CanAddSchedule(1, scheduleDate, currentTime, selectedMovie.Id!.Value, selectedMovie.Duration.Value))
             {
-                Schedule schedule = new(1, selectedMovie.Id!.Value, scheduleDate, currentTime);
+                Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, scheduleDate, currentTime);
                 if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
                 {
                     Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate} {currentTime} !");
