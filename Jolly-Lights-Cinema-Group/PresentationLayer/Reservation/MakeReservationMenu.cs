@@ -45,14 +45,21 @@ public class MakeReservationMenu
 
         if (movieRoom is null) return;
 
-        int leftOverSeats = movieRoomService.GetLeftOverSeats(movieRoom, selectedSchedule);
+        int leftOverSeats = movieRoomService.GetLeftOverSeats(selectedSchedule);
 
         int numberOfSeats;
         string? inputNumberOfSeats;
         do
         {
-            Console.Write("Enter the amount of seats: ");
+            Console.Write("Enter the amount of seats (or 'C' to cancel): ");
             inputNumberOfSeats = Console.ReadLine();
+
+            if (inputNumberOfSeats != null && inputNumberOfSeats.Trim().ToUpper() == "C")
+            {
+                Console.WriteLine("Reservation cancelled.");
+                return;
+            }
+
             if (!int.TryParse(inputNumberOfSeats, out numberOfSeats) || numberOfSeats < 0)
             {
                 Console.WriteLine("Please enter a valid positive number.");
@@ -64,7 +71,10 @@ public class MakeReservationMenu
                 Console.WriteLine($"You requested {numberOfSeats} seats, but only {leftOverSeats} are available.");
                 continue;
             }
-        } while (!int.TryParse(inputNumberOfSeats, out numberOfSeats) || numberOfSeats < 0 || numberOfSeats > leftOverSeats);       
+
+            break;
+
+        } while (true);       
 
         SeatSelection seatSelection = new();
         List<ScheduleSeat> selectedSeats = seatSelection.SelectSeatsMenu(locationId, movieRoom, selectedSchedule, numberOfSeats);
