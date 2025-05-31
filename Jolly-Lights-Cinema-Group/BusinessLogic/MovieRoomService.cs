@@ -1,5 +1,6 @@
 using JollyLightsCinemaGroup.DataAccess;
 using Jolly_Lights_Cinema_Group.Helpers;
+using JollyLightsCinemaGroup.BusinessLogic;
 
 public class MovieRoomService
 {
@@ -33,5 +34,32 @@ public class MovieRoomService
     public MovieRoom? GetMovieRoomById(int id)
     {
         return _movieRoomRepo.GetMovieRoomById(id);
+    }
+
+    public int GetLeftOverSeats(MovieRoom movieRoom, Schedule schedule)
+    {
+        List<List<string>>? movieRoomLayout = GetRoomLayout(movieRoom.Id!.Value);
+        if (movieRoomLayout == null) return 0;
+
+        int totalSeats = 0;
+        foreach (List<string> row in movieRoomLayout)
+        {
+            foreach (string seat in row)
+            {
+                if (seat != "#" && seat != "_")
+                {
+                    totalSeats++;
+                }
+            }
+        }
+
+        ScheduleSeatService scheduleSeatService = new();
+        List<ScheduleSeat> reservedSeats = scheduleSeatService.ShowAllLScheduleSeats(schedule.Id!.Value);
+
+        int reservedCount = reservedSeats.Count;
+
+        int freeSeats = totalSeats - reservedCount;
+
+        return freeSeats;
     }
 }
