@@ -25,6 +25,8 @@ public class EditReservationMenu
         if (reservation is null)
         {
             Console.WriteLine($"No Reservation found with reservation number: {reservationNumber}");
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
         }
 
         else
@@ -43,9 +45,6 @@ public class EditReservationMenu
                 inEditReservationsMenu = HandleEditReservationMenu(choice, reservation);
             }
         }
-
-        Console.WriteLine("\nPress any key to continue.");
-        Console.ReadKey();
     }
 
     public bool HandleEditReservationMenu(int choice, Reservation reservation)

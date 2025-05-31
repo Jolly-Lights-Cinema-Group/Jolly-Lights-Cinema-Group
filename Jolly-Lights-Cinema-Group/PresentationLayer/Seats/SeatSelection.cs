@@ -4,9 +4,9 @@ using Jolly_Lights_Cinema_Group.Enum;
 public class SeatSelection
 {
     private readonly SeatService _seatService;
-    private static int SelectedIndexY;
-    private static int SelectedIndexX;
-    private static int SelectionAmount = 1;
+    private int SelectedIndexY = 0;
+    private int SelectedIndexX = 0;
+    private int SelectionAmount = 1;
 
     public SeatSelection()
     {
@@ -52,12 +52,13 @@ public class SeatSelection
         return selectedSeats;
     }
 
-    private static void StartSeatSelection(List<List<string>> seats)
+    private void StartSeatSelection(List<List<string>> seats)
     {
+        MoveToNextValidPosition(seats);
+
         ConsoleKey keypressed;
         do
         {
-            Console.Clear();
             DisplayOptions(seats);
 
             keypressed = Console.ReadKey(true).Key;
@@ -65,23 +66,57 @@ public class SeatSelection
             switch (keypressed)
             {
                 case ConsoleKey.UpArrow:
-                    if (SelectedIndexY > 0) SelectedIndexY--;
+                    do
+                    {
+                        SelectedIndexY--;
+                    }
+                    while (SelectedIndexY >= 0 &&
+                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
+                    if (SelectedIndexY < 0) SelectedIndexY = 0;
                     break;
+
                 case ConsoleKey.DownArrow:
-                    if (SelectedIndexY < seats.Count - 1) SelectedIndexY++;
+                    do
+                    {
+                        SelectedIndexY++;
+                    }
+                    while (SelectedIndexY < seats.Count &&
+                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
+                    if (SelectedIndexY >= seats.Count) SelectedIndexY = seats.Count - 1;
                     break;
+
                 case ConsoleKey.LeftArrow:
-                    if (SelectedIndexX > 0) SelectedIndexX--;
+                    do
+                    {
+                        SelectedIndexX--;
+                    }
+                    while (SelectedIndexX >= 0 &&
+                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
+                    if (SelectedIndexX < 0) SelectedIndexX = 0;
                     break;
+
                 case ConsoleKey.RightArrow:
-                    if (SelectedIndexX < seats[SelectedIndexY].Count - SelectionAmount) SelectedIndexX++;
+                    do
+                    {
+                        SelectedIndexX++;
+                    }
+                    while (SelectedIndexX < seats[SelectedIndexY].Count - SelectionAmount &&
+                        !IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount));
+                    if (SelectedIndexX >= seats[SelectedIndexY].Count - SelectionAmount)
+                        SelectedIndexX = seats[SelectedIndexY].Count - SelectionAmount;
                     break;
             }
 
+            if (!IsValidSelection(seats, SelectedIndexY, SelectedIndexX, SelectionAmount))
+                {
+                    MoveToNextValidPosition(seats);
+                }
+
         } while (keypressed != ConsoleKey.Enter);
+        
     }
 
-    private static void DisplayOptions(List<List<string>> grid)
+    private void DisplayOptions(List<List<string>> grid)
     {
         Console.Clear();
         for (var r = 0; r < grid.Count; r++)
@@ -96,8 +131,7 @@ public class SeatSelection
                     "L" => "[L]",
                     "P" => "[V]",
                     "[X]" => "[X]",
-                    "_" => "   ",
-                    "#" => "   ",
+                    "_" or "#" => "   ",
                     _ => $"[{displayValue}]"
                 };
 
@@ -124,7 +158,7 @@ public class SeatSelection
             Console.WriteLine();
         }
     }
-    private static bool IsValidSelection(List<List<string>> layout, int y, int x, int amount)
+    private bool IsValidSelection(List<List<string>> layout, int y, int x, int amount)
     {
         if (y < 0 || y >= layout.Count) return false;
         if (x < 0 || x + amount > layout[y].Count) return false;
@@ -133,14 +167,14 @@ public class SeatSelection
         {
             string seat = layout[y][x + i];
 
-            if (seat == "#" || seat == "_" || seat == "[X]") 
+            if (seat == "#" || seat == "_" || seat == "[X]")
                 return false;
         }
 
         return true;
     }
 
-    private static List<List<string>> PrepareRoomLayoutWithReservations(MovieRoom movieRoom, List<(string, string)> reservedSeats)
+    private List<List<string>> PrepareRoomLayoutWithReservations(MovieRoom movieRoom, List<(string, string)> reservedSeats)
     {
         MovieRoomService movieRoomService = new MovieRoomService();
         var roomLayout = movieRoomService.GetRoomLayout(movieRoom.Id!.Value);
@@ -158,5 +192,22 @@ public class SeatSelection
         }
 
         return roomLayout;
+    }
+
+    private void MoveToNextValidPosition(List<List<string>> layout)
+    {
+        while (!IsValidSelection(layout, SelectedIndexY, SelectedIndexX, SelectionAmount))
+        {
+            SelectedIndexX++;
+            if (SelectedIndexX >= layout[SelectedIndexY].Count)
+            {
+                SelectedIndexX = 0;
+                SelectedIndexY++;
+                if (SelectedIndexY >= layout.Count)
+                {
+                    SelectedIndexY = 0;
+                }
+            }
+        }
     }
 }
