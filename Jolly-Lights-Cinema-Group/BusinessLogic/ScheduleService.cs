@@ -66,11 +66,13 @@ public class ScheduleService
         List<Schedule> schedules = _scheduleRepo.GetSchedulesByMovie(selectedMovie);
 
         MovieRoomRepository movieRoomRepository = new();
+        MovieRoomService movieRoomService = new();
 
         schedules = schedules
             .Where(s =>
                 s.StartDate.Add(s.StartTime) >= DateTime.Now &&
-                movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId
+                movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId &&
+                movieRoomService.GetLeftOverSeats(s) > 0
             )
             .ToList();
 

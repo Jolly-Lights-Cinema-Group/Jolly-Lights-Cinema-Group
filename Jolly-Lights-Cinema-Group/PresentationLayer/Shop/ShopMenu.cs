@@ -82,7 +82,13 @@ public class ShopMenu
 
         } while (reservation == null);
 
-        if (!reservationService.IsReservationPaid(reservation)) DisplayShop(reservation);
+        if (!reservationService.IsReservationPaid(reservation))
+        {
+            DisplayShop(reservation);
+            OrderLineService orderLineService = new();
+            orderLineService.DeleteOrderLineByReservation(reservation);
+            orderLineService.CreateOrderLineForReservation(reservation);
+        }
 
         else
         {

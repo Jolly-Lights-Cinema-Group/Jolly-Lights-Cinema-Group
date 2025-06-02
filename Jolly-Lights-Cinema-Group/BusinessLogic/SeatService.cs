@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.Enum;
 using Jolly_Lights_Cinema_Group.Models;
 using JollyLightsCinemaGroup.DataAccess;
 
@@ -15,5 +16,10 @@ public class SeatService
     public bool EditSeatPrice(Seat seat, decimal newPrice, int locationId)
     {
         return _seatRepo.ModifySeatPrices(seat, newPrice, locationId);
+    }
+
+    public double GetSeatPriceForSeatTypeOnLocation(SeatType type, int locationId)
+    {
+        return _seatRepo.GetSeatPriceForSeatTypeOnLocation(type, locationId);
     }
 }

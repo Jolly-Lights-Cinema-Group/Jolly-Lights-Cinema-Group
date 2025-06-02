@@ -27,7 +27,12 @@ namespace Jolly_Lights_Cinema_Group
 
                 var selectedDateGroup = groupedSchedules[dateChoice];
 
-                List<Schedule> timesForDate = selectedDateGroup.OrderBy(s => s.StartTime).ToList();
+                MovieRoomService movieRoomService = new();
+
+                List<Schedule> timesForDate = selectedDateGroup
+                    .OrderBy(s => s.StartTime)
+                    .Where(s => movieRoomService.GetLeftOverSeats(s) > 0)
+                    .ToList();
 
                 string[] timeMenuItems = timesForDate
                     .Select(s => s.StartTime.ToString(@"hh\:mm"))

@@ -39,27 +39,22 @@ public class ReservationService
         return _reservationRepository.IsReservationPaid(reservation);
     }
 
-    public List<(string, string)> GetReservedSeats(int roomNumber, int locationId)
+    public List<(string, string)> GetReservedSeats(Schedule schedule)
     {
         ScheduleSeatRepository scheduleSeatRepository = new();
-        var result = scheduleSeatRepository.GetReservedSeats(roomNumber, locationId);
-        return result.Select(x => (x.Split(',')[0], x.Split(',')[1])).ToList();
-    }
+        List<ScheduleSeat> result = scheduleSeatRepository.GetSeatsBySchedule(schedule.Id!.Value);
 
-    public Reservation? MakeReservation()
-    {
-        MakeReservationMenu makeReservationMenu = new();
-        Reservation? reservation = makeReservationMenu.MakeReservation();
+        List<(string, string)> reservedSeats = new List<(string, string)>();
 
-        if (reservation is null) return null;
+        foreach (var seat in result)
+        {
+            var parts = seat.SeatNumber!.Split(',');
+            var row = parts[0].Trim();
+            var col = parts[1].Trim();
 
-        Reservation newReservation = _reservationRepository.FindReservationByReservationNumber(reservation.ReservationNumber)!;
-        return newReservation;
-    }
+            reservedSeats.Add((row, col));
+        }
 
-    public void CompleteReservation(Reservation reservation, Movie selectedMovie, Schedule selectedSchedule, string selectedSeat)
-    {
-        MakeReservationMenu makeReservationMenu = new();
-        makeReservationMenu.CompleteReservation(reservation, selectedMovie, selectedSchedule, selectedSeat);
+        return reservedSeats;
     }
 }

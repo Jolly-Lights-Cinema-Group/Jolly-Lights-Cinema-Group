@@ -4,7 +4,7 @@ public class ScheduleSeat
 {
     public int? Id { get; set; }
     public int ScheduleId { get; set; }
-    public int ReservationId { get; set; }
+    public int? ReservationId { get; set; }
     public double Price { get; set; }
     public SeatType Type { get; set; }
     public string? SeatNumber { get; set; }
@@ -22,5 +22,13 @@ public class ScheduleSeat
         : this(scheduleId, reservationId, price, type, seatNumber)
     {
         Id = id;
+    }
+
+    public ScheduleSeat(int scheduleId, double price, SeatType type, string seatNumber)
+    {
+        ScheduleId = scheduleId;
+        Price = price;
+        Type = type;
+        SeatNumber = seatNumber;
     }
 }

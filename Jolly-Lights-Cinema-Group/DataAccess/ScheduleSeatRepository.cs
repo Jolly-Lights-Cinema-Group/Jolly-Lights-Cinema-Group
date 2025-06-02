@@ -5,26 +5,6 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class ScheduleSeatRepository
     {
-        public bool AddScheduleSeat(ScheduleSeat scheduleSeat)
-        {
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    INSERT INTO ScheduleSeat (ScheduleId, ReservationId, Price, Type, SeatNumber)
-                    VALUES (@scheduleId, @reservationId, @price, @type, @seatNumber);";
-
-                command.Parameters.AddWithValue("@scheduleId", scheduleSeat.ScheduleId);
-                command.Parameters.AddWithValue("@reservationId", scheduleSeat.ReservationId);
-                command.Parameters.AddWithValue("@price", scheduleSeat.Price);
-                command.Parameters.AddWithValue("@type", scheduleSeat.Type);
-                command.Parameters.AddWithValue("@seatNumber", scheduleSeat.SeatNumber);
-
-                return command.ExecuteNonQuery() > 0;
-            }
-        }
-
         public List<ScheduleSeat> GetSeatsBySchedule(int scheduleId)
         {
             var seats = new List<ScheduleSeat>();
@@ -48,7 +28,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return seats;
         }
 
-        public List<string> GetReservedSeats(int roomNumber, int locationId)
+        public List<string> GetReservedSeats(int movieRoomId)
         {
             var result = new List<string>();
             using (var connection = DatabaseManager.GetConnection())
@@ -59,9 +39,9 @@ namespace JollyLightsCinemaGroup.DataAccess
                     SELECT SeatNumber
                     FROM ScheduleSeat
                     LEFT JOIN Schedule ON ScheduleSeat.ScheduleId = Schedule.Id
-                    WHERE Schedule.MovieRoomId = @RoomNumber;";
+                    WHERE Schedule.MovieRoomId = @movieRoomId;";
 
-                command.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                command.Parameters.AddWithValue("@movieRoomId", movieRoomId);
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -74,7 +54,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return result;
         }
 
-        public void AddSeatToReservation(string seat, SeatType type, int reservationId, int scheduleId, double price)
+        public bool AddSeatToReservation(ScheduleSeat scheduleSeat)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -84,12 +64,12 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO ScheduleSeat (SeatNumber, ReservationId, Price, Type, ScheduleId)
                     VALUES (@SeatNumber, @ReservationId, @Price, @Type, @ScheduleId);";
 
-                command.Parameters.AddWithValue("@SeatNumber", seat);
-                command.Parameters.AddWithValue("@ReservationId", reservationId);
-                command.Parameters.AddWithValue("@Price", price);
-                command.Parameters.AddWithValue("@Type", type);
-                command.Parameters.AddWithValue("@ScheduleId", scheduleId);
-                command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@SeatNumber", scheduleSeat.SeatNumber);
+                command.Parameters.AddWithValue("@ReservationId", scheduleSeat.ReservationId);
+                command.Parameters.AddWithValue("@Price", scheduleSeat.Price);
+                command.Parameters.AddWithValue("@Type", scheduleSeat.Type);
+                command.Parameters.AddWithValue("@ScheduleId", scheduleSeat.ScheduleId);
+                return command.ExecuteNonQuery() > 0;
             }
         }
 
