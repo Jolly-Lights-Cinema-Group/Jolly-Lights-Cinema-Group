@@ -5,11 +5,6 @@ public class OrderLineService
 {
     private readonly OrderLineRepository _orderLineRepo = new OrderLineRepository();
 
-    public void RegisterOrderLine(OrderLine orderLine)
-    {
-        _orderLineRepo.AddOrderLine(orderLine);
-    }
-
     public bool DeleteOrderLineByReservation(Reservation reservation)
     {
         return _orderLineRepo.DeleteOrderLineByReservation(reservation);
@@ -37,7 +32,7 @@ public class OrderLineService
             int quantity = group.Count();
             double totalPrice = group.Sum(seat => (double)seat.Price);
 
-            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, totalPrice, (int)reservation.Id!);
+            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }
@@ -65,7 +60,7 @@ public class OrderLineService
 
             double totalPrice = quantity * shopItem.Price;
 
-            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, totalPrice, (int)reservation.Id!);
+            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }
@@ -76,7 +71,7 @@ public class OrderLineService
         return _orderLineRepo.GetOrderLinesByReservation(reservation);
     }
 
-    public List<OrderLine> CreateOrderLineForScheduleShopItem(Reservation reservation, List<ShopItem> shopItems)
+    public List<OrderLine> CreateOrderLineForCashDeskShopItems(List<ShopItem> shopItems)
     {
         List<OrderLine> orderLines = new List<OrderLine>();
 
@@ -107,7 +102,7 @@ public class OrderLineService
 
             double totalPrice = quantity * shopItem.Price;
 
-            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, totalPrice, (int)reservation.Id!);
+            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2));
 
             _orderLineRepo.AddOrderLine(orderLine);
             orderLines.Add(orderLine);

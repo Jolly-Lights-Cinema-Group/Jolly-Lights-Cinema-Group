@@ -1,4 +1,5 @@
 using Jolly_Lights_Cinema_Group;
+using Jolly_Lights_Cinema_Group.Common;
 
 public static class CashDesk
 {
@@ -22,6 +23,8 @@ public static class CashDesk
         switch (choice)
         {
             case 0:
+                ShopMenu shopMenu = new();
+                shopMenu.CashDeskShop(Globals.SessionLocationId);
                 return true;
             case 1:
                 return true;

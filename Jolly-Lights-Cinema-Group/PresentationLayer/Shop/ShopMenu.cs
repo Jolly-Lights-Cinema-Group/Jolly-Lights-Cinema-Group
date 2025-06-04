@@ -75,54 +75,39 @@ public class ShopMenu
         OrderLineService orderLineService = new();
         CustomerOrderService customerOrderService = new();
 
+        List<OrderLine> orderLines = orderLineService.CreateOrderLineForCashDeskShopItems(boughtItems);
+        CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
 
+        foreach (OrderLine orderLine in orderLines)
+        {
+            Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
+        }
+        Console.WriteLine($"-----------------------------------------------------------------------");
+        Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
+        Console.WriteLine($"VAT: €{customerOrder.Tax}");
+        Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
 
+        string? input;
+        do
+        {
+            Console.Write("\nConfirm payment? (y): ");
+            input = Console.ReadLine()?.Trim().ToLower();
 
+            if (input == "y")
+            {
+                customerOrderService.RegisterCustomerOrder(customerOrder);
+                Console.WriteLine("\nPayment confirmed.");
+                break;
+            }
 
-        //     Console.Clear();
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter 'y' to confirm.");
+            }
+        } while (input != "y");
 
-        //     OrderLineService orderLineService = new();
-        //     CustomerOrderService customerOrderService = new();
-
-        //     List<OrderLine> orderLines = orderLineService.CreateOrderLineForScheduleShopItem(reservation, selectedShopItems);
-        //     CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
-
-        //     foreach (OrderLine orderLine in orderLines)
-        //     {
-        //         Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
-        //     }
-        //     Console.WriteLine($"-----------------------------------------------------------------------");
-        //     Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
-        //     Console.WriteLine($"VAT: €{customerOrder.Tax}");
-        //     Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
-
-        //     string? input;
-        //     do
-        //     {
-        //         Console.Write("Confirm payment? (y): ");
-        //         input = Console.ReadLine()?.Trim().ToLower();
-
-        //         if (input == "y")
-        //         {
-        //             if (customerOrderService.RegisterCustomerOrder(customerOrder))
-        //             {
-        //                 Console.WriteLine("Payment confirmed.");
-        //                 break;
-        //             }
-        //             Console.WriteLine("Payment could not be confirmed.");
-        //             break;
-        //         }
-
-        //         else
-        //         {
-        //             Console.WriteLine("Invalid input. Please enter 'y' to confirm.");
-        //         }
-
-        //     } while (input != "y");
-
-        //     Console.WriteLine("\nPress any key to continue.");
-        //     Console.ReadKey();
-        // }
+        Console.WriteLine("\nPress any key to continue.");
+        Console.ReadKey();
     }
 
     public ShopItem? ShopItemMenu(ref int selectedIndex, int locationId)

@@ -14,7 +14,15 @@ namespace JollyLightsCinemaGroup.DataAccess
                     INSERT INTO OrderLine (ReservationId, Quantity, Description, VatPercentage, Price)
                     VALUES (@reservationId, @quantity, @description, @vatPercentage, @price);";
 
-                command.Parameters.AddWithValue("@reservationId", orderLine.ReservationId);
+                if (orderLine.ReservationId.HasValue)
+                {
+                    command.Parameters.AddWithValue("@reservationId", orderLine.ReservationId.Value);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@reservationId", DBNull.Value);
+                }
+
                 command.Parameters.AddWithValue("@quantity", orderLine.Quantity);
                 command.Parameters.AddWithValue("@description", orderLine.Description);
                 command.Parameters.AddWithValue("@vatPercentage", orderLine.VatPercentage);
