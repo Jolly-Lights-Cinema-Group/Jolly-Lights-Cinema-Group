@@ -58,4 +58,27 @@ public class ReservationService
     {
         return _reservationRepository.GetAllReservations();
     }
+
+    public int? GetLocationIdByReservation(Reservation reservation)
+    {
+        ScheduleSeatRepository scheduleSeatRepository = new();
+        ScheduleRepository scheduleRepository = new();
+        MovieRoomRepository movieRoomRepository = new();
+
+        List<ScheduleSeat> scheduleSeats = scheduleSeatRepository.GetSeatsByReservation(reservation);
+        if (scheduleSeats.Count == 0)
+            return null;
+
+        ScheduleSeat scheduleSeat = scheduleSeats.First();
+
+        Schedule? schedule = scheduleRepository.GetScheduleById(scheduleSeat.ScheduleId);
+        if (schedule == null)
+            return null;
+
+        MovieRoom? movieRoom = movieRoomRepository.GetMovieRoomById(schedule.MovieRoomId);
+        if (movieRoom == null)
+            return null;
+
+        return movieRoom.LocationId;
+    }
 }

@@ -133,7 +133,7 @@ public class MakeReservationMenu
         if (response == "y")
         {
             ShopMenu shopMenu = new();
-            shopMenu.DisplayShop(newReservation);
+            shopMenu.DisplayShop(newReservation, locationId);
         }
 
         OrderLineService orderLineService = new();

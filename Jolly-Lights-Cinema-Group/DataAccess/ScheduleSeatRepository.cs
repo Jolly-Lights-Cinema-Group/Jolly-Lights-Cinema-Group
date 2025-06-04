@@ -28,32 +28,6 @@ namespace JollyLightsCinemaGroup.DataAccess
             return seats;
         }
 
-        public List<string> GetReservedSeats(int movieRoomId)
-        {
-            var result = new List<string>();
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    SELECT SeatNumber
-                    FROM ScheduleSeat
-                    LEFT JOIN Schedule ON ScheduleSeat.ScheduleId = Schedule.Id
-                    WHERE Schedule.MovieRoomId = @movieRoomId;";
-
-                command.Parameters.AddWithValue("@movieRoomId", movieRoomId);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result.Add(reader.GetString(0));
-                    }
-                }
-            }
-            return result;
-        }
-
         public bool AddSeatToReservation(ScheduleSeat scheduleSeat)
         {
             using (var connection = DatabaseManager.GetConnection())

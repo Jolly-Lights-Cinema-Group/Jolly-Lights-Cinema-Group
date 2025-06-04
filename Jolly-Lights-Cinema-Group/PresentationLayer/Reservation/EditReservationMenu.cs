@@ -76,6 +76,9 @@ public class EditReservationMenu
         Console.Clear();
 
         List<ScheduleShopItem> scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
+        int? locationId = _reservationService.GetLocationIdByReservation(reservation);
+
+        if (locationId is null) return;
 
         if (scheduleShopItems.Count <= 0)
         {
@@ -86,7 +89,7 @@ public class EditReservationMenu
             if (response == "y")
             {
                 ShopMenu shopMenu = new();
-                shopMenu.DisplayShop(reservation);
+                shopMenu.DisplayShop(reservation, (int)locationId);
 
                 if (_orderLineService.DeleteOrderLineByReservation(reservation))
                 {
@@ -102,7 +105,7 @@ public class EditReservationMenu
 
         while (inCart)
         {
-            ShopItem? selectedItem = ReservedItems(scheduleShopItems, reservation, ref selectedIndex);
+            ShopItem? selectedItem = ReservedItems(scheduleShopItems, reservation, ref selectedIndex, (int)locationId);
             if (selectedItem == null)
             {
                 inCart = false;
@@ -163,7 +166,7 @@ public class EditReservationMenu
         Console.ReadKey();
     }
 
-    public ShopItem? ReservedItems(List<ScheduleShopItem> scheduleShopItems, Reservation reservation, ref int selectedIndex)
+    public ShopItem? ReservedItems(List<ScheduleShopItem> scheduleShopItems, Reservation reservation, ref int selectedIndex, int locationId)
     {
         List<ShopItem> shopItems = new();
 
@@ -193,10 +196,13 @@ public class EditReservationMenu
         if (choice == shopItems.Count)
         {
             ShopMenu shopMenu = new();
-            shopMenu.DisplayShop(reservation);
+            shopMenu.DisplayShop(reservation, locationId);
+
+            _orderLineService.DeleteOrderLineByReservation(reservation);
+            _orderLineService.CreateOrderLineForReservation(reservation);
 
             scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
-            return ReservedItems(scheduleShopItems, reservation, ref selectedIndex);
+            return ReservedItems(scheduleShopItems, reservation, ref selectedIndex, locationId);
         }
 
         if (choice >= 0 && choice < shopItems.Count)

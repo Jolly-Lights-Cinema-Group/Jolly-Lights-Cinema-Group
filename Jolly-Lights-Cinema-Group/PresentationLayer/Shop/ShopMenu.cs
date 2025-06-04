@@ -9,14 +9,14 @@ public class ShopMenu
         _shopitemService = new ShopItemService();
     }
 
-    public void DisplayShop(Reservation reservation)
+    public void DisplayShop(Reservation reservation, int locationId)
     {
         bool inShop = true;
         int selectedIndex = 0;
 
         while (inShop)
         {
-            ShopItem? selectedItem = ShopItemMenu(ref selectedIndex);
+            ShopItem? selectedItem = ShopItemMenu(ref selectedIndex, locationId);
             if (selectedItem == null)
             {
                 inShop = false;
@@ -38,120 +38,97 @@ public class ShopMenu
         }
     }
 
-    public void CashDeskShop()
+    public void CashDeskShop(int locationId)
     {
-        // Console.Clear();
+        Console.Clear();
 
-        // List<ShopItem> selectedShopItems = new List<ShopItem>();
-        // List<ShopItem> shopItems = _shopitemService.GetAllShopItems();
+        bool inShop = true;
+        int selectedIndex = 0;
+        List<ShopItem> boughtItems = new List<ShopItem>();
 
-        // bool inShop = true;
-        // (Menu shopMenu, List<ShopItem> availableItems) = ShopItemMenu();
+        while (inShop)
+        {
+            ShopItem? selectedItem = ShopItemMenu(ref selectedIndex, locationId);
+            if (selectedItem == null)
+            {
+                inShop = false;
+                continue;
+            }
 
-        // while (inShop)
-        // {
-        //     int choice = shopMenu.Run();
-        //     if (choice == shopItems.Count)
+            if (_shopitemService.SellShopItem(selectedItem))
+            {
+                boughtItems.Add(selectedItem);
+                Console.WriteLine($"{selectedItem.Name} added to basket.");
+            }
+
+            else
+            {
+                Console.WriteLine($"{selectedItem.Name} could not be added to basket.");
+            }
+
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
+
+        Console.Clear();
+
+        OrderLineService orderLineService = new();
+        CustomerOrderService customerOrderService = new();
+
+
+
+
+
+        //     Console.Clear();
+
+        //     OrderLineService orderLineService = new();
+        //     CustomerOrderService customerOrderService = new();
+
+        //     List<OrderLine> orderLines = orderLineService.CreateOrderLineForScheduleShopItem(reservation, selectedShopItems);
+        //     CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
+
+        //     foreach (OrderLine orderLine in orderLines)
         //     {
-        //         inShop = false;
-        //         continue;
+        //         Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
         //     }
+        //     Console.WriteLine($"-----------------------------------------------------------------------");
+        //     Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
+        //     Console.WriteLine($"VAT: €{customerOrder.Tax}");
+        //     Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
+
+        //     string? input;
+        //     do
+        //     {
+        //         Console.Write("Confirm payment? (y): ");
+        //         input = Console.ReadLine()?.Trim().ToLower();
+
+        //         if (input == "y")
+        //         {
+        //             if (customerOrderService.RegisterCustomerOrder(customerOrder))
+        //             {
+        //                 Console.WriteLine("Payment confirmed.");
+        //                 break;
+        //             }
+        //             Console.WriteLine("Payment could not be confirmed.");
+        //             break;
+        //         }
+
+        //         else
+        //         {
+        //             Console.WriteLine("Invalid input. Please enter 'y' to confirm.");
+        //         }
+
+        //     } while (input != "y");
+
+        //     Console.WriteLine("\nPress any key to continue.");
+        //     Console.ReadKey();
         // }
-        
-        // else
-        // {
-        //     List<ShopItem> selectedShopItems = new List<ShopItem>();
-        //     List<ShopItem> shopItems = _shopitemService.GetAllShopItems();
-        //     bool inShop = true;
-        //     Menu shopMenu = ShopItemMenu();
-
-            //     while (inShop)
-            //     {
-            //         int choice = shopMenu.Run();
-            //         if (choice == shopItems.Count)
-            //         {
-            //             inShop = false;
-            //             continue;
-            //         }
-
-            //         if (choice >= 0 && choice < shopItems.Count)
-            //         {
-            //             ShopItem selectedItem = shopItems[choice];
-            //             if (selectedItem.Stock <= 0)
-            //             {
-            //                 Console.WriteLine($"{selectedItem.Name} out of stock.");
-            //                 Console.WriteLine("\nPress any key to continue.");
-            //                 Console.ReadKey();
-            //                 continue;
-            //             }
-
-            //             if (_shopitemService.SellShopItem(selectedItem, reservation))
-            //             {
-            //                 selectedShopItems.Add(selectedItem);
-            //                 Console.WriteLine($"{selectedItem.Name} added to reservation: {reservation.ReservationNumber}.");
-            //             }
-            //             else
-            //             {
-            //                 Console.WriteLine($"{selectedItem.Name} could not be added to the reservation.");
-            //             }
-            //         }
-
-            //         else Console.WriteLine("Invalid choice.");
-
-            //         Console.WriteLine("\nPress any key to continue.");
-            //         Console.ReadKey();
-            //     }
-
-            //     Console.Clear();
-
-            //     OrderLineService orderLineService = new();
-            //     CustomerOrderService customerOrderService = new();
-
-            //     List<OrderLine> orderLines = orderLineService.CreateOrderLineForScheduleShopItem(reservation, selectedShopItems);
-            //     CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
-
-            //     foreach (OrderLine orderLine in orderLines)
-            //     {
-            //         Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
-            //     }
-            //     Console.WriteLine($"-----------------------------------------------------------------------");
-            //     Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
-            //     Console.WriteLine($"VAT: €{customerOrder.Tax}");
-            //     Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
-
-            //     string? input;
-            //     do
-            //     {
-            //         Console.Write("Confirm payment? (y): ");
-            //         input = Console.ReadLine()?.Trim().ToLower();
-
-            //         if (input == "y")
-            //         {
-            //             if (customerOrderService.RegisterCustomerOrder(customerOrder))
-            //             {
-            //                 Console.WriteLine("Payment confirmed.");
-            //                 break;
-            //             }
-            //             Console.WriteLine("Payment could not be confirmed.");
-            //             break;
-            //         }
-
-            //         else
-            //         {
-            //             Console.WriteLine("Invalid input. Please enter 'y' to confirm.");
-            //         }
-
-            //     } while (input != "y");
-
-            //     Console.WriteLine("\nPress any key to continue.");
-            //     Console.ReadKey();
-            // }
     }
 
-    public ShopItem? ShopItemMenu(ref int selectedIndex)
+    public ShopItem? ShopItemMenu(ref int selectedIndex, int locationId)
     {
         List<ShopItem> availableItems = _shopitemService
-            .GetAllShopItems()
+            .GetAllShopItems(locationId)
             .Where(item => item.Stock > 0)
             .ToList();
 
