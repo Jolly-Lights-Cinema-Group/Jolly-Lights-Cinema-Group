@@ -150,46 +150,54 @@ public static class ShopManagementMenu
 
         Console.Clear();
 
-        List<ShopItem> shopItems = _shopItemService.GetAllShopItems(locationId);
-
-        string[] menuItems = shopItems
-            .Select(item => $"Name: {item.Name}; Price: €{item.Price}; Stock: {item.Stock}; VAT: {item.VatPercentage}%; Minimum age: {item.MinimumAge}")
-            .Append("Finish")
-            .ToArray();
-        
-        Menu shopMenu = new("Select shop item to edit:", menuItems);
-        int choice = shopMenu.Run();
-
-        if (choice >= shopItems.Count) return;
-
-        ShopItem selectedItem = shopItems[choice];
-
-        Console.Clear();
-        Console.WriteLine($"Editing: {selectedItem.Name}");
-
-        Console.Write("New name (leave empty to keep current): ");
-        string? newName = Console.ReadLine();
-        newName = string.IsNullOrWhiteSpace(newName) ? null : newName;
-
-        Console.Write("New price (leave empty to keep current): ");
-        string? newPrice = Console.ReadLine();
-        newPrice = string.IsNullOrWhiteSpace(newPrice) ? null : newPrice;
-
-        Console.Write("New stock (leave empty to keep current): ");
-        string? newStock = Console.ReadLine();
-        newStock = string.IsNullOrWhiteSpace(newStock) ? null : newStock;
-
-        Console.Write("New minimum age (leave empty for all ages / to keep current): ");
-        string? newMinimumAge = Console.ReadLine();
-        newMinimumAge = string.IsNullOrWhiteSpace(newMinimumAge) ? null : newMinimumAge;
-
-        if (_shopItemService.UpdateShopItem(selectedItem, newName, newPrice, newStock, newMinimumAge))
+        bool editing = true;
+        while (editing)
         {
-            Console.WriteLine($"{selectedItem.Name} is updated");
-        }
-        else Console.WriteLine("No item found in shop to update.");
+            List<ShopItem> shopItems = _shopItemService.GetAllShopItems(locationId);
 
-        Console.WriteLine("\nPress any key to continue.");
-        Console.ReadKey();
+            string[] menuItems = shopItems
+                .Select(item => $"Name: {item.Name}; Price: €{item.Price}; Stock: {item.Stock}; VAT: {item.VatPercentage}%; Minimum age: {item.MinimumAge}")
+                .Append("Finish")
+                .ToArray();
+
+            Menu shopMenu = new("Select shop item to edit:", menuItems);
+            int choice = shopMenu.Run();
+
+            if (choice >= shopItems.Count)
+            {
+                editing = false;
+                continue;
+            }
+
+            ShopItem selectedItem = shopItems[choice];
+
+            Console.Clear();
+            Console.WriteLine($"Editing: {selectedItem.Name}");
+
+            Console.Write("New name (leave empty to keep current): ");
+            string? newName = Console.ReadLine();
+            newName = string.IsNullOrWhiteSpace(newName) ? null : newName;
+
+            Console.Write("New price (leave empty to keep current): ");
+            string? newPrice = Console.ReadLine();
+            newPrice = string.IsNullOrWhiteSpace(newPrice) ? null : newPrice;
+
+            Console.Write("New stock (leave empty to keep current): ");
+            string? newStock = Console.ReadLine();
+            newStock = string.IsNullOrWhiteSpace(newStock) ? null : newStock;
+
+            Console.Write("New minimum age (leave empty for all ages / to keep current): ");
+            string? newMinimumAge = Console.ReadLine();
+            newMinimumAge = string.IsNullOrWhiteSpace(newMinimumAge) ? null : newMinimumAge;
+
+            if (_shopItemService.UpdateShopItem(selectedItem, newName, newPrice, newStock, newMinimumAge))
+            {
+                Console.WriteLine($"{selectedItem.Name} is updated");
+            }
+            else Console.WriteLine("No item found in shop to update.");
+
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
+        }
     }
 }
