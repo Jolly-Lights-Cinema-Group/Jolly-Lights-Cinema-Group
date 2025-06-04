@@ -143,6 +143,13 @@ public class EditReservationMenu
                 if (scheduleShopItemService.DeleteScheduleShopItem(selectedItem, reservation))
                 {
                     shopItemService.RestoreShopItem(selectedItem);
+                    OrderLineService orderLineService = new();
+
+                    if (orderLineService.DeleteOrderLineByReservation(reservation))
+                    {
+                        orderLineService.CreateOrderLineForReservation(reservation);
+                    }
+
                     Console.WriteLine($"{selectedItem.Name} removed from reservation: {reservation.ReservationNumber}.");
                 }
                 else
@@ -154,13 +161,6 @@ public class EditReservationMenu
             else
             {
                 Console.WriteLine("Invalid choice.");
-            }
-
-            OrderLineService orderLineService = new();
-
-            if (orderLineService.DeleteOrderLineByReservation(reservation))
-            {
-                orderLineService.CreateOrderLineForReservation(reservation);
             }
 
             Console.WriteLine("\nPress any key to continue.");

@@ -4,7 +4,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class ReservationRepository
     {
-        public bool AddReservation(Reservation reservation)
+        public Reservation? AddReservation(Reservation reservation)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -21,8 +21,20 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@reservationNumber", reservation.ReservationNumber);
                 command.Parameters.AddWithValue("@paid", Convert.ToBoolean(reservation.Paid));
 
-                return command.ExecuteNonQuery() > 0;
+                command.ExecuteNonQuery();
 
+                var idCommand = connection.CreateCommand();
+                idCommand.CommandText = "SELECT last_insert_rowid();";
+
+                var result = idCommand.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    reservation.Id = Convert.ToInt32(result);
+                    return reservation;
+                }
+
+                return null;
             }
         }
 

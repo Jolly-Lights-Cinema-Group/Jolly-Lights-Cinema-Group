@@ -108,25 +108,18 @@ public class MakeReservationMenu
             eMail = Console.ReadLine();
         } while (string.IsNullOrWhiteSpace(eMail));
 
-        string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
+        Reservation reservation = new(firstName, lastName, phoneNumber, eMail);
+        Reservation? newReservation = _reservationService.RegisterReservation(reservation);
 
-        Reservation reservation = new(firstName, lastName, phoneNumber, eMail, reservationNumber);
-        Reservation? newReservation;
-
-        if (_reservationService.RegisterReservation(reservation))
+        if (newReservation != null)
         {
-            newReservation = _reservationService.FindReservationByReservationNumber(reservation.ReservationNumber);
-            if (newReservation != null)
+            foreach (ScheduleSeat selectedSeat in selectedSeats)
             {
-                foreach (ScheduleSeat selectedSeat in selectedSeats)
-                {
-                    ScheduleSeat scheduleSeat = new(selectedSeat.ScheduleId, newReservation.Id!.Value, selectedSeat.Price, selectedSeat.Type, selectedSeat.SeatNumber!);
-                    _scheduleSeatService.AddSeatToReservation(scheduleSeat);
-                }
-
-                Console.WriteLine("Reservation added successfully.");
+                ScheduleSeat scheduleSeat = new(selectedSeat.ScheduleId, newReservation.Id!.Value, selectedSeat.Price, selectedSeat.Type, selectedSeat.SeatNumber!);
+                _scheduleSeatService.AddSeatToReservation(scheduleSeat);
             }
-            else return;
+
+            Console.WriteLine("Reservation added successfully.");
         }
         else
         {
@@ -150,7 +143,7 @@ public class MakeReservationMenu
 
         string seatsString = string.Join("; ", selectedSeats.Select(s => s.SeatNumber));
 
-        Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}");
+        Console.WriteLine($"Reservation Number: {newReservation.ReservationNumber}");
         Console.WriteLine($"Movie: {selectedMovie.Title}");
         Console.WriteLine($"Date: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
         Console.WriteLine($"Seat(s): {seatsString}");

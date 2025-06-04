@@ -24,8 +24,7 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ShopMenu shopMenu = new();
-                    shopMenu.CashDeskShop();
+                    CashDesk.ShowCashDeskMenu();
                     return true;
                 case 1:
                     ReservationMenu.ShowReservationMenu();

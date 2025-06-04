@@ -43,7 +43,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        OrderLine orderLine = new OrderLine(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetDouble(5));
+                        OrderLine orderLine = new OrderLine(reader.GetInt32(0), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetDouble(5), reader.GetInt32(1));
                         orderLines.Add(orderLine);
                     }
                 }

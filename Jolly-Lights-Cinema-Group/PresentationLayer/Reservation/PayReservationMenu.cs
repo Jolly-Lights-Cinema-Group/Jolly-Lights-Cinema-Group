@@ -38,7 +38,7 @@ public class PayReservationMenu
 
                 foreach (OrderLine orderLine in orderLines)
                 {
-                    Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
+                    Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{Math.Round(orderLine.Price, 2)}     ({orderLine.VatPercentage}% VAT)");
                 }
                 Console.WriteLine($"-----------------------------------------------------------------------");
                 Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
