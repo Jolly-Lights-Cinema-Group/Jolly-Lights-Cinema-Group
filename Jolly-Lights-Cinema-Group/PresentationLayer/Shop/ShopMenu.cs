@@ -90,7 +90,7 @@ public class ShopMenu
         string? input;
         do
         {
-            Console.Write("\nConfirm payment? (y): ");
+            Console.Write("\nConfirm payment (y) or (c) to cancel: ");
             input = Console.ReadLine()?.Trim().ToLower();
 
             if (input == "y")
@@ -100,11 +100,33 @@ public class ShopMenu
                 break;
             }
 
+            if (input == "c")
+            {
+                Dictionary<int, int> quantities = new Dictionary<int, int>();
+
+                foreach (ShopItem shopItem in boughtItems)
+                {
+                    if (quantities.ContainsKey(shopItem.Id!.Value))
+                        quantities[shopItem.Id.Value]++;
+                    else
+                        quantities[shopItem.Id.Value] = 1;
+                }
+
+                foreach (KeyValuePair<int, int> kvp in quantities)
+                {
+                    ShopItem? item = _shopitemService.GetShopItemById(kvp.Key);
+                    _shopitemService.RestoreShopItem(item!, kvp.Value);
+                }
+
+                Console.WriteLine("\n Payment cancelled");
+                break;
+            }
+
             else
             {
                 Console.WriteLine("Invalid input. Please enter 'y' to confirm.");
             }
-        } while (input != "y");
+        } while (input != "y" && input != "c");
 
         Console.WriteLine("\nPress any key to continue.");
         Console.ReadKey();

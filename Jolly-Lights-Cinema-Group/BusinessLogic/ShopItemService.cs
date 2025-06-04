@@ -49,8 +49,8 @@ public class ShopItemService
         return _shopItemRepository.GetShopItemById(id);
     }
 
-    public bool RestoreShopItem(ShopItem shopItem)
+    public bool RestoreShopItem(ShopItem shopItem, int quantity = 1)
     {
-        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock += 1), "");
+        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock += quantity), "");
     }
 }
