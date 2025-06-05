@@ -5,11 +5,11 @@ public class Menu
     private string Prompt;
     private string[] Options;
     private int SelectedIndex;
-    public Menu(string prompt, string[] options)
+    public Menu(string prompt, string[] options, int defaultIndex = 0)
     {
         Prompt = prompt;
         Options = options;
-        SelectedIndex = 0;
+        SelectedIndex = defaultIndex;
     }
 
     public void DisplayOptions()

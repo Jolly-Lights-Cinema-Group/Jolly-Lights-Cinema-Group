@@ -18,7 +18,7 @@ public class ShopItemService
         List<ShopItem> shopItems = _shopItemRepository.GetAllShopItems(locationId);
         return shopItems;
     }
-    
+
     public bool UpdateShopItem(ShopItem shopItem, string? newName, string? newPrice, string? newStock, string? newMinimumAge)
     {
         return _shopItemRepository.ModifyShopItem(shopItem, newName, newPrice, newStock, newMinimumAge);
@@ -31,7 +31,7 @@ public class ShopItemService
             ScheduleShopItem scheduleShopItem = new(shopItem.Id.Value, reservation.Id.Value);
             ScheduleShopItemRepository scheduleShopItemRepository = new();
 
-            if (_shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock -= 1), "") == true && scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem) == true)
+            if (SellShopItem(shopItem) == true && scheduleShopItemRepository.AddScheduleShopItem(scheduleShopItem) == true)
             {
                 return true;
             }
@@ -39,13 +39,18 @@ public class ShopItemService
         return false;
     }
 
+    public bool SellShopItem(ShopItem shopItem)
+    {
+        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock -= 1), "");
+    }
+
     public ShopItem? GetShopItemById(int id)
     {
         return _shopItemRepository.GetShopItemById(id);
     }
 
-    public bool RestoreShopItem(ShopItem shopItem)
+    public bool RestoreShopItem(ShopItem shopItem, int quantity = 1)
     {
-        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock += 1), "");
+        return _shopItemRepository.ModifyShopItem(shopItem, "", "", Convert.ToString(shopItem.Stock += quantity), "");
     }
 }

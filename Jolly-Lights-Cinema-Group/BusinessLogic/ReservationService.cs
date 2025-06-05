@@ -3,22 +3,14 @@ using JollyLightsCinemaGroup.DataAccess;
 public class ReservationService
 {
     private readonly ReservationRepository _reservationRepository = new ReservationRepository();
-    public bool RegisterReservation(Reservation reservation)
+    public Reservation? RegisterReservation(Reservation reservation)
     {
-        if (_reservationRepository.AddReservation(reservation))
-        {
-            return true;
-        }
-        return false;
+        return _reservationRepository.AddReservation(reservation);
     }
 
     public bool DeleteReservation(Reservation reservation)
     {
-        if (_reservationRepository.RemoveReservation(reservation))
-        {
-            return true;
-        }
-        return false;
+        return _reservationRepository.RemoveReservation(reservation);
     }
 
     public Reservation? FindReservationByReservationNumber(string reservationNumber)
@@ -56,5 +48,33 @@ public class ReservationService
         }
 
         return reservedSeats;
+    }
+
+    public List<Reservation> GetAllReservations()
+    {
+        return _reservationRepository.GetAllReservations();
+    }
+
+    public int? GetLocationIdByReservation(Reservation reservation)
+    {
+        ScheduleSeatRepository scheduleSeatRepository = new();
+        ScheduleRepository scheduleRepository = new();
+        MovieRoomRepository movieRoomRepository = new();
+
+        List<ScheduleSeat> scheduleSeats = scheduleSeatRepository.GetSeatsByReservation(reservation);
+        if (scheduleSeats.Count == 0)
+            return null;
+
+        ScheduleSeat scheduleSeat = scheduleSeats.First();
+
+        Schedule? schedule = scheduleRepository.GetScheduleById(scheduleSeat.ScheduleId);
+        if (schedule == null)
+            return null;
+
+        MovieRoom? movieRoom = movieRoomRepository.GetMovieRoomById(schedule.MovieRoomId);
+        if (movieRoom == null)
+            return null;
+
+        return movieRoom.LocationId;
     }
 }

@@ -16,19 +16,26 @@ namespace JollyLightsCinemaGroup.BusinessLogic
             return _scheduleSeatRepo.GetSeatsBySchedule(scheduleId);
         }
 
-        public List<string> GetReservedSeatsByMovieRoom(int movieRoomId)
+        public List<ScheduleSeat> AddSeatToReservation(List<ScheduleSeat> scheduleSeats)
         {
-            return _scheduleSeatRepo.GetReservedSeats(movieRoomId);
+            List<ScheduleSeat> seats = new List<ScheduleSeat>();
+            foreach (ScheduleSeat scheduleSeat in scheduleSeats)
+            {
+                ScheduleSeat? scheduleSeatId = _scheduleSeatRepo.AddSeatToReservation(scheduleSeat);
+                if (scheduleSeatId != null)
+                {
+                    seats.Add(scheduleSeatId);
+                }
+            }
+            return seats;
         }
 
-        public bool AddSeatToReservation(ScheduleSeat scheduleSeat)
+        public void DeleteSeat(List<ScheduleSeat> scheduleSeats)
         {
-            return _scheduleSeatRepo.AddSeatToReservation(scheduleSeat);
-        }
-
-        public List<ScheduleSeat> GetSeatsByReservation(Reservation reservation)
-        {
-            return _scheduleSeatRepo.GetSeatsByReservation(reservation);
+            foreach (ScheduleSeat scheduleSeat in scheduleSeats)
+            {
+                _scheduleSeatRepo.DeleteSeat(scheduleSeat);
+            }
         }
     }
 }

@@ -3,10 +3,16 @@ using Jolly_Lights_Cinema_Group;
 public class EditReservationMenu
 {
     private readonly ReservationService _reservationService;
+    private readonly ScheduleShopItemService _scheduleShopItemService;
+    private readonly ShopItemService _shopItemService;
+    private readonly OrderLineService _orderLineService;
 
     public EditReservationMenu()
     {
         _reservationService = new ReservationService();
+        _scheduleShopItemService = new ScheduleShopItemService();
+        _shopItemService = new ShopItemService();
+        _orderLineService = new OrderLineService();
     }
 
     public void EditReservation()
@@ -69,8 +75,11 @@ public class EditReservationMenu
     {
         Console.Clear();
 
-        ScheduleShopItemService scheduleShopItemService = new();
-        List<ScheduleShopItem> scheduleShopItems = scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
+        List<ScheduleShopItem> scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
+        int? locationId = _reservationService.GetLocationIdByReservation(reservation);
+
+        if (locationId is null) return;
+
         if (scheduleShopItems.Count <= 0)
         {
             Console.WriteLine($"No shop items to edit");
@@ -80,87 +89,42 @@ public class EditReservationMenu
             if (response == "y")
             {
                 ShopMenu shopMenu = new();
-                shopMenu.DisplayShop(reservation);
+                shopMenu.DisplayShop(reservation, (int)locationId);
 
-                OrderLineService orderLineService = new();
-
-                if (orderLineService.DeleteOrderLineByReservation(reservation))
+                if (_orderLineService.DeleteOrderLineByReservation(reservation))
                 {
-                    orderLineService.CreateOrderLineForReservation(reservation);
+                    _orderLineService.CreateOrderLineForReservation(reservation);
                 }
+            }
 
-                return;
-            }
-            else
-            {
-                return;
-            }
+            return;
         }
-
-        List<ShopItem> shopItems = new();
-
-        ShopItemService shopItemService = new();
-        foreach (ScheduleShopItem scheduleShopItem in scheduleShopItems)
-        {
-            ShopItem? shopItem = shopItemService.GetShopItemById(scheduleShopItem.ShopItemId);
-            if (shopItem != null)
-            {
-                shopItems.Add(shopItem);
-            }
-        }
-
-        string[] menuItems = shopItems
-            .Where(item => item.Stock > 0)
-            .Select(item => $"{item.Name}: €{Math.Round(item.Price * (1.0 + ((double)item.VatPercentage / 100)), 2)}")
-            .Append("Add items")
-            .Append("Finish")
-            .ToArray();
-
-        Menu itemsInCart = new("Select item to delete", menuItems);
 
         bool inCart = true;
+        int selectedIndex = 0;
 
         while (inCart)
         {
-            int choice = itemsInCart.Run();
-            if (choice == shopItems.Count + 1)
+            ShopItem? selectedItem = ReservedItems(scheduleShopItems, reservation, ref selectedIndex, (int)locationId);
+            if (selectedItem == null)
             {
                 inCart = false;
                 continue;
             }
 
-            if (choice == shopItems.Count)
+            if (_scheduleShopItemService.DeleteScheduleShopItem(selectedItem, reservation))
             {
-                ShopMenu shopMenu = new();
-                shopMenu.DisplayShop(reservation);
-                continue;
-            }
+                _shopItemService.RestoreShopItem(selectedItem);
+                _orderLineService.DeleteOrderLineByReservation(reservation);
+                _orderLineService.CreateOrderLineForReservation(reservation);
 
-            if (choice >= 0 && choice < shopItems.Count)
-            {
-                ShopItem selectedItem = shopItems[choice];
-
-                if (scheduleShopItemService.DeleteScheduleShopItem(selectedItem, reservation))
-                {
-                    shopItemService.RestoreShopItem(selectedItem);
-                    Console.WriteLine($"{selectedItem.Name} removed from reservation: {reservation.ReservationNumber}.");
-                }
-                else
-                {
-                    Console.WriteLine($"{selectedItem.Name} could not be removed from reservation.");
-                }
+                Console.WriteLine($"{selectedItem.Name} removed from reservation: {reservation.ReservationNumber}.");
+                scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
             }
 
             else
             {
-                Console.WriteLine("Invalid choice.");
-            }
-
-            OrderLineService orderLineService = new();
-
-            if (orderLineService.DeleteOrderLineByReservation(reservation))
-            {
-                orderLineService.CreateOrderLineForReservation(reservation);
+                Console.WriteLine($"{selectedItem.Name} could not be removed from reservation.");
             }
 
             Console.WriteLine("\nPress any key to continue.");
@@ -178,8 +142,7 @@ public class EditReservationMenu
 
         if (response == "y")
         {
-            ScheduleShopItemService scheduleShopItemService = new();
-            List<ScheduleShopItem> scheduleShopItems = scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
+            List<ScheduleShopItem> scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
 
             if (_reservationService.DeleteReservation(reservation))
             {
@@ -187,9 +150,8 @@ public class EditReservationMenu
                 {
                     foreach (ScheduleShopItem scheduleShopItem in scheduleShopItems)
                     {
-                        ShopItemService shopItemService = new();
-                        ShopItem shopItem = shopItemService.GetShopItemById(scheduleShopItem.ShopItemId)!;
-                        shopItemService.RestoreShopItem(shopItem);
+                        ShopItem shopItem = _shopItemService.GetShopItemById(scheduleShopItem.ShopItemId)!;
+                        _shopItemService.RestoreShopItem(shopItem);
                     }
                 }
                 Console.WriteLine($"Reservation: {reservation.ReservationNumber} deleted");
@@ -202,5 +164,55 @@ public class EditReservationMenu
 
         Console.WriteLine("\nPress any key to continue.");
         Console.ReadKey();
+    }
+
+    public ShopItem? ReservedItems(List<ScheduleShopItem> scheduleShopItems, Reservation reservation, ref int selectedIndex, int locationId)
+    {
+        List<ShopItem> shopItems = new();
+
+        foreach (ScheduleShopItem scheduleShopItem in scheduleShopItems)
+        {
+            ShopItem? shopItem = _shopItemService.GetShopItemById(scheduleShopItem.ShopItemId);
+            if (shopItem != null)
+            {
+                shopItems.Add(shopItem);
+            }
+        }
+
+        string[] menuItems = shopItems
+            .Select(item => $"{item.Name}: €{Math.Round(item.Price * (1.0 + ((double)item.VatPercentage / 100)), 2)}")
+            .Append("Add items")
+            .Append("Finish")
+            .ToArray();
+
+        Menu itemsInCart = new("Select item to delete", menuItems);
+        int choice = itemsInCart.Run();
+
+        selectedIndex = choice;
+
+        if (choice == shopItems.Count + 1)
+            return null;
+
+        if (choice == shopItems.Count)
+        {
+            ShopMenu shopMenu = new();
+            shopMenu.DisplayShop(reservation, locationId);
+
+            _orderLineService.DeleteOrderLineByReservation(reservation);
+            _orderLineService.CreateOrderLineForReservation(reservation);
+
+            scheduleShopItems = _scheduleShopItemService.GetScheduleShopItemByReservation(reservation);
+            return ReservedItems(scheduleShopItems, reservation, ref selectedIndex, locationId);
+        }
+
+        if (choice >= 0 && choice < shopItems.Count)
+        {
+            ShopItem selectedItem = shopItems[choice];
+            return selectedItem;
+        }
+
+        Console.WriteLine("Invalid choice.");
+        Console.ReadKey();
+        return null;
     }
 }

@@ -5,11 +5,6 @@ public class OrderLineService
 {
     private readonly OrderLineRepository _orderLineRepo = new OrderLineRepository();
 
-    public void RegisterOrderLine(OrderLine orderLine)
-    {
-        _orderLineRepo.AddOrderLine(orderLine);
-    }
-
     public bool DeleteOrderLineByReservation(Reservation reservation)
     {
         return _orderLineRepo.DeleteOrderLineByReservation(reservation);
@@ -37,7 +32,7 @@ public class OrderLineService
             int quantity = group.Count();
             double totalPrice = group.Sum(seat => (double)seat.Price);
 
-            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, seatType.ToString(), 9, totalPrice);
+            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }
@@ -65,7 +60,7 @@ public class OrderLineService
 
             double totalPrice = quantity * shopItem.Price;
 
-            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, shopItem.VatPercentage, totalPrice);
+            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
         }
@@ -76,7 +71,7 @@ public class OrderLineService
         return _orderLineRepo.GetOrderLinesByReservation(reservation);
     }
 
-    public List<OrderLine> CreateOrderLineForScheduleShopItem(Reservation reservation, List<ShopItem> shopItems)
+    public List<OrderLine> CreateOrderLineForCashDeskShopItems(List<ShopItem> shopItems)
     {
         List<OrderLine> orderLines = new List<OrderLine>();
 
@@ -107,11 +102,55 @@ public class OrderLineService
 
             double totalPrice = quantity * shopItem.Price;
 
-            OrderLine orderLine = new OrderLine((int)reservation.Id!, quantity, shopItem.Name, shopItem.VatPercentage, totalPrice);
+            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2));
+            OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
 
-            _orderLineRepo.AddOrderLine(orderLine);
-            orderLines.Add(orderLine);
+            if (orderLineId != null)
+            {
+                orderLines.Add(orderLineId);
+            }
         }
         return orderLines;
+    }
+
+    public List<OrderLine> CreateOrderLineForCashDeskTickets(List<ScheduleSeat> scheduleSeats)
+    {
+        List<OrderLine> orderLines = new List<OrderLine>();
+
+        ScheduleSeatRepository scheduleSeatRepository = new();
+        SeatRepository seatRepository = new();
+
+        List<IGrouping<SeatType, ScheduleSeat>> groupedSeats = scheduleSeats
+            .GroupBy(seat => seat.Type)
+            .ToList();
+
+        foreach (var group in groupedSeats)
+        {
+            SeatType seatType = group.Key;
+            int quantity = group.Count();
+            double totalPrice = group.Sum(seat => (double)seat.Price);
+
+            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2));
+            OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
+
+            if (orderLineId != null)
+            {
+                orderLines.Add(orderLineId);
+            }
+        }
+        return orderLines;
+    }
+
+    public bool ConnectCustomerOrderIdToOrderLine(List<OrderLine> orderLines)
+    {
+        foreach (OrderLine orderLine in orderLines)
+        {
+            if (!_orderLineRepo.SetCustomerOrderIdForOrderLine(orderLine))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

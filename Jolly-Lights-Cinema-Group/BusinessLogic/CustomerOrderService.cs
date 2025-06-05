@@ -3,7 +3,7 @@ using JollyLightsCinemaGroup.DataAccess;
 public class CustomerOrderService
 {
     private readonly CustomerOrderRepository _customerOrderRepository = new CustomerOrderRepository();
-    public bool RegisterCustomerOrder(CustomerOrder customerOrder)
+    public CustomerOrder? RegisterCustomerOrder(CustomerOrder customerOrder)
     {
         return _customerOrderRepository.AddCustomerOrder(customerOrder);
     }

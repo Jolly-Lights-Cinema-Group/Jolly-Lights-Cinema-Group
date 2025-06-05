@@ -108,31 +108,17 @@ public class MakeReservationMenu
             eMail = Console.ReadLine();
         } while (string.IsNullOrWhiteSpace(eMail));
 
-        string reservationNumber = ReservationNumberGenerator.GetReservationNumber();
+        Reservation reservation = new(firstName, lastName, phoneNumber, eMail);
+        Reservation? newReservation = _reservationService.RegisterReservation(reservation);
 
-        Reservation reservation = new(firstName, lastName, phoneNumber, eMail, reservationNumber);
-        Reservation? newReservation;
-
-        if (_reservationService.RegisterReservation(reservation))
+        if (newReservation != null)
         {
-            newReservation = _reservationService.FindReservationByReservationNumber(reservation.ReservationNumber);
-            if (newReservation != null)
-            {
-                foreach (ScheduleSeat selectedSeat in selectedSeats)
-                {
-                    ScheduleSeat scheduleSeat = new(selectedSeat.ScheduleId, newReservation.Id!.Value, selectedSeat.Price, selectedSeat.Type, selectedSeat.SeatNumber!);
-                    _scheduleSeatService.AddSeatToReservation(scheduleSeat);
-                }
+            selectedSeats.ForEach(seat => seat.ReservationId = newReservation.Id!.Value);
+            _scheduleSeatService.AddSeatToReservation(selectedSeats);
 
-                Console.WriteLine("Reservation added successfully.");
-            }
-            else return;
+            Console.WriteLine("Reservation added successfully.");
         }
-        else
-        {
-            Console.WriteLine("Reservation was not added to the database.");
-            return;
-        }
+        else return;
 
         Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
         string? response = Console.ReadLine()?.Trim().ToLower();
@@ -140,7 +126,7 @@ public class MakeReservationMenu
         if (response == "y")
         {
             ShopMenu shopMenu = new();
-            shopMenu.DisplayShop(newReservation);
+            shopMenu.DisplayShop(newReservation, locationId);
         }
 
         OrderLineService orderLineService = new();
@@ -150,10 +136,16 @@ public class MakeReservationMenu
 
         string seatsString = string.Join("; ", selectedSeats.Select(s => s.SeatNumber));
 
-        Console.WriteLine($"Reservation Number: {reservation.ReservationNumber}");
+        Console.WriteLine($"Reservation Number: {newReservation.ReservationNumber}");
         Console.WriteLine($"Movie: {selectedMovie.Title}");
         Console.WriteLine($"Date: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
-        Console.WriteLine($"Seat(s): {seatsString}");
+        Console.WriteLine($"Room: {movieRoom.RoomNumber}");
+        Console.WriteLine($"Seat(s): {seatsString}\n\n");
+
+        List<OrderLine> orderLines = orderLineService.GetOrderLinesByReservation(newReservation);
+        CustomerOrderService customerOrderService = new();
+        CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(newReservation);
+        Receipt.DisplayReceipt(orderLines, customerOrder);
 
         Console.WriteLine("\nReservation complete. Press any key to continue.");
         Console.ReadKey();

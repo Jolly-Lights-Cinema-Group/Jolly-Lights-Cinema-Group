@@ -131,7 +131,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<Schedule> ShowSchedule(DateTime date, int locationId)
+        public List<Schedule> GetScheduleByDate(DateTime date, int locationId)
         {
             List<Schedule> schedules = new List<Schedule>();
 
@@ -162,34 +162,6 @@ namespace JollyLightsCinemaGroup.DataAccess
                             reader.GetInt32(2),     // MovieId
                             reader.GetDateTime(3),  // StartDate
                             reader.GetTimeSpan(4)); // StartTime
-                        schedules.Add(schedule);
-                    }
-                }
-            }
-
-            return schedules;
-        }
-
-        public List<Schedule> GetAllSchedules()
-        {
-            List<Schedule> schedules = new List<Schedule>();
-
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule;";
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Schedule schedule = new(
-                            reader.GetInt32(0),
-                            reader.GetInt32(1),
-                            reader.GetInt32(2),
-                            reader.GetDateTime(3),
-                            reader.GetTimeSpan(4));
                         schedules.Add(schedule);
                     }
                 }
@@ -296,6 +268,33 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
 
             return schedules;
+        }
+
+        public Schedule? GetScheduleById(int id)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT Id, MovieRoomId, MovieId, StartDate, StartTime FROM Schedule WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", id);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        Schedule schedule = new(
+                            reader.GetInt32(0),
+                            reader.GetInt32(1),
+                            reader.GetInt32(2),
+                            reader.GetDateTime(3),
+                            reader.GetTimeSpan(4));
+                        return schedule;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

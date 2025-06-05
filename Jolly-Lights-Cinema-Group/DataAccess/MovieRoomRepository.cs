@@ -86,27 +86,27 @@ public class MovieRoomRepository
 
     public MovieRoom? GetMovieRoomById(int id)
     {
-            using (var connection = DatabaseManager.GetConnection())
+        using (var connection = DatabaseManager.GetConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT Id, RoomNumber, RoomLayoutJson, SupportedMovieType, LocationId
+                FROM MovieRoom
+                WHERE Id = @id;";
+
+            command.Parameters.AddWithValue("@id", id);
+
+            using (var reader = command.ExecuteReader())
             {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    SELECT Id, RoomNumber, RoomLayoutJson, SupportedMovieType, LocationId
-                    FROM MovieRoom
-                    WHERE Id = @id;";
-
-                command.Parameters.AddWithValue("@id", id);
-
-                using (var reader = command.ExecuteReader())
+                if (reader.Read())
                 {
-                    if (reader.Read())
-                    {
-                        MovieRoom movieRoom = new MovieRoom(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2),
-                            (MovieType)reader.GetInt32(3), reader.GetInt32(4));
-                        return movieRoom;
-                    }
+                    MovieRoom movieRoom = new MovieRoom(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2),
+                        (MovieType)reader.GetInt32(3), reader.GetInt32(4));
+                    return movieRoom;
                 }
             }
-            return null;
+        }
+        return null;
     }
 }

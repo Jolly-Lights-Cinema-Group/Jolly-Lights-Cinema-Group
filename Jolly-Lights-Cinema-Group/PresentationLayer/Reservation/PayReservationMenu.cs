@@ -1,6 +1,3 @@
-using Jolly_Lights_Cinema_Group;
-using JollyLightsCinemaGroup.BusinessLogic;
-
 public class PayReservationMenu
 {
     private readonly ReservationService _reservationService;
@@ -36,25 +33,26 @@ public class PayReservationMenu
                 OrderLineService orderLineService = new();
                 List<OrderLine> orderLines = orderLineService.GetOrderLinesByReservation(reservation);
 
-                foreach (OrderLine orderLine in orderLines)
-                {
-                    Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
-                }
-                Console.WriteLine($"-----------------------------------------------------------------------");
-                Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
-                Console.WriteLine($"VAT: €{customerOrder.Tax}");
-                Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
+                Receipt.DisplayReceipt(orderLines, customerOrder);
 
                 string? input;
                 do
                 {
-                    Console.Write("Confirm payment? (y/n): ");
+                    Console.Write("\nConfirm payment? (y/n): ");
                     input = Console.ReadLine()?.Trim().ToLower();
 
                     if (input == "y")
                     {
-                        if (_reservationService.PayReservation(reservation) && customerOrderService.RegisterCustomerOrder(customerOrder))
+                        CustomerOrder? customerOrderId = customerOrderService.RegisterCustomerOrder(customerOrder);
+                        if (_reservationService.PayReservation(reservation) && customerOrderId != null)
                         {
+                            for (int i = 0; i < orderLines.Count; i++)
+                            {
+                                orderLines[i].CustomerOrderId = customerOrderId.Id;
+                            }
+
+                            orderLineService.ConnectCustomerOrderIdToOrderLine(orderLines);
+
                             Console.WriteLine("Payment confirmed.");
                             break;
                         }
