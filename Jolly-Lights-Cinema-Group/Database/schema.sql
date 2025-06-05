@@ -94,7 +94,9 @@ CREATE TABLE IF NOT EXISTS OrderLine (
   Description TEXT NOT NULL,
   VatPercentage INTEGER NOT NULL,
   Price REAL NOT NULL,
-  FOREIGN KEY (ReservationId) REFERENCES Reservation (Id) ON DELETE CASCADE
+  CustomerOrderId INTEGER,
+  FOREIGN KEY (ReservationId) REFERENCES Reservation (Id) ON DELETE CASCADE,
+  FOREIGN KEY (CustomerOrderId) REFERENCES CustomerOrder (Id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS DiscountCode (

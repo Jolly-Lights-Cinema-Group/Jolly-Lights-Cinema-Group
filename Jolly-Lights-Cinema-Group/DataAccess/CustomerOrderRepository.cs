@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Data.Sqlite;  
-
 namespace JollyLightsCinemaGroup.DataAccess
 {
     public class CustomerOrderRepository
     {
-        public bool AddCustomerOrder(CustomerOrder customerOrder)
+        public CustomerOrder? AddCustomerOrder(CustomerOrder customerOrder)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -20,7 +16,20 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.AddWithValue("@payDate", customerOrder.PayDate);
                 command.Parameters.AddWithValue("@tax", customerOrder.Tax);
 
-                return command.ExecuteNonQuery() > 0;
+                command.ExecuteNonQuery();
+
+                var idCommand = connection.CreateCommand();
+                idCommand.CommandText = "SELECT last_insert_rowid();";
+
+                var result = idCommand.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    customerOrder.Id = Convert.ToInt32(result);
+                    return customerOrder;
+                }
+
+                return null;
             }
         }
 

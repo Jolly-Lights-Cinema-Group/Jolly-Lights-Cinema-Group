@@ -103,10 +103,26 @@ public class OrderLineService
             double totalPrice = quantity * shopItem.Price;
 
             OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2));
+            OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
 
-            _orderLineRepo.AddOrderLine(orderLine);
-            orderLines.Add(orderLine);
+            if (orderLineId != null)
+            {
+                orderLines.Add(orderLineId);
+            }
         }
         return orderLines;
+    }
+
+    public bool ConnectCustomerOrderIdToOrderLine(List<OrderLine> orderLines)
+    {
+        foreach (OrderLine orderLine in orderLines)
+        {
+            if (!_orderLineRepo.SetCustomerOrderIdForOrderLine(orderLine))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -377,7 +377,7 @@ public static class ManageScheduleMenu
         // Loop of getting the date for the schedule.
         do
         {
-            Console.Write("Enter the date for the schedule (yyyy-MM-dd), or type 'cancel' to exit: ");
+            Console.Write("Enter the date for the schedule (dd-MM-yyyy), or type 'cancel' to exit: ");
             string? input = Console.ReadLine();
 
             if (input?.Trim().ToLower() == "cancel")
@@ -392,7 +392,7 @@ public static class ManageScheduleMenu
             }
             if (scheduleDate < DateTime.Today || scheduleDate < selectedMovie.ReleaseDate)
             {
-                Console.WriteLine($"Date cannot be in the past or before the Release date of: {selectedMovie.ReleaseDate.ToString("dd-mm-yyyy")}.");
+                Console.WriteLine($"Date cannot be in the past or before the Release date of: {selectedMovie.ReleaseDate.ToString("dd-MM-yyyy")}.");
                 continue;
             }
 

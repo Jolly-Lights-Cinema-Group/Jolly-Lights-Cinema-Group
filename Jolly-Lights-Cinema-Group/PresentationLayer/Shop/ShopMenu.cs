@@ -95,7 +95,18 @@ public class ShopMenu
 
             if (input == "y")
             {
-                customerOrderService.RegisterCustomerOrder(customerOrder);
+                CustomerOrder? customerOrderId = customerOrderService.RegisterCustomerOrder(customerOrder);
+
+                if (customerOrderId != null)
+                {
+                    for (int i = 0; i < orderLines.Count; i++)
+                    {
+                        orderLines[i].CustomerOrderId = customerOrderId.Id;
+                    }
+
+                    orderLineService.ConnectCustomerOrderIdToOrderLine(orderLines);
+                }
+
                 Console.WriteLine("\nPayment confirmed.");
                 break;
             }
