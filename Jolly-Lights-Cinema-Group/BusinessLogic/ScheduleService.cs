@@ -32,7 +32,7 @@ public class ScheduleService
 
     public List<Schedule> ShowScheduleByDate(DateTime dateTime, int locationId)
     {
-        List<Schedule> schedules = _scheduleRepo.ShowSchedule(dateTime, locationId);
+        List<Schedule> schedules = _scheduleRepo.GetScheduleByDate(dateTime, locationId);
         return schedules;
     }
 

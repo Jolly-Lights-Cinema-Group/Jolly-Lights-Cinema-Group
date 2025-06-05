@@ -113,6 +113,34 @@ public class OrderLineService
         return orderLines;
     }
 
+    public List<OrderLine> CreateOrderLineForCashDeskTickets(List<ScheduleSeat> scheduleSeats)
+    {
+        List<OrderLine> orderLines = new List<OrderLine>();
+
+        ScheduleSeatRepository scheduleSeatRepository = new();
+        SeatRepository seatRepository = new();
+
+        List<IGrouping<SeatType, ScheduleSeat>> groupedSeats = scheduleSeats
+            .GroupBy(seat => seat.Type)
+            .ToList();
+
+        foreach (var group in groupedSeats)
+        {
+            SeatType seatType = group.Key;
+            int quantity = group.Count();
+            double totalPrice = group.Sum(seat => (double)seat.Price);
+
+            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2));
+            OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
+
+            if (orderLineId != null)
+            {
+                orderLines.Add(orderLineId);
+            }
+        }
+        return orderLines;
+    }
+
     public bool ConnectCustomerOrderIdToOrderLine(List<OrderLine> orderLines)
     {
         foreach (OrderLine orderLine in orderLines)

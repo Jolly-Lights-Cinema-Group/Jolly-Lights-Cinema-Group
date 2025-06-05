@@ -78,14 +78,7 @@ public class ShopMenu
         List<OrderLine> orderLines = orderLineService.CreateOrderLineForCashDeskShopItems(boughtItems);
         CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
 
-        foreach (OrderLine orderLine in orderLines)
-        {
-            Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{orderLine.Price}     ({orderLine.VatPercentage}% VAT)");
-        }
-        Console.WriteLine($"-----------------------------------------------------------------------");
-        Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
-        Console.WriteLine($"VAT: €{customerOrder.Tax}");
-        Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
+        Receipt.DisplayReceipt(orderLines, customerOrder);
 
         string? input;
         do
@@ -129,7 +122,7 @@ public class ShopMenu
                     _shopitemService.RestoreShopItem(item!, kvp.Value);
                 }
 
-                Console.WriteLine("\n Payment cancelled");
+                Console.WriteLine("\nPayment cancelled");
                 break;
             }
 

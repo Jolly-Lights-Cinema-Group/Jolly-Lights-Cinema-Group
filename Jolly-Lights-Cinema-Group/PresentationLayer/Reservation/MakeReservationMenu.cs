@@ -113,19 +113,12 @@ public class MakeReservationMenu
 
         if (newReservation != null)
         {
-            foreach (ScheduleSeat selectedSeat in selectedSeats)
-            {
-                ScheduleSeat scheduleSeat = new(selectedSeat.ScheduleId, newReservation.Id!.Value, selectedSeat.Price, selectedSeat.Type, selectedSeat.SeatNumber!);
-                _scheduleSeatService.AddSeatToReservation(scheduleSeat);
-            }
+            selectedSeats.ForEach(seat => seat.ReservationId = newReservation.Id!.Value);
+            _scheduleSeatService.AddSeatToReservation(selectedSeats);
 
             Console.WriteLine("Reservation added successfully.");
         }
-        else
-        {
-            Console.WriteLine("Reservation was not added to the database.");
-            return;
-        }
+        else return;
 
         Console.Write("\nWould you like to add extra items to your reservation? (y/n): ");
         string? response = Console.ReadLine()?.Trim().ToLower();
@@ -146,7 +139,13 @@ public class MakeReservationMenu
         Console.WriteLine($"Reservation Number: {newReservation.ReservationNumber}");
         Console.WriteLine($"Movie: {selectedMovie.Title}");
         Console.WriteLine($"Date: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
-        Console.WriteLine($"Seat(s): {seatsString}");
+        Console.WriteLine($"Room: {movieRoom.RoomNumber}");
+        Console.WriteLine($"Seat(s): {seatsString}\n\n");
+
+        List<OrderLine> orderLines = orderLineService.GetOrderLinesByReservation(newReservation);
+        CustomerOrderService customerOrderService = new();
+        CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForReservation(newReservation);
+        Receipt.DisplayReceipt(orderLines, customerOrder);
 
         Console.WriteLine("\nReservation complete. Press any key to continue.");
         Console.ReadKey();

@@ -10,11 +10,7 @@ public class ReservationService
 
     public bool DeleteReservation(Reservation reservation)
     {
-        if (_reservationRepository.RemoveReservation(reservation))
-        {
-            return true;
-        }
-        return false;
+        return _reservationRepository.RemoveReservation(reservation);
     }
 
     public Reservation? FindReservationByReservationNumber(string reservationNumber)

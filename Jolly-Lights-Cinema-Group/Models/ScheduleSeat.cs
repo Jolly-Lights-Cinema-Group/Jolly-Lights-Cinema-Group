@@ -9,7 +9,7 @@ public class ScheduleSeat
     public SeatType Type { get; set; }
     public string? SeatNumber { get; set; }
 
-    public ScheduleSeat(int scheduleId, int reservationId, double price, SeatType type, string seatNumber)
+    public ScheduleSeat(int scheduleId, double price, SeatType type, string seatNumber, int? reservationId = null)
     {
         ScheduleId = scheduleId;
         ReservationId = reservationId;
@@ -18,17 +18,9 @@ public class ScheduleSeat
         SeatNumber = seatNumber;
     }
 
-    public ScheduleSeat(int id, int scheduleId, int reservationId, double price, SeatType type, string seatNumber)
-        : this(scheduleId, reservationId, price, type, seatNumber)
+    public ScheduleSeat(int id, int scheduleId, double price, SeatType type, string seatNumber, int? reservationId = null)
+        : this(scheduleId, price, type, seatNumber, reservationId)
     {
         Id = id;
-    }
-
-    public ScheduleSeat(int scheduleId, double price, SeatType type, string seatNumber)
-    {
-        ScheduleId = scheduleId;
-        Price = price;
-        Type = type;
-        SeatNumber = seatNumber;
     }
 }

@@ -89,21 +89,16 @@ public static class ManageMovieMenu
 
         Console.Clear();
         Console.WriteLine($"Title: {movie.Title}\nDuration: {movie.Duration}\nMinimum Age: {movie.MinimumAge}\nReleaseDate: {movie.ReleaseDate}\nMoviecast: {movie.MovieCast}");
-        Console.WriteLine("\nEnter y to add movie to the database: ");
-        string? input = Console.ReadLine();
 
-        if (input != null && input.Trim().ToLower() == "y")
+        if (_movieService.RegisterMovie(movie))
         {
-            if (_movieService.RegisterMovie(movie))
-            {
-                Console.WriteLine($"Movie added succesfully");
-            }
-            else
-            {
-                Console.WriteLine($"Movie could not be added to the database");
-            }
+            Console.WriteLine($"Movie added succesfully");
         }
-        
+        else
+        {
+            Console.WriteLine($"Movie could not be added to the database");
+        }
+    
         Console.WriteLine("\nPress any key to exit.");
         Console.ReadKey();
     }
@@ -123,7 +118,7 @@ public static class ManageMovieMenu
             Console.WriteLine("Movies:");
             foreach (var movie in movies)
             {
-                Console.WriteLine($"Title: {movie.Title}, Duration: {movie.Duration} minutes, MinimumAge: {movie.MinimumAge}, ReleaseDate: {movie.ReleaseDate.ToString("dd-MM-yyyy")}, Cast: {movie.MovieCast}");
+                Console.WriteLine($"Title: {movie.Title}, Duration: {movie.Duration} minutes, MinimumAge: {movie.MinimumAge}, ReleaseDate: {movie.ReleaseDate.ToString("dd/MM/yyyy")}, Cast: {movie.MovieCast}");
             }
         }
 

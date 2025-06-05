@@ -1,9 +1,9 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Common;
+using JollyLightsCinemaGroup.BusinessLogic;
 
 public static class CashDesk
 {
-    private static ShopItemService _shopItemService = new();
     private static Menu _cashDesk = new("Shop Management", new string[] { "Tickets", "Shop", "Back" });
     public static void ShowCashDeskMenu()
     {
@@ -23,10 +23,11 @@ public static class CashDesk
         switch (choice)
         {
             case 0:
-                ShopMenu shopMenu = new();
-                shopMenu.CashDeskShop(Globals.SessionLocationId);
+                SellTickets();
                 return true;
             case 1:
+                ShopMenu shopMenu = new();
+                shopMenu.CashDeskShop(Globals.SessionLocationId);
                 return true;
             case 2:
                 return false;
@@ -38,6 +39,135 @@ public static class CashDesk
 
     public static void SellTickets()
     {
+        ScheduleService scheduleService = new();
+        MovieRoomService movieRoomService = new();
+        MovieService movieService = new();
+        ScheduleSeatService scheduleSeatService = new();
 
+        DateTime today = DateTime.Now;
+        List<Schedule> schedules = scheduleService.ShowScheduleByDate(DateTime.Now, Globals.SessionLocationId);
+
+        List<Schedule> upcomingSchedules = schedules
+            .Where(s =>
+            {
+                DateTime fullStartDateTime = s.StartDate.Date.Add(s.StartTime);
+                return fullStartDateTime >= today && movieRoomService.GetLeftOverSeats(s) > 0;
+            })
+            .OrderBy(s => s.StartDate.Date.Add(s.StartTime))
+            .ToList();
+
+        string[] menuItems = upcomingSchedules
+            .Select(s =>
+            {
+                Movie movie = movieService.GetMovieById(s.MovieId)!;
+                DateTime start = s.StartDate.Date.Add(s.StartTime);
+                return $"{movie.Title} — {start:HH:mm}";
+            })
+            .Append("Cancel")
+            .ToArray();
+
+        Menu scheduleMenu = new("Buy Tickets", menuItems);
+        int choice = scheduleMenu.Run(); ;
+
+        if (choice == upcomingSchedules.Count) return;
+
+        Schedule selectedSchedule = upcomingSchedules[choice];
+
+        int leftOverSeats = movieRoomService.GetLeftOverSeats(selectedSchedule);
+
+        int numberOfSeats;
+        string? inputNumberOfSeats;
+        do
+        {
+            Console.Write("Enter the amount of seats (or 'C' to cancel): ");
+            inputNumberOfSeats = Console.ReadLine();
+
+            if (inputNumberOfSeats != null && inputNumberOfSeats.Trim().ToUpper() == "C")
+            {
+                Console.WriteLine("Reservation cancelled.");
+                return;
+            }
+
+            if (!int.TryParse(inputNumberOfSeats, out numberOfSeats) || numberOfSeats < 0)
+            {
+                Console.WriteLine("Please enter a valid positive number.");
+                continue;
+            }
+
+            if (numberOfSeats > leftOverSeats)
+            {
+                Console.WriteLine($"You requested {numberOfSeats} seats, but only {leftOverSeats} are available.");
+                continue;
+            }
+
+            break;
+
+        } while (true);
+
+        MovieRoom? movieRoom = movieRoomService.GetMovieRoomById(selectedSchedule.MovieRoomId);
+        if (movieRoom is null) return;
+
+        SeatSelection seatSelection = new();
+        List<ScheduleSeat> selectedSeats = seatSelection.SelectSeatsMenu(Globals.SessionLocationId, movieRoom, selectedSchedule, numberOfSeats);
+
+        List<ScheduleSeat> reservedSeats = scheduleSeatService.AddSeatToReservation(selectedSeats);
+
+        OrderLineService orderLineService = new();
+        List<OrderLine> orderLines = orderLineService.CreateOrderLineForCashDeskTickets(selectedSeats);
+
+        CustomerOrderService customerOrderService = new();
+        CustomerOrder customerOrder = customerOrderService.CreateCustomerOrderForCashDesk(orderLines);
+
+        Receipt.DisplayReceipt(orderLines, customerOrder);
+
+        string? input;
+        do
+        {
+            Console.Write("\nConfirm payment (y) or (c) to cancel: ");
+            input = Console.ReadLine()?.Trim().ToLower();
+
+            if (input == "y")
+            {
+                CustomerOrder? customerOrderId = customerOrderService.RegisterCustomerOrder(customerOrder);
+
+                if (customerOrderId != null)
+                {
+                    for (int i = 0; i < orderLines.Count; i++)
+                    {
+                        orderLines[i].CustomerOrderId = customerOrderId.Id;
+                    }
+
+                    orderLineService.ConnectCustomerOrderIdToOrderLine(orderLines);
+                }
+
+                string seatsString = string.Join("; ", reservedSeats.Select(s => s.SeatNumber));
+                Movie movie = movieService.GetMovieById(selectedSchedule.MovieId)!;
+
+                Console.Clear();
+                
+                Console.WriteLine($"Movie: {movie.Title}");
+                Console.WriteLine($"Date: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
+                Console.WriteLine($"Room: {movieRoom.RoomNumber}");
+                Console.WriteLine($"Seat(s): {seatsString}");
+
+                Console.WriteLine("\nPayment confirmed.");
+                break;
+            }
+
+            if (input == "c")
+            {
+                scheduleSeatService.DeleteSeat(reservedSeats);
+                Console.WriteLine("\nPayment cancelled");
+                break;
+            }
+
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter 'y' to confirm or 'c' to cancel.");
+            }
+        } while (input != "y" && input != "c");
+
+        Console.WriteLine("\nPress any key to continue.");
+        Console.ReadKey();
     }
 }

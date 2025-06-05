@@ -33,19 +33,12 @@ public class PayReservationMenu
                 OrderLineService orderLineService = new();
                 List<OrderLine> orderLines = orderLineService.GetOrderLinesByReservation(reservation);
 
-                foreach (OrderLine orderLine in orderLines)
-                {
-                    Console.WriteLine($"{orderLine.Description} * {orderLine.Quantity} = €{Math.Round(orderLine.Price, 2)}     ({orderLine.VatPercentage}% VAT)");
-                }
-                Console.WriteLine($"-----------------------------------------------------------------------");
-                Console.WriteLine($"Subtotal (excl. Tax): €{Math.Round(customerOrder.GrandPrice - customerOrder.Tax, 2)}");
-                Console.WriteLine($"VAT: €{customerOrder.Tax}");
-                Console.WriteLine($"Total (incl. Tax): €{customerOrder.GrandPrice}");
+                Receipt.DisplayReceipt(orderLines, customerOrder);
 
                 string? input;
                 do
                 {
-                    Console.Write("Confirm payment? (y/n): ");
+                    Console.Write("\nConfirm payment? (y/n): ");
                     input = Console.ReadLine()?.Trim().ToLower();
 
                     if (input == "y")

@@ -213,7 +213,7 @@ public static class ManageScheduleMenu
                 List<Schedule> schedules = _scheduleService.GetSchedulesByMovieAndRoom(movie, selectedMovieRoom);
 
                 string[] scheduleItems = schedules
-                    .Select(schedule => $"Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime.ToString(@"hh\:mm")}")
+                    .Select(schedule => $"Date: {schedule.StartDate.ToString("dd/MM/yyyy")}, Time: {schedule.StartTime.ToString(@"hh\:mm")}")
                     .Append("Cancel")
                     .ToArray();
 
@@ -261,7 +261,7 @@ public static class ManageScheduleMenu
         DateTime SearchDate;
         do
         {
-            Console.WriteLine("Search Date: (dd/MM/yyyy)");
+            Console.WriteLine("Search Date (dd/MM/yyyy): ");
             string? inputSearchDate = Console.ReadLine();
             if (DateTimeValidator.TryParseDate(inputSearchDate, out SearchDate))
             {
@@ -285,7 +285,7 @@ public static class ManageScheduleMenu
 
         else
         {
-            Console.WriteLine($"Schedule Movies on {SearchDate.ToString("dd-MM-yyyy")}:");
+            Console.WriteLine($"Schedule Movies on {SearchDate.ToString("dd/MM/yyyy")}:");
 
             MovieService movieService = new();
             MovieRoomService movieRoomService = new();
@@ -295,7 +295,7 @@ public static class ManageScheduleMenu
                 Movie? movieinformation = movieService.GetMovieById(schedule.MovieId);
                 MovieRoom? movieRoom = movieRoomService.GetMovieRoomById(schedule.MovieRoomId);
 
-                Console.WriteLine($"Room number: {movieRoom!.RoomNumber}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd-MM-yyyy")}, Time: {schedule.StartTime}");
+                Console.WriteLine($"Room number: {movieRoom!.RoomNumber}, Movie: {movieinformation!.Title}, Date: {schedule.StartDate.ToString("dd/MM/yyyy")}, Time: {schedule.StartTime}");
             }
         }
 
@@ -377,7 +377,7 @@ public static class ManageScheduleMenu
         // Loop of getting the date for the schedule.
         do
         {
-            Console.Write("Enter the date for the schedule (dd-MM-yyyy), or type 'cancel' to exit: ");
+            Console.Write("Enter the date for the schedule (dd/MM/yyyy), or type 'cancel' to exit: ");
             string? input = Console.ReadLine();
 
             if (input?.Trim().ToLower() == "cancel")
@@ -392,7 +392,7 @@ public static class ManageScheduleMenu
             }
             if (scheduleDate < DateTime.Today || scheduleDate < selectedMovie.ReleaseDate)
             {
-                Console.WriteLine($"Date cannot be in the past or before the Release date of: {selectedMovie.ReleaseDate.ToString("dd-MM-yyyy")}.");
+                Console.WriteLine($"Date cannot be in the past or before the Release date of: {selectedMovie.ReleaseDate.ToString("dd/MM/yyyy")}.");
                 continue;
             }
 
@@ -425,7 +425,7 @@ public static class ManageScheduleMenu
                 Schedule schedule = new(selectedMovieRoom.Id.Value, selectedMovie.Id!.Value, scheduleDate, currentTime);
                 if (_scheduleService.RegisterSchedule(schedule) && _scheduleService.UpdateFreeTimeColumn())
                 {
-                    Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate} {currentTime}");
+                    Console.WriteLine($"Movie {selectedMovie.Title} added to schedule. Will play on {scheduleDate.ToString("dd/MM/yyyy")} {currentTime}");
                     scheduledCount++;
                     currentTime += gapBetweenShowings;
                 }

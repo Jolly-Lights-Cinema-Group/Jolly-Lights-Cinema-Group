@@ -20,7 +20,8 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        ScheduleSeat seat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5));
+                        int? reservationId = reader.IsDBNull(2) ? null : reader.GetInt32(2);
+                        ScheduleSeat seat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(1), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5), reservationId);
                         seats.Add(seat);
                     }
                 }
@@ -28,7 +29,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return seats;
         }
 
-        public bool AddSeatToReservation(ScheduleSeat scheduleSeat)
+        public ScheduleSeat? AddSeatToReservation(ScheduleSeat scheduleSeat)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -39,11 +40,33 @@ namespace JollyLightsCinemaGroup.DataAccess
                     VALUES (@SeatNumber, @ReservationId, @Price, @Type, @ScheduleId);";
 
                 command.Parameters.AddWithValue("@SeatNumber", scheduleSeat.SeatNumber);
-                command.Parameters.AddWithValue("@ReservationId", scheduleSeat.ReservationId);
+
+                if (scheduleSeat.ReservationId.HasValue)
+                {
+                    command.Parameters.AddWithValue("@ReservationId", scheduleSeat.ReservationId.Value);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@ReservationId", DBNull.Value);
+                }
+
                 command.Parameters.AddWithValue("@Price", scheduleSeat.Price);
                 command.Parameters.AddWithValue("@Type", scheduleSeat.Type);
                 command.Parameters.AddWithValue("@ScheduleId", scheduleSeat.ScheduleId);
-                return command.ExecuteNonQuery() > 0;
+                command.ExecuteNonQuery();
+
+                var idCommand = connection.CreateCommand();
+                idCommand.CommandText = "SELECT last_insert_rowid();";
+
+                var result = idCommand.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    scheduleSeat.Id = Convert.ToInt32(result);
+                    return scheduleSeat;
+                }
+
+                return null;
             }
         }
 
@@ -66,12 +89,24 @@ namespace JollyLightsCinemaGroup.DataAccess
                 {
                     while (reader.Read())
                     {
-                        ScheduleSeat scheduleSeat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5));
+                        ScheduleSeat scheduleSeat = new ScheduleSeat(reader.GetInt32(0), reader.GetInt32(2), reader.GetDouble(3), (SeatType)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(1));
                         scheduleSeats.Add(scheduleSeat);
                     }
                 }
             }
             return scheduleSeats;
+        }
+
+        public void DeleteSeat(ScheduleSeat scheduleSeat)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM ScheduleSeat WHERE Id = @Id;";
+                command.Parameters.AddWithValue("@Id", scheduleSeat.Id!.Value);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

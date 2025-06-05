@@ -131,7 +131,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<Schedule> ShowSchedule(DateTime date, int locationId)
+        public List<Schedule> GetScheduleByDate(DateTime date, int locationId)
         {
             List<Schedule> schedules = new List<Schedule>();
 
