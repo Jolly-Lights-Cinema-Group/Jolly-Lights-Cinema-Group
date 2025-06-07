@@ -73,42 +73,13 @@ public static class CashDesk
 
         Schedule selectedSchedule = upcomingSchedules[choice];
 
-        int leftOverSeats = movieRoomService.GetLeftOverSeats(selectedSchedule);
-
-        int numberOfSeats;
-        string? inputNumberOfSeats;
-        do
-        {
-            Console.Write("Enter the amount of seats (or 'C' to cancel): ");
-            inputNumberOfSeats = Console.ReadLine();
-
-            if (inputNumberOfSeats != null && inputNumberOfSeats.Trim().ToUpper() == "C")
-            {
-                Console.WriteLine("Reservation cancelled.");
-                return;
-            }
-
-            if (!int.TryParse(inputNumberOfSeats, out numberOfSeats) || numberOfSeats < 0)
-            {
-                Console.WriteLine("Please enter a valid positive number.");
-                continue;
-            }
-
-            if (numberOfSeats > leftOverSeats)
-            {
-                Console.WriteLine($"You requested {numberOfSeats} seats, but only {leftOverSeats} are available.");
-                continue;
-            }
-
-            break;
-
-        } while (true);
-
         MovieRoom? movieRoom = movieRoomService.GetMovieRoomById(selectedSchedule.MovieRoomId);
         if (movieRoom is null) return;
 
         SeatSelection seatSelection = new();
-        List<ScheduleSeat> selectedSeats = seatSelection.SelectSeatsMenu(Globals.SessionLocationId, movieRoom, selectedSchedule, numberOfSeats);
+        List<ScheduleSeat> selectedSeats = seatSelection.SelectSeatsMenu(Globals.SessionLocationId, movieRoom, selectedSchedule);
+
+        if (selectedSeats.Count <= 0) return;
 
         List<ScheduleSeat> reservedSeats = scheduleSeatService.AddSeatToReservation(selectedSeats);
 
