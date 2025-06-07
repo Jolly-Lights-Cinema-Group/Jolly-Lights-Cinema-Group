@@ -1,11 +1,7 @@
-using System.Text;
 using JollyLightsCinemaGroup.DataAccess;
 
 public class DiscountCodeService
 {
-    private static readonly char[] AllowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789".ToCharArray();
-
-    private static readonly Random random = new();
     private readonly DiscountCodeRepository _discountCodeRepo;
 
     public DiscountCodeService()
@@ -35,20 +31,8 @@ public class DiscountCodeService
     public DiscountCode? MakeCompensationDiscountCode()
     {
         Console.Clear();
-        StringBuilder code = new();
-        int length = 10;
+        DiscountCode discountcode = DiscountCode.CreateWithCompensationDiscountCode();
 
-        for (int i = 0; i < length; i++)
-        {
-            char character = AllowedChars[random.Next(AllowedChars.Length)];
-            code.Append(character);
-        }
-
-        string? Code = code.ToString();
-
-        DiscountCode discountcode = new DiscountCode(Code, 0.2, "Compensation", DateTime.Now.AddYears(1), null);
-
-        DiscountCodeService discountcodeservice = new();
         if (_discountCodeRepo.AddDiscountCode(discountcode))
         {
             return discountcode;
