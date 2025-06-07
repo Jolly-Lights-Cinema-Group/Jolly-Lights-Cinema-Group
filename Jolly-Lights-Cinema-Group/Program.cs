@@ -10,6 +10,7 @@ namespace Jolly_Lights_Cinema_Group
         static void Main()
         {
             DatabaseManager.InitializeDatabase();
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             // Main menu / Asking for location
             while (true)

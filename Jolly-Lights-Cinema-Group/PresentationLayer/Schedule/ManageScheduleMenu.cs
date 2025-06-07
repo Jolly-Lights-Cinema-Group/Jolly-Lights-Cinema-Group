@@ -6,7 +6,7 @@ using Jolly_Lights_Cinema_Group.Helpers;
 public static class ManageScheduleMenu
 {
     private static ScheduleService _scheduleService = new();
-    private static Menu _manageScheduleMenu = new("Schedule Menu", new string[] { "Daily Manual planning", "Deleting planning", "Show Schedule by Date", "Automatic planning (Coming soon)", "Back" });
+    private static Menu _manageScheduleMenu = new("Schedule Menu", new string[] { "Daily Manual planning", "Deleting planning", "Show Schedule by Date", "Automatic planning", "Back" });
     public static void ShowScheduleManagementMenu()
     {
         bool inScheduleManagementMenu = true;

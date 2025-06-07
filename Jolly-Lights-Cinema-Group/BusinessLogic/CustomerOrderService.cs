@@ -73,4 +73,14 @@ public class CustomerOrderService
     {
         return _customerOrderRepository.GetAvailableYears();
     }
+
+    public decimal GetEarningsForYearMonth(int year, int month)
+    {
+        return _customerOrderRepository.GetEarningsForYearMonth(year, month);
+    }
+
+    public decimal GetNetEarningsForYearMonth(int year, int month)
+    {
+        return _customerOrderRepository.GetNetEarningsForYearMonth(year, month);
+    }
 }

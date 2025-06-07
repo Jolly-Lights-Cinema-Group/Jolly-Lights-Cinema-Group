@@ -1,4 +1,7 @@
+using Microsoft.Data.Sqlite;
+using System.Data;
 namespace JollyLightsCinemaGroup.DataAccess
+
 {
     public class CustomerOrderRepository
     {
@@ -106,6 +109,46 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
 
             return orders;
+        }
+
+        public decimal GetEarningsForYearMonth(int year, int month)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT SUM(GrandPrice)
+                    FROM CustomerOrder
+                    WHERE strftime('%Y', PayDate) = @year
+                    AND strftime('%m', PayDate) = @month;";
+
+                command.Parameters.Add(new SqliteParameter("@year", DbType.String) { Value = year.ToString() });
+                command.Parameters.Add(new SqliteParameter("@month", DbType.String) { Value = month.ToString("D2") });
+
+                object result = command.ExecuteScalar();
+                return result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+            }
+        }
+
+        public decimal GetNetEarningsForYearMonth(int year, int month)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    SELECT SUM(GrandPrice - Tax)
+                    FROM CustomerOrder
+                    WHERE strftime('%Y', PayDate) = @year
+                    AND strftime('%m', PayDate) = @month;";
+
+                command.Parameters.Add(new SqliteParameter("@year", DbType.String) { Value = year.ToString() });
+                command.Parameters.Add(new SqliteParameter("@month", DbType.String) { Value = month.ToString("D2") });
+
+                object result = command.ExecuteScalar();
+                return result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+            }
         }
     }
 }
