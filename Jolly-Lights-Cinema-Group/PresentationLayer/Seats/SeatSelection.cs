@@ -6,27 +6,22 @@ public class SeatSelection
     private readonly SeatService _seatService;
     private int SelectedIndexY = 0;
     private int SelectedIndexX = 0;
-    private int SelectionAmount = 1;
 
     public SeatSelection()
     {
         _seatService = new SeatService();
     }
 
-    public List<ScheduleSeat> SelectSeatsMenu(int locationId, MovieRoom movieRoom, Schedule schedule, int amount)
+    public List<ScheduleSeat> SelectSeatsMenu(int locationId, MovieRoom movieRoom, Schedule schedule)
     {
         ReservationService reservationService = new ReservationService();
-        SelectionAmount = amount;
 
         var reservedSeats = reservationService.GetReservedSeats(schedule);
         var roomLayout = PrepareRoomLayoutWithReservations(movieRoom, reservedSeats);
 
         var selectedSeatsCoords = new List<(int y, int x)>();
 
-        while (selectedSeatsCoords.Count < SelectionAmount)
-        {
-            StartSeatSelection(roomLayout, selectedSeatsCoords);
-        }
+        StartSeatSelection(roomLayout, selectedSeatsCoords);
 
         Console.Clear();
 
@@ -59,6 +54,10 @@ public class SeatSelection
         {
             DisplayOptions(seats, alreadySelected);
 
+            Console.WriteLine($"\nSelected seats: {alreadySelected.Count}");
+            Console.WriteLine("Use keyboard arrows to navigate, Enter to select/deselect seats, F to confirm seat selection or C to cancel reservation.");
+            Console.WriteLine("[_] = Regular seat\n[V] = VIP seat\n[L] = Love seat\n[X] = Unavaiable seat\n[*] = Selected seat");
+
             keyPressed = Console.ReadKey(true).Key;
 
             switch (keyPressed)
@@ -78,11 +77,30 @@ public class SeatSelection
                 case ConsoleKey.RightArrow:
                     (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, 0, 1, alreadySelected);
                     break;
-            }
-        } while (keyPressed != ConsoleKey.Enter ||
-                 !IsSelectablePosition(seats, SelectedIndexY, SelectedIndexX, alreadySelected));
 
-        alreadySelected.Add((SelectedIndexY, SelectedIndexX));
+                case ConsoleKey.Enter:
+                    var currentCoord = (SelectedIndexY, SelectedIndexX);
+                    if (IsSelectablePosition(seats, SelectedIndexY, SelectedIndexX, new List<(int, int)>()) || alreadySelected.Contains(currentCoord))
+                    {
+                        if (alreadySelected.Contains(currentCoord))
+                        {
+                            alreadySelected.Remove(currentCoord);
+                        }
+                        else
+                        {
+                            alreadySelected.Add(currentCoord);
+                        }
+
+                        (SelectedIndexY, SelectedIndexX) = MoveCursor(seats, SelectedIndexY, SelectedIndexX, 0, 1, alreadySelected);
+                    }
+                    break;
+
+                case ConsoleKey.C:
+                    alreadySelected.Clear();
+                    return;
+            }
+        } while (keyPressed != ConsoleKey.F ||
+                 !IsSelectablePosition(seats, SelectedIndexY, SelectedIndexX, alreadySelected));
     }
 
     private void DisplayOptions(List<List<string>> grid, List<(int y, int x)> alreadySelected)
@@ -184,7 +202,6 @@ public class SeatSelection
         string seat = layout[y][x];
 
         if (seat == "#" || seat == "_" || seat == "[X]") return false;
-        if (alreadySelected.Contains((y, x))) return false;
 
         return true;
     }
