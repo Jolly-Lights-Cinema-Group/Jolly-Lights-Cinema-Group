@@ -170,7 +170,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return schedules;
         }
 
-        public List<Schedule> GetSchedulesByMovie(Movie movie)
+        public virtual List<Schedule> GetSchedulesByMovie(Movie movie)
         {
             List<Schedule> schedules = new List<Schedule>();
 
@@ -229,7 +229,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return schedules;
         }
 
-        public List<Schedule> GetAllUpcomingSchedules(int locationId)
+        public virtual List<Schedule> GetAllUpcomingSchedules(int locationId)
         {
             List<Schedule> schedules = new();
 

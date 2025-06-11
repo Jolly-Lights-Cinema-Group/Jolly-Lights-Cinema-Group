@@ -38,7 +38,7 @@ public class MovieRoomService
         return _movieRoomRepo.GetMovieRoomById(id);
     }
 
-    public int GetLeftOverSeats(Schedule schedule)
+    public virtual int GetLeftOverSeats(Schedule schedule)
     {
         List<List<string>>? movieRoomLayout = GetRoomLayout(schedule.MovieRoomId);
         if (movieRoomLayout == null) return 0;

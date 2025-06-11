@@ -38,8 +38,7 @@ public class ScheduleService
 
     public List<Schedule> ShowScheduleByDate(DateTime dateTime, int locationId)
     {
-        List<Schedule> schedules = _scheduleRepo.GetScheduleByDate(dateTime, locationId);
-        return schedules;
+        return _scheduleRepo.GetScheduleByDate(dateTime, locationId);
     }
 
     public List<Movie> GetMoviesBySchedule(int locationId)

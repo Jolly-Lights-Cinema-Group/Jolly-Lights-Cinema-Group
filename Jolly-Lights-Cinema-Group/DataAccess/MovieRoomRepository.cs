@@ -84,7 +84,7 @@ public class MovieRoomRepository
         return movieRoomLayout;
     }
 
-    public MovieRoom? GetMovieRoomById(int id)
+    public virtual MovieRoom? GetMovieRoomById(int id)
     {
         using (var connection = DatabaseManager.GetConnection())
         {
