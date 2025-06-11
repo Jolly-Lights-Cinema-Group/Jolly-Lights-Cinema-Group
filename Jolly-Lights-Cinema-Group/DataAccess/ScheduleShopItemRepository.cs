@@ -40,7 +40,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<ScheduleShopItem> GetScheduleShopItemByReservation(Reservation reservation)
+        public virtual List<ScheduleShopItem> GetScheduleShopItemByReservation(Reservation reservation)
         {
             List<ScheduleShopItem> scheduleShopItems = new List<ScheduleShopItem>();
             using (var connection = DatabaseManager.GetConnection())

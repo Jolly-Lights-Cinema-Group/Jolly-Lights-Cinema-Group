@@ -122,33 +122,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public ShopItem? GetShopItemByName(string name)
-        {
-            using (var connection = DatabaseManager.GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    SELECT Id, Name, Price, Stock, LocationId, VatPercentage, MinimumAge
-                    FROM ShopItem
-                    WHERE Name = @name;";
-
-                command.Parameters.AddWithValue("@name", name);
-                // command.Parameters.AddWithValue("@locationId", Globals.SessionLocationId);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        ShopItem shopItem = new(reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6));
-                        return shopItem;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public ShopItem? GetShopItemById(int id, int locationId)
+        public virtual ShopItem? GetShopItemById(int id, int locationId)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -174,7 +148,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return null;
         }
 
-        public ShopItem? GetShopItemById(int id)
+        public virtual ShopItem? GetShopItemById(int id)
         {
             return GetShopItemById(id, Globals.SessionLocationId);
         }

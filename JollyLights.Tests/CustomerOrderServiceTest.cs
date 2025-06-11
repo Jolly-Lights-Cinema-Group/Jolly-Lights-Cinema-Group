@@ -61,9 +61,9 @@ public class CustomerOrderServiceTest
         int testYear = 2025;
         List<CustomerOrder> orders = new List<CustomerOrder>
         {
-            new CustomerOrder(100.0, System.DateTime.Now, 10.0),
-            new CustomerOrder(200.0, System.DateTime.Now, 20.0),
-            new CustomerOrder(50.0, System.DateTime.Now, 5.0),
+            new CustomerOrder(100.0, DateTime.Now, 10.0),
+            new CustomerOrder(200.0, DateTime.Now, 20.0),
+            new CustomerOrder(50.0, DateTime.Now, 5.0),
         };
         _mockCustomerOrderRepository.Setup(repo => repo.GetCustomerOrdersByYear(testYear)).Returns(orders);
 
@@ -79,9 +79,9 @@ public class CustomerOrderServiceTest
         int testYear = 2025;
         List<CustomerOrder> orders = new List<CustomerOrder>
         {
-            new CustomerOrder(100.0, System.DateTime.Now, 10.0),
-            new CustomerOrder(200.0, System.DateTime.Now, 20.0),
-            new CustomerOrder(50.0, System.DateTime.Now, 5.0),
+            new CustomerOrder(100.0, DateTime.Now, 10.0),
+            new CustomerOrder(200.0, DateTime.Now, 20.0),
+            new CustomerOrder(50.0, DateTime.Now, 5.0),
         };
         _mockCustomerOrderRepository.Setup(repo => repo.GetCustomerOrdersByYear(testYear)).Returns(orders);
 

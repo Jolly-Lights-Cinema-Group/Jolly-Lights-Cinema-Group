@@ -70,7 +70,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<ScheduleSeat> GetSeatsByReservation(Reservation reservation)
+        public virtual List<ScheduleSeat> GetSeatsByReservation(Reservation reservation)
         {
             List<ScheduleSeat> scheduleSeats = new List<ScheduleSeat>();
             using (var connection = DatabaseManager.GetConnection())

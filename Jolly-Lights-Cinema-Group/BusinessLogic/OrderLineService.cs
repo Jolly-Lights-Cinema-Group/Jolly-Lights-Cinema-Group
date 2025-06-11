@@ -3,7 +3,22 @@ using JollyLightsCinemaGroup.DataAccess;
 
 public class OrderLineService
 {
-    private readonly OrderLineRepository _orderLineRepo = new OrderLineRepository();
+    private readonly OrderLineRepository _orderLineRepo;
+    private readonly ScheduleSeatRepository _scheduleSeatRepository;
+    private readonly ScheduleShopItemRepository _scheduleShopItemRepository;
+    private readonly ShopItemRepository _shopItemRepository;
+
+    public OrderLineService(
+        OrderLineRepository? orderLineRepository = null,
+        ScheduleSeatRepository? scheduleSeatRepository = null,
+        ScheduleShopItemRepository? scheduleShopItemRepository = null,
+        ShopItemRepository? shopItemRepository = null)
+    {
+        _orderLineRepo = orderLineRepository ?? new OrderLineRepository();
+        _scheduleSeatRepository = scheduleSeatRepository ?? new ScheduleSeatRepository();
+        _scheduleShopItemRepository = scheduleShopItemRepository ?? new ScheduleShopItemRepository();
+        _shopItemRepository = shopItemRepository ?? new ShopItemRepository();
+    }
 
     public bool DeleteOrderLineByReservation(Reservation reservation)
     {
@@ -15,12 +30,10 @@ public class OrderLineService
         CreateOrderLineForScheduleSeats(reservation);
     }
 
-    public void CreateOrderLineForScheduleSeats(Reservation reservation)
+    public List<OrderLine> CreateOrderLineForScheduleSeats(Reservation reservation)
     {
-        ScheduleSeatRepository scheduleSeatRepository = new();
-        SeatRepository seatRepository = new();
-
-        List<ScheduleSeat> scheduleSeats = scheduleSeatRepository.GetSeatsByReservation(reservation);
+        List<OrderLine> orderLines = new List<OrderLine>();
+        List<ScheduleSeat> scheduleSeats = _scheduleSeatRepository.GetSeatsByReservation(reservation);
 
         List<IGrouping<SeatType, ScheduleSeat>> groupedSeats = scheduleSeats
             .GroupBy(seat => seat.Type)
@@ -35,15 +48,16 @@ public class OrderLineService
             OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
+            orderLines.Add(orderLine);
         }
+
+        return orderLines;
     }
 
-    public void CreateOrderLineForScheduleShopItem(Reservation reservation)
+    public List<OrderLine> CreateOrderLineForScheduleShopItem(Reservation reservation)
     {
-        ScheduleShopItemRepository scheduleShopItemRepository = new();
-        ShopItemRepository shopItemRepository = new();
-
-        List<ScheduleShopItem> scheduleShopItems = scheduleShopItemRepository.GetScheduleShopItemByReservation(reservation);
+        List<OrderLine> orderLines = new List<OrderLine>();
+        List<ScheduleShopItem> scheduleShopItems = _scheduleShopItemRepository.GetScheduleShopItemByReservation(reservation);
 
         List<IGrouping<int, ScheduleShopItem>> groupedItems = scheduleShopItems
             .GroupBy(item => item.ShopItemId)
@@ -54,7 +68,7 @@ public class OrderLineService
             int shopItemId = group.Key;
             int quantity = group.Count();
 
-            ShopItem shopItem = shopItemRepository.GetShopItemById(shopItemId)!;
+            ShopItem shopItem = _shopItemRepository.GetShopItemById(shopItemId)!;
             if (shopItem == null)
                 continue;
 
@@ -63,7 +77,10 @@ public class OrderLineService
             OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2), (int)reservation.Id!);
 
             _orderLineRepo.AddOrderLine(orderLine);
+            orderLines.Add(orderLine);
         }
+
+        return orderLines;
     }
 
     public List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
@@ -94,9 +111,7 @@ public class OrderLineService
             int shopItemId = group.Key;
             int quantity = group.Count();
 
-            ShopItemRepository shopItemRepository = new();
-
-            ShopItem shopItem = shopItemRepository.GetShopItemById(shopItemId)!;
+            ShopItem shopItem = _shopItemRepository.GetShopItemById(shopItemId)!;
             if (shopItem == null)
                 continue;
 
@@ -116,9 +131,6 @@ public class OrderLineService
     public List<OrderLine> CreateOrderLineForCashDeskTickets(List<ScheduleSeat> scheduleSeats)
     {
         List<OrderLine> orderLines = new List<OrderLine>();
-
-        ScheduleSeatRepository scheduleSeatRepository = new();
-        SeatRepository seatRepository = new();
 
         List<IGrouping<SeatType, ScheduleSeat>> groupedSeats = scheduleSeats
             .GroupBy(seat => seat.Type)
