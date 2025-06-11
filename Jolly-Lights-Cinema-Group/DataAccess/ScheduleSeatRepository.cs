@@ -5,7 +5,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class ScheduleSeatRepository
     {
-        public List<ScheduleSeat> GetSeatsBySchedule(int scheduleId)
+        public virtual List<ScheduleSeat> GetSeatsBySchedule(int scheduleId)
         {
             var seats = new List<ScheduleSeat>();
 

@@ -19,9 +19,9 @@ public class ReservationServiceTests
                 new ScheduleSeat (1, 1, 10.0, SeatType.RegularSeat, "1,17")
             });
 
-        ReservationService service = new ReservationService(scheduleSeatRepository: mockScheduleSeatRepo.Object);
+        ReservationService reservationService = new ReservationService(scheduleSeatRepository: mockScheduleSeatRepo.Object);
 
-        List<(string, string)> result = service.GetReservedSeats(dummySchedule);
+        List<(string, string)> result = reservationService.GetReservedSeats(dummySchedule);
 
         List<(string, string)> expected = new List<(string, string)>
         {

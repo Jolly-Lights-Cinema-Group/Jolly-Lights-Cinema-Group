@@ -70,6 +70,8 @@ public class ShopMenu
             Console.ReadKey();
         }
 
+        if (boughtItems.Count <= 0) return;
+
         Console.Clear();
 
         OrderLineService orderLineService = new();
