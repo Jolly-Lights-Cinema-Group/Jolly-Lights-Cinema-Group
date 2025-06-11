@@ -3,10 +3,16 @@ using JollyLightsCinemaGroup.DataAccess;
 public class ScheduleService
 {
     private readonly ScheduleRepository _scheduleRepo;
+    private readonly MovieRepository _movieRepository;
+    private readonly MovieRoomRepository _movieRoomRepository;
+    private readonly MovieRoomService _movieRoomService;
 
-    public ScheduleService()
+    public ScheduleService(ScheduleRepository? scheduleRepository = null, MovieRepository? movieRepository = null, MovieRoomRepository? movieRoomRepository = null, MovieRoomService? movieRoomService = null)
     {
-        _scheduleRepo = new ScheduleRepository();
+        _scheduleRepo = scheduleRepository ?? new ScheduleRepository();
+        _movieRepository = movieRepository ?? new MovieRepository();
+        _movieRoomRepository = movieRoomRepository ?? new MovieRoomRepository();
+        _movieRoomService = movieRoomService ?? new MovieRoomService();
     }
 
     public bool RegisterSchedule(Schedule schedule)
@@ -40,8 +46,6 @@ public class ScheduleService
     {
         List<Schedule> schedules = _scheduleRepo.GetAllUpcomingSchedules(locationId);
 
-        MovieRepository movieRepository = new();
-
         List<Movie> uniqueMovies = new();
         HashSet<int?> addedMovieIds = new();
 
@@ -49,7 +53,7 @@ public class ScheduleService
         {
             if (!addedMovieIds.Contains(schedule.MovieId))
             {
-                Movie? movie = movieRepository.GetMovieById(schedule.MovieId);
+                Movie? movie = _movieRepository.GetMovieById(schedule.MovieId);
                 if (movie != null)
                 {
                     uniqueMovies.Add(movie);
@@ -64,14 +68,11 @@ public class ScheduleService
     {
         List<Schedule> schedules = _scheduleRepo.GetSchedulesByMovie(selectedMovie);
 
-        MovieRoomRepository movieRoomRepository = new();
-        MovieRoomService movieRoomService = new();
-
         schedules = schedules
             .Where(s =>
                 s.StartDate.Add(s.StartTime) >= DateTime.Now &&
-                movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId &&
-                movieRoomService.GetLeftOverSeats(s) > 0
+                _movieRoomRepository.GetMovieRoomById(s.MovieRoomId)!.LocationId == locationId &&
+                _movieRoomService.GetLeftOverSeats(s) > 0
             )
             .ToList();
 

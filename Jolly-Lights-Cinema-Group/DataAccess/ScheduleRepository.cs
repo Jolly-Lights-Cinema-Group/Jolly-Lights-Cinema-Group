@@ -38,7 +38,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public bool CanAddScheduleAfter(int roomId, DateTime startDate, TimeSpan startTime, int minutes)
+        public virtual bool CanAddScheduleAfter(int roomId, DateTime startDate, TimeSpan startTime, int minutes)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -62,7 +62,7 @@ namespace JollyLightsCinemaGroup.DataAccess
                 return count == 0;
             }
         }
-        public bool CanAddScheduleBefore(int roomId, DateTime startDate, TimeSpan startTime, int movieId)
+        public virtual bool CanAddScheduleBefore(int roomId, DateTime startDate, TimeSpan startTime, int movieId)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
