@@ -42,7 +42,7 @@ public class AuthenticationServiceTests
     [InlineData("", "password")]
     [InlineData("username", "")]
     [InlineData("", "")]
-    public void LoginWithEmptyUsernameOrPassword(string username, string password)
+    public void TestLoginWithEmptyUsernameOrPassword(string username, string password)
     {
         AuthenticationService authenticationService = new AuthenticationService();
 

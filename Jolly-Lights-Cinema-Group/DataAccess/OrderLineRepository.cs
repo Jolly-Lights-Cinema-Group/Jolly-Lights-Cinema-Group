@@ -54,7 +54,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
+        public virtual List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
         {
             List<OrderLine> orderLines = new List<OrderLine>();
             using (var connection = DatabaseManager.GetConnection())
