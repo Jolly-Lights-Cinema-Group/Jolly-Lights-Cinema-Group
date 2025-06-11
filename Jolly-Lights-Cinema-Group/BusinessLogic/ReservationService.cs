@@ -30,10 +30,7 @@ public class ReservationService
 
     public Reservation? FindReservationByReservationNumber(string reservationNumber)
     {
-        Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
-        if (reservation is null) return null;
-
-        return reservation;
+        return _reservationRepository.FindReservationByReservationNumber(reservationNumber);
     }
 
     public bool PayReservation(Reservation reservation)
