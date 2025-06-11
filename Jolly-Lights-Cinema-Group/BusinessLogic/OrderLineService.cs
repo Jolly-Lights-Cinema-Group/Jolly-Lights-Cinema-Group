@@ -32,55 +32,22 @@ public class OrderLineService
 
     public List<OrderLine> CreateOrderLineForScheduleSeats(Reservation reservation)
     {
-        List<OrderLine> orderLines = new List<OrderLine>();
         List<ScheduleSeat> scheduleSeats = _scheduleSeatRepository.GetSeatsByReservation(reservation);
-
-        List<IGrouping<SeatType, ScheduleSeat>> groupedSeats = scheduleSeats
-            .GroupBy(seat => seat.Type)
-            .ToList();
-
-        foreach (var group in groupedSeats)
-        {
-            SeatType seatType = group.Key;
-            int quantity = group.Count();
-            double totalPrice = group.Sum(seat => (double)seat.Price);
-
-            OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2), (int)reservation.Id!);
-
-            _orderLineRepo.AddOrderLine(orderLine);
-            orderLines.Add(orderLine);
-        }
-
-        return orderLines;
+        return CreateOrderLineForCashDeskTickets(scheduleSeats, reservation);
     }
 
     public List<OrderLine> CreateOrderLineForScheduleShopItem(Reservation reservation)
     {
-        List<OrderLine> orderLines = new List<OrderLine>();
+        List<ShopItem> shopItems = new List<ShopItem>();
         List<ScheduleShopItem> scheduleShopItems = _scheduleShopItemRepository.GetScheduleShopItemByReservation(reservation);
 
-        List<IGrouping<int, ScheduleShopItem>> groupedItems = scheduleShopItems
-            .GroupBy(item => item.ShopItemId)
-            .ToList();
-
-        foreach (IGrouping<int, ScheduleShopItem> group in groupedItems)
+        foreach (ScheduleShopItem scheduleShopItem in scheduleShopItems)
         {
-            int shopItemId = group.Key;
-            int quantity = group.Count();
-
-            ShopItem shopItem = _shopItemRepository.GetShopItemById(shopItemId)!;
-            if (shopItem == null)
-                continue;
-
-            double totalPrice = quantity * shopItem.Price;
-
-            OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2), (int)reservation.Id!);
-
-            _orderLineRepo.AddOrderLine(orderLine);
-            orderLines.Add(orderLine);
+            ShopItem? shopItem = _shopItemRepository.GetShopItemById(scheduleShopItem.ShopItemId);
+            if (shopItem != null) shopItems.Add(shopItem);
         }
 
-        return orderLines;
+        return CreateOrderLineForCashDeskShopItems(shopItems, reservation);
     }
 
     public List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
@@ -88,21 +55,13 @@ public class OrderLineService
         return _orderLineRepo.GetOrderLinesByReservation(reservation);
     }
 
-    public List<OrderLine> CreateOrderLineForCashDeskShopItems(List<ShopItem> shopItems)
+    public List<OrderLine> CreateOrderLineForCashDeskShopItems(List<ShopItem> shopItems, Reservation? reservation = null)
     {
         List<OrderLine> orderLines = new List<OrderLine>();
 
-        for (int i = 0; i < shopItems.Count; i++)
-        {
-            ShopItem item = shopItems[i];
-            if (item.Id is null)
-            {
-                shopItems.Remove(item);
-            }
-        }
+        shopItems.RemoveAll(item => item.Id is null);
 
         List<IGrouping<int, ShopItem>> groupedItems = shopItems
-            .Where(item => item.Id.HasValue)
             .GroupBy(item => item.Id!.Value)
             .ToList();
 
@@ -112,12 +71,12 @@ public class OrderLineService
             int quantity = group.Count();
 
             ShopItem shopItem = _shopItemRepository.GetShopItemById(shopItemId)!;
-            if (shopItem == null)
-                continue;
 
             double totalPrice = quantity * shopItem.Price;
 
             OrderLine orderLine = new OrderLine(quantity, shopItem.Name, shopItem.VatPercentage, Math.Round(totalPrice, 2));
+            if (reservation != null) orderLine.ReservationId = (int)reservation.Id!;
+
             OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
 
             if (orderLineId != null)
@@ -128,7 +87,7 @@ public class OrderLineService
         return orderLines;
     }
 
-    public List<OrderLine> CreateOrderLineForCashDeskTickets(List<ScheduleSeat> scheduleSeats)
+    public List<OrderLine> CreateOrderLineForCashDeskTickets(List<ScheduleSeat> scheduleSeats, Reservation? reservation = null)
     {
         List<OrderLine> orderLines = new List<OrderLine>();
 
@@ -143,6 +102,8 @@ public class OrderLineService
             double totalPrice = group.Sum(seat => (double)seat.Price);
 
             OrderLine orderLine = new OrderLine(quantity, seatType.ToString(), 9, Math.Round(totalPrice, 2));
+            if (reservation != null) orderLine.ReservationId = (int)reservation.Id!;
+
             OrderLine? orderLineId = _orderLineRepo.AddOrderLine(orderLine);
 
             if (orderLineId != null)
