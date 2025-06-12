@@ -49,6 +49,10 @@ public static class ManageEmployeeMenu
         {
             Console.Write("Enter first name: ");
             firstName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(firstName))
+                Console.WriteLine("First name cannot be empty. Please try again.");
+
         } while (string.IsNullOrWhiteSpace(firstName));
 
         string? lastName;
@@ -56,20 +60,49 @@ public static class ManageEmployeeMenu
         {
             Console.Write("Enter last name: ");
             lastName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(lastName))
+                Console.WriteLine("Last name cannot be empty. Please try again.");
+
         } while (string.IsNullOrWhiteSpace(lastName));
 
-        string? dateOfBirth;
+        string? dateOfBirthInput;
+        DateTime dateOfBirth;
         do
         {
             Console.Write("Enter date of birth: ");
-            dateOfBirth = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(dateOfBirth));
+            dateOfBirthInput = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(dateOfBirthInput))
+            {
+                Console.WriteLine("Date of birth cannot be empty. Please try again.");
+                continue;
+            }
+
+            if (!DateTime.TryParse(dateOfBirthInput, out dateOfBirth))
+            {
+                Console.WriteLine("Invalid date format. Please enter a valid date (e.g. 22/02/2025).");
+                continue;
+            }
+
+            if (dateOfBirth > DateTime.Now)
+            {
+                Console.WriteLine("Date of birth cannot be in the future. Please enter a valid date.");
+                continue;
+            }
+            break;
+        } while (true);
 
         string? address;
         do
         {
             Console.Write("Enter address: ");
             address = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                Console.WriteLine("Please Type in a valid adress like: Straatweg 99");
+            }
         } while (string.IsNullOrWhiteSpace(address));
 
         string? eMail;
@@ -77,6 +110,11 @@ public static class ManageEmployeeMenu
         {
             Console.Write("Enter email address: ");
             eMail = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(eMail) || !eMail.Contains("@"))
+            {
+                Console.WriteLine("Make sure that the email contains a '@'. Also the email can't be empty.");
+            }
         } while (string.IsNullOrWhiteSpace(eMail) || !eMail.Contains("@"));
 
         string? userName;
@@ -84,6 +122,16 @@ public static class ManageEmployeeMenu
         {
             Console.Write("Enter username: ");
             userName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                Console.WriteLine("Username can't be empty");
+            }
+
+            if (_employeeService.UserNameExists(userName))
+            {
+                Console.WriteLine("Username already exists. Try another one");
+            }
         } while (string.IsNullOrWhiteSpace(userName) || _employeeService.UserNameExists(userName));
 
         string? password;
@@ -91,6 +139,11 @@ public static class ManageEmployeeMenu
         {
             Console.Write("Enter password: ");
             password = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                Console.WriteLine("Password can't be empty");
+            }
         } while (string.IsNullOrWhiteSpace(password));
 
         Console.Clear();
@@ -116,7 +169,7 @@ public static class ManageEmployeeMenu
                 return;
         }
 
-        Employee employee = new Employee(firstName, lastName, dateOfBirth, address, eMail, userName, password, role);
+        Employee employee = new Employee(firstName, lastName, dateOfBirthInput, address, eMail, userName, password, role);
 
         if (_employeeService.RegisterEmployee(employee))
         {
