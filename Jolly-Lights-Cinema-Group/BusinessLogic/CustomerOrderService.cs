@@ -2,7 +2,15 @@ using JollyLightsCinemaGroup.DataAccess;
 
 public class CustomerOrderService
 {
-    private readonly CustomerOrderRepository _customerOrderRepository = new CustomerOrderRepository();
+    private readonly CustomerOrderRepository _customerOrderRepository;
+    private readonly OrderLineRepository _orderLineRepository;
+
+    public CustomerOrderService(CustomerOrderRepository? customerOrderRepository = null, OrderLineRepository? orderLineRepository = null)
+    {
+        _customerOrderRepository = customerOrderRepository ?? new CustomerOrderRepository();
+        _orderLineRepository = orderLineRepository ?? new OrderLineRepository();
+    }
+
     public CustomerOrder? RegisterCustomerOrder(CustomerOrder customerOrder)
     {
         return _customerOrderRepository.AddCustomerOrder(customerOrder);
@@ -10,22 +18,9 @@ public class CustomerOrderService
 
     public CustomerOrder CreateCustomerOrderForReservation(Reservation reservation)
     {
-        OrderLineRepository orderLineRepository = new();
-        List<OrderLine> orderLines = orderLineRepository.GetOrderLinesByReservation(reservation);
+        List<OrderLine> orderLines = _orderLineRepository.GetOrderLinesByReservation(reservation);
 
-        double grandTotal = 0;
-        double tax = 0;
-
-        foreach (OrderLine orderLine in orderLines)
-        {
-            double vat = orderLine.VatPercentage / 100.0;
-            double taxPerOrderLine = orderLine.Price * vat;
-            tax += taxPerOrderLine;
-            grandTotal += orderLine.Price + taxPerOrderLine;
-        }
-
-        CustomerOrder customerOrder = new(Math.Round(grandTotal, 2), DateTime.Now, Math.Round(tax, 2));
-        return customerOrder;
+        return CreateCustomerOrderForCashDesk(orderLines);
     }
 
     public CustomerOrder CreateCustomerOrderForCashDesk(List<OrderLine> orderLines)

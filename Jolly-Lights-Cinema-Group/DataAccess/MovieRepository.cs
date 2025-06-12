@@ -24,7 +24,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public Movie? GetMovieById(int index)
+        public virtual Movie? GetMovieById(int index)
         {
             using (var connection = DatabaseManager.GetConnection())
             {

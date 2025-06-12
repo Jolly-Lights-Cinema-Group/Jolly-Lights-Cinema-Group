@@ -2,7 +2,22 @@ using JollyLightsCinemaGroup.DataAccess;
 
 public class ReservationService
 {
-    private readonly ReservationRepository _reservationRepository = new ReservationRepository();
+    private readonly ReservationRepository _reservationRepository;
+    private readonly ScheduleSeatRepository _scheduleSeatRepository;
+    private readonly ScheduleRepository _scheduleRepository;
+    private readonly MovieRoomRepository _movieRoomRepository;
+
+    public ReservationService(
+        ReservationRepository? reservationRepository = null,
+        ScheduleSeatRepository? scheduleSeatRepository = null,
+        ScheduleRepository? scheduleRepository = null,
+        MovieRoomRepository? movieRoomRepository = null)
+    {
+        _reservationRepository = reservationRepository ?? new ReservationRepository();
+        _scheduleSeatRepository = scheduleSeatRepository ?? new ScheduleSeatRepository();
+        _scheduleRepository = scheduleRepository ?? new ScheduleRepository();
+        _movieRoomRepository = movieRoomRepository ?? new MovieRoomRepository();
+    }
     public Reservation? RegisterReservation(Reservation reservation)
     {
         return _reservationRepository.AddReservation(reservation);
@@ -15,10 +30,7 @@ public class ReservationService
 
     public Reservation? FindReservationByReservationNumber(string reservationNumber)
     {
-        Reservation? reservation = _reservationRepository.FindReservationByReservationNumber(reservationNumber);
-        if (reservation is null) return null;
-
-        return reservation;
+        return _reservationRepository.FindReservationByReservationNumber(reservationNumber);
     }
 
     public bool PayReservation(Reservation reservation)
@@ -33,8 +45,7 @@ public class ReservationService
 
     public List<(string, string)> GetReservedSeats(Schedule schedule)
     {
-        ScheduleSeatRepository scheduleSeatRepository = new();
-        List<ScheduleSeat> result = scheduleSeatRepository.GetSeatsBySchedule(schedule.Id!.Value);
+        List<ScheduleSeat> result = _scheduleSeatRepository.GetSeatsBySchedule(schedule.Id!.Value);
 
         List<(string, string)> reservedSeats = new List<(string, string)>();
 
@@ -57,21 +68,17 @@ public class ReservationService
 
     public int? GetLocationIdByReservation(Reservation reservation)
     {
-        ScheduleSeatRepository scheduleSeatRepository = new();
-        ScheduleRepository scheduleRepository = new();
-        MovieRoomRepository movieRoomRepository = new();
-
-        List<ScheduleSeat> scheduleSeats = scheduleSeatRepository.GetSeatsByReservation(reservation);
+        List<ScheduleSeat> scheduleSeats = _scheduleSeatRepository.GetSeatsByReservation(reservation);
         if (scheduleSeats.Count == 0)
             return null;
 
         ScheduleSeat scheduleSeat = scheduleSeats.First();
 
-        Schedule? schedule = scheduleRepository.GetScheduleById(scheduleSeat.ScheduleId);
+        Schedule? schedule = _scheduleRepository.GetScheduleById(scheduleSeat.ScheduleId);
         if (schedule == null)
             return null;
 
-        MovieRoom? movieRoom = movieRoomRepository.GetMovieRoomById(schedule.MovieRoomId);
+        MovieRoom? movieRoom = _movieRoomRepository.GetMovieRoomById(schedule.MovieRoomId);
         if (movieRoom == null)
             return null;
 

@@ -1,15 +1,17 @@
 using JollyLightsCinemaGroup.DataAccess;
 using Jolly_Lights_Cinema_Group.Helpers;
-using JollyLightsCinemaGroup.BusinessLogic;
 
 public class MovieRoomService
 {
     private readonly MovieRoomRepository _movieRoomRepo;
+    private readonly ScheduleSeatRepository _scheduleSeatRepository;
 
-    public MovieRoomService()
+    public MovieRoomService(MovieRoomRepository? movieRoomRepository = null, ScheduleSeatRepository? scheduleSeatRepository = null)
     {
-        _movieRoomRepo = new MovieRoomRepository();
+        _movieRoomRepo = movieRoomRepository ?? new MovieRoomRepository();
+        _scheduleSeatRepository = scheduleSeatRepository ?? new ScheduleSeatRepository();
     }
+
     public bool RegisterMovieRoom(MovieRoom movieRoom)
     {
         return _movieRoomRepo.AddMovieRoom(movieRoom);
@@ -36,7 +38,7 @@ public class MovieRoomService
         return _movieRoomRepo.GetMovieRoomById(id);
     }
 
-    public int GetLeftOverSeats(Schedule schedule)
+    public virtual int GetLeftOverSeats(Schedule schedule)
     {
         List<List<string>>? movieRoomLayout = GetRoomLayout(schedule.MovieRoomId);
         if (movieRoomLayout == null) return 0;
@@ -53,11 +55,9 @@ public class MovieRoomService
             }
         }
 
-        ScheduleSeatService scheduleSeatService = new();
-        List<ScheduleSeat> reservedSeats = scheduleSeatService.ShowAllLScheduleSeats(schedule.Id!.Value);
+        List<ScheduleSeat> reservedSeats = _scheduleSeatRepository.GetSeatsBySchedule(schedule.Id!.Value);
 
         int reservedCount = reservedSeats.Count;
-
         int freeSeats = totalSeats - reservedCount;
 
         return freeSeats;

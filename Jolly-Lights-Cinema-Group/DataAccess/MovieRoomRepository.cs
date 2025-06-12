@@ -60,7 +60,7 @@ public class MovieRoomRepository
         return command.ExecuteNonQuery() > 0;
     }    
     
-    public string GetRoomLayoutJson(int id)
+    public virtual string GetRoomLayoutJson(int id)
     {
         var movieRoomLayout = "";
 
@@ -84,7 +84,7 @@ public class MovieRoomRepository
         return movieRoomLayout;
     }
 
-    public MovieRoom? GetMovieRoomById(int id)
+    public virtual MovieRoom? GetMovieRoomById(int id)
     {
         using (var connection = DatabaseManager.GetConnection())
         {

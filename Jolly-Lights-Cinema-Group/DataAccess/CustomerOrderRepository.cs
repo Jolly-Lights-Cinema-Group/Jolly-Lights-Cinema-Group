@@ -83,7 +83,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             return years;
         }
 
-        public List<CustomerOrder> GetCustomerOrdersByYear(int year)
+        public virtual List<CustomerOrder> GetCustomerOrdersByYear(int year)
         {
             List<CustomerOrder> orders = new();
 
@@ -126,8 +126,10 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.Add(new SqliteParameter("@year", DbType.String) { Value = year.ToString() });
                 command.Parameters.Add(new SqliteParameter("@month", DbType.String) { Value = month.ToString("D2") });
 
-                object result = command.ExecuteScalar();
-                return result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+                object? result = command.ExecuteScalar();
+                if (result == null || result == DBNull.Value) return 0m;
+
+                return Convert.ToDecimal(result);
             }
         }
 
@@ -146,8 +148,10 @@ namespace JollyLightsCinemaGroup.DataAccess
                 command.Parameters.Add(new SqliteParameter("@year", DbType.String) { Value = year.ToString() });
                 command.Parameters.Add(new SqliteParameter("@month", DbType.String) { Value = month.ToString("D2") });
 
-                object result = command.ExecuteScalar();
-                return result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+                object? result = command.ExecuteScalar();
+                if (result == null || result == DBNull.Value) return 0m;
+
+                return Convert.ToDecimal(result);
             }
         }
     }

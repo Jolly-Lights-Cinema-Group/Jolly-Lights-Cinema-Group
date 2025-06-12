@@ -11,11 +11,6 @@ namespace JollyLightsCinemaGroup.BusinessLogic
             _scheduleSeatRepo = new ScheduleSeatRepository();
         }
 
-        public List<ScheduleSeat> ShowAllLScheduleSeats(int scheduleId)
-        {
-            return _scheduleSeatRepo.GetSeatsBySchedule(scheduleId);
-        }
-
         public List<ScheduleSeat> AddSeatToReservation(List<ScheduleSeat> scheduleSeats)
         {
             List<ScheduleSeat> seats = new List<ScheduleSeat>();

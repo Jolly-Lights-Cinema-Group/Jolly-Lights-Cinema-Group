@@ -4,7 +4,7 @@ namespace JollyLightsCinemaGroup.DataAccess
 {
     public class OrderLineRepository
     {
-        public OrderLine? AddOrderLine(OrderLine orderLine)
+        public virtual OrderLine? AddOrderLine(OrderLine orderLine)
         {
             using (var connection = DatabaseManager.GetConnection())
             {
@@ -54,7 +54,7 @@ namespace JollyLightsCinemaGroup.DataAccess
             }
         }
 
-        public List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
+        public virtual List<OrderLine> GetOrderLinesByReservation(Reservation reservation)
         {
             List<OrderLine> orderLines = new List<OrderLine>();
             using (var connection = DatabaseManager.GetConnection())
