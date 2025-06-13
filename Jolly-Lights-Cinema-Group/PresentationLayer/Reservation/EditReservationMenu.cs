@@ -19,37 +19,44 @@ public class EditReservationMenu
     {
         Console.Clear();
 
-        string? reservationNumber;
+        Reservation? reservation = null;
         do
         {
-            Console.Write("Enter reservation number to edit reservation: ");
-            reservationNumber = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(reservationNumber));
+            Console.Write("Enter reservation number to edit reservation (enter C tot cancel): ");
+             string? reservationNumber = Console.ReadLine();
 
-        Reservation? reservation = _reservationService.FindReservationByReservationNumber(reservationNumber);
-
-        if (reservation is null)
-        {
-            Console.WriteLine($"No Reservation found with reservation number: {reservationNumber}");
-            Console.WriteLine("\nPress any key to continue.");
-            Console.ReadKey();
-        }
-
-        else
-        {
-            Console.Clear();
-            string[] editReservationOptions = { "Edit shop items", "Cancel reservation", "Finish" };
-
-            Menu editReservationMenu = new($"Edit reservation: {reservation.ReservationNumber}", editReservationOptions);
-
-            var inEditReservationsMenu = true;
-            Console.Clear();
-
-            while (inEditReservationsMenu)
+            if (string.IsNullOrWhiteSpace(reservationNumber))
             {
-                int choice = editReservationMenu.Run();
-                inEditReservationsMenu = HandleEditReservationMenu(choice, reservation);
+                Console.WriteLine("Reservation number cannot be empty.\n");
+                continue;
             }
+
+            if (reservationNumber.Trim().ToLower() == "c") return;
+
+            reservation = _reservationService.FindReservationByReservationNumber(reservationNumber);
+
+            if (reservation is null)
+            {
+                Console.WriteLine($"No Reservation found with reservation number: {reservationNumber}\n");
+                continue;
+            }
+
+            break;
+
+        } while (true);
+
+        Console.Clear();
+        string[] editReservationOptions = { "Edit shop items", "Cancel reservation", "Finish" };
+
+        Menu editReservationMenu = new($"Edit reservation: {reservation.ReservationNumber}", editReservationOptions);
+
+        var inEditReservationsMenu = true;
+        Console.Clear();
+
+        while (inEditReservationsMenu)
+        {
+            int choice = editReservationMenu.Run();
+            inEditReservationsMenu = HandleEditReservationMenu(choice, reservation);
         }
     }
 

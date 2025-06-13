@@ -107,7 +107,7 @@ public class MakeReservationMenu
 
         string seatsString = string.Join("; ", selectedSeats.Select(s => s.SeatNumber));
 
-        Console.WriteLine($"Reservation Number: {newReservation.ReservationNumber}");
+        Console.WriteLine($"Reservation Number (save for later): {newReservation.ReservationNumber}");
         Console.WriteLine($"Movie: {selectedMovie.Title}");
         Console.WriteLine($"Date: {selectedSchedule.StartDate:dddd dd MMMM yyyy} {selectedSchedule.StartTime:hh\\:mm}");
         Console.WriteLine($"Room: {movieRoom.RoomNumber}");
