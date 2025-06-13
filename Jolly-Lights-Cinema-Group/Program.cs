@@ -30,10 +30,10 @@ namespace Jolly_Lights_Cinema_Group
                 string password;
                 do
                 {
-                    Console.WriteLine("Login.");
-                    Console.WriteLine("Username: ");
+                    Console.WriteLine("Login");
+                    Console.WriteLine("Enter Username: ");
                     userName = Console.ReadLine()!;
-                    Console.WriteLine("Password: ");
+                    Console.WriteLine("Enter Password: ");
                     password = Console.ReadLine()!;
                 } while (!authenticationService.Login(userName: userName, password: password));
 
