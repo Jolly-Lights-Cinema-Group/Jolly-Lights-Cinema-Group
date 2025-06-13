@@ -1,5 +1,6 @@
 using Jolly_Lights_Cinema_Group;
 using Jolly_Lights_Cinema_Group.Enum;
+using Jolly_Lights_Cinema_Group.Helpers;
 using JollyLightsCinemaGroup.BusinessLogic;
 
 public static class ManageEmployeeMenu
@@ -79,7 +80,7 @@ public static class ManageEmployeeMenu
                 continue;
             }
 
-            if (!DateTime.TryParse(dateOfBirthInput, out dateOfBirth))
+            if (!DateTimeValidator.TryParseDate(dateOfBirthInput, out dateOfBirth))
             {
                 Console.WriteLine("Invalid date format. Please enter a valid date (e.g. 22/02/2025).");
                 continue;
