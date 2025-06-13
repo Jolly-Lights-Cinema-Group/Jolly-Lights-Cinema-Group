@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
 {
     public static class ManagerMenu
     {
-        private static Menu _managerMenu = new("Manager Menu", new string[] { "Manage Reservations", "Manage discount", "Manage Shop", "View Reports", "Settings", "Logout" });
+        private static Menu _managerMenu = new("Manager Menu", new string[] { "Reservations", "Manage discount", "Manage Shop", "View Reports", "Settings", "Logout" });
         public static void ShowManagerMenu(ref User user)
         {
             var inManagerMenu = true;

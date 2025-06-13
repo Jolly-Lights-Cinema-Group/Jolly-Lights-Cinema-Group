@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
 {
     public static class EmployeeMenu
     {
-        private static Menu _employeeMenu = new("Employee Menu", new string[] { "Cash Desk", "Manage Reservations", "Manage Shop", "Account settings", "Logout" });
+        private static Menu _employeeMenu = new("Employee Menu", new string[] { "Cash Desk", "Reservations", "Manage Shop", "Account settings", "Logout" });
         public static void ShowEmployeerMenu(ref User user)
         {
             var inEmployeeMenu = true;
