@@ -4,7 +4,7 @@ using JollyLightsCinemaGroup.BusinessLogic;
 
 public static class CashDesk
 {
-    private static Menu _cashDesk = new("Shop Management", new string[] { "Tickets", "Shop", "Back" });
+    private static Menu _cashDesk = new("Cash Desk", new string[] { "Tickets", "Shop", "Back" });
     public static void ShowCashDeskMenu()
     {
         bool inCashDeskMenu = true;

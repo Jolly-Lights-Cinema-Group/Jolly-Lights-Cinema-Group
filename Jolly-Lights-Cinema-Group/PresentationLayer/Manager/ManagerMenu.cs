@@ -5,7 +5,7 @@ namespace Jolly_Lights_Cinema_Group
 {
     public static class ManagerMenu
     {
-        private static Menu _managerMenu = new("Manager Menu", new string[] { "Reservations", "Manage discount", "Manage Shop", "View Reports", "Settings", "Logout" });
+        private static Menu _managerMenu = new("Manager Menu", new string[] { "Cash Desk", "Reservations", "Manage discount", "Manage Shop", "View Reports", "Settings", "Logout" });
         public static void ShowManagerMenu(ref User user)
         {
             var inManagerMenu = true;
@@ -24,21 +24,24 @@ namespace Jolly_Lights_Cinema_Group
             switch (choice)
             {
                 case 0:
-                    ReservationMenu.ShowReservationMenu();
+                    CashDesk.ShowCashDeskMenu();
                     return true;
                 case 1:
-                    ManageDiscountCodeMenu.ShowManageDiscountCodeMenu();
+                    ReservationMenu.ShowReservationMenu();
                     return true;
                 case 2:
-                    ShopManagementMenu.ShowShopManagementMenu();
+                    ManageDiscountCodeMenu.ShowManageDiscountCodeMenu();
                     return true;
                 case 3:
-                    ReportsMenu.ShowReportsMenu();
+                    ShopManagementMenu.ShowShopManagementMenu();
                     return true;
                 case 4:
-                    AccountSettingsMenu.ShowAccountSettingsMenu();
+                    ReportsMenu.ShowReportsMenu();
                     return true;
                 case 5:
+                    AccountSettingsMenu.ShowAccountSettingsMenu();
+                    return true;
+                case 6:
                     user.IsAuthenticated = false;
                     return false;
                 default:
