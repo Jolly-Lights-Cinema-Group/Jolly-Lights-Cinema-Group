@@ -55,6 +55,9 @@ public class MakeReservationMenu
         {
             Console.Write("Enter first name: ");
             firstName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(firstName))
+                Console.WriteLine("First name cannot be empty. Please try again.");
         } while (string.IsNullOrWhiteSpace(firstName));
 
         string? lastName;
@@ -62,6 +65,9 @@ public class MakeReservationMenu
         {
             Console.Write("Enter last name: ");
             lastName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(lastName))
+                Console.WriteLine("Last name cannot be empty. Please try again.");
         } while (string.IsNullOrWhiteSpace(lastName));
 
         int phoneNumber;
@@ -70,6 +76,11 @@ public class MakeReservationMenu
         {
             Console.Write("Enter telephone number: ");
             input = Console.ReadLine();
+
+            if (!int.TryParse(input, out phoneNumber) || phoneNumber < 0)
+            {
+                Console.WriteLine("Phonenumber atleast has 1 digit and exists of numbers only. e.g 0612345678");
+            }
         } while (!int.TryParse(input, out phoneNumber) || phoneNumber < 0);
 
         string? eMail;
@@ -77,7 +88,12 @@ public class MakeReservationMenu
         {
             Console.Write("Enter email address: ");
             eMail = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(eMail));
+
+            if (string.IsNullOrWhiteSpace(eMail) || !eMail.Contains("@"))
+            {
+                Console.WriteLine("Make sure that the email contains a '@'. Also the email can't be empty.");
+            }
+        } while (string.IsNullOrWhiteSpace(eMail) || !eMail.Contains("@"));
 
         Reservation reservation = new(firstName, lastName, phoneNumber, eMail);
         Reservation? newReservation = _reservationService.RegisterReservation(reservation);
