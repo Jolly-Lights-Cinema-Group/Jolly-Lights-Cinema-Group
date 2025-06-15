@@ -13,6 +13,7 @@ public class ShopMenu
     {
         bool inShop = true;
         int selectedIndex = 0;
+        DateTime? birthDate = null;
 
         while (inShop)
         {
@@ -21,6 +22,20 @@ public class ShopMenu
             {
                 inShop = false;
                 continue;
+            }
+
+            if (selectedItem.MinimumAge > 0)
+            {
+                if (birthDate == null)
+                    birthDate = AgeVerifier.AskDateOfBirth();
+
+                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedItem.MinimumAge))
+                {
+                    Console.WriteLine($"You must be at least {selectedItem.MinimumAge} years old to buy {selectedItem.Name}.");
+                    Console.WriteLine("\nPress any key to continue.");
+                    Console.ReadKey();
+                    continue;
+                }
             }
 
             if (_shopitemService.SellShopItem(selectedItem, reservation))
@@ -44,6 +59,7 @@ public class ShopMenu
 
         bool inShop = true;
         int selectedIndex = 0;
+        DateTime? birthDate = null;
         List<ShopItem> boughtItems = new List<ShopItem>();
 
         while (inShop)
@@ -53,6 +69,20 @@ public class ShopMenu
             {
                 inShop = false;
                 continue;
+            }
+
+            if (selectedItem.MinimumAge > 0)
+            {
+                if (birthDate == null)
+                    birthDate = AgeVerifier.AskDateOfBirth();
+
+                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedItem.MinimumAge))
+                {
+                    Console.WriteLine($"You must be at least {selectedItem.MinimumAge} years old to buy {selectedItem.Name}.");
+                    Console.WriteLine("\nPress any key to continue.");
+                    Console.ReadKey();
+                    continue;
+                }
             }
 
             if (_shopitemService.SellShopItem(selectedItem))
