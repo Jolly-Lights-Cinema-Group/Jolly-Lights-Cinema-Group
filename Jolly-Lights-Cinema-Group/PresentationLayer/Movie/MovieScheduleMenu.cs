@@ -13,22 +13,43 @@ public class MovieScheduleMenu
     public Movie? SelectMovieMenu(int locationId)
     {
         ScheduleService scheduleService = new();
-        List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule(locationId);
+        DateTime? birthDate = null;
 
-        string[] movieMenuItems = scheduledMovies
-            .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
-            .Append("Cancel")
-            .ToArray();
-
-        Menu movieMenu = new("Select a movie:", movieMenuItems);
-        int movieChoice = movieMenu.Run();
-
-        if (movieChoice >= scheduledMovies.Count)
+        while (true)
         {
-            Console.WriteLine("Cancelled.");
-            return null;
-        }
+            List<Movie> scheduledMovies = scheduleService.GetMoviesBySchedule(locationId);
 
-        return scheduledMovies[movieChoice];
+            string[] movieMenuItems = scheduledMovies
+                .Select(movie => $"Movie: {movie.Title}; Duration: {movie.Duration} minutes; Min Age: {movie.MinimumAge}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu movieMenu = new("Select a movie:", movieMenuItems);
+            int movieChoice = movieMenu.Run();
+
+            if (movieChoice >= scheduledMovies.Count)
+            {
+                Console.WriteLine("Cancelled.");
+                return null;
+            }
+
+            Movie selectedMovie = scheduledMovies[movieChoice];
+
+            if (selectedMovie.MinimumAge >= 18)
+            {
+                if (birthDate == null)
+                    birthDate = AgeVerifier.AskDateOfBirth();
+
+                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedMovie.MinimumAge.Value))
+                {
+                    Console.WriteLine($"You must be at least {selectedMovie.MinimumAge} years old to watch {selectedMovie.Title}.");
+                    Console.WriteLine("Press any key to choose a difrent movie.");
+                    Console.ReadKey();
+                    continue;
+                }
+            }
+
+            return selectedMovie;
+        }
     }
 }
