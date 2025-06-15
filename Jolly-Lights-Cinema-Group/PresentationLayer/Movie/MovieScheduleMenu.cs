@@ -34,7 +34,7 @@ public class MovieScheduleMenu
 
             Movie selectedMovie = scheduledMovies[movieChoice];
 
-            if (selectedMovie.MinimumAge >= 18)
+            if (selectedMovie.MinimumAge >= 16)
             {
                 if (birthDates == null) birthDates = AgeVerifier.AskDateOfBirth(selectedMovie.MinimumAge.Value);
 

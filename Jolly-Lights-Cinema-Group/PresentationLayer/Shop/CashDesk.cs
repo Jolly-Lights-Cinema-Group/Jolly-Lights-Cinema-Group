@@ -78,7 +78,7 @@ public static class CashDesk
             Schedule selectedSchedule = upcomingSchedules[choice];
             Movie movie = movieService.GetMovieById(selectedSchedule.MovieId)!;
 
-            if (movie.MinimumAge >= 18)
+            if (movie.MinimumAge >= 16)
             {
                 if (birthDates == null) birthDates = AgeVerifier.AskDateOfBirth(movie.MinimumAge.Value);
 
