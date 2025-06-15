@@ -1,5 +1,4 @@
 using Jolly_Lights_Cinema_Group;
-using Jolly_Lights_Cinema_Group.Common;
 
 public class MovieScheduleMenu
 {
@@ -13,7 +12,7 @@ public class MovieScheduleMenu
     public Movie? SelectMovieMenu(int locationId)
     {
         ScheduleService scheduleService = new();
-        DateTime? birthDate = null;
+        List<DateTime>? birthDates = null;
 
         while (true)
         {
@@ -37,10 +36,9 @@ public class MovieScheduleMenu
 
             if (selectedMovie.MinimumAge >= 18)
             {
-                if (birthDate == null)
-                    birthDate = AgeVerifier.AskDateOfBirth();
+                if (birthDates == null) birthDates = AgeVerifier.AskDateOfBirth(selectedMovie.MinimumAge.Value);
 
-                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedMovie.MinimumAge.Value))
+                if (!AgeVerifier.IsOldEnough(birthDates, selectedMovie.MinimumAge.Value))
                 {
                     Console.WriteLine($"You must be at least {selectedMovie.MinimumAge} years old to watch {selectedMovie.Title}.");
                     Console.WriteLine("Press any key to choose a difrent movie.");

@@ -2,45 +2,81 @@ using Jolly_Lights_Cinema_Group.Helpers;
 
 public static class AgeVerifier
 {
-    public static bool IsOldEnough(DateTime birthDate, int minimumAge)
+    public static bool IsOldEnough(List<DateTime> birthdates, int minimumAge)
     {
-        var today = DateTime.Today;
-        var age = today.Year - birthDate.Year;
+        DateTime today = DateTime.Today;
 
-        if (birthDate > today.AddYears(-age))
-            age--;
+        foreach (DateTime birthDate in birthdates)
+        {
+            int age = today.Year - birthDate.Year;
 
-        return age >= minimumAge;
+            if (birthDate > today.AddYears(-age))
+                age--;
+
+            if (age < minimumAge) return false;
+        }
+        return true;
     }
 
-    public static DateTime AskDateOfBirth()
+    public static List<DateTime> AskDateOfBirth(int minimumAge)
     {
-        string? dateOfBirthInput;
-        DateTime dateOfBirth;
-        do
+        List<DateTime> birthDates = new();
+        bool tryAnother = true;
+
+        while (tryAnother)
         {
-            Console.Write("Enter date of birth (dd/MM/yyyy): ");
-            dateOfBirthInput = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(dateOfBirthInput))
+            string? dateOfBirthInput;
+            DateTime dateOfBirth;
+            do
             {
-                Console.WriteLine("Date of birth cannot be empty. Please try again.");
-                continue;
+                Console.Write("\nEnter date of birth (dd/MM/yyyy): ");
+                dateOfBirthInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(dateOfBirthInput))
+                {
+                    Console.WriteLine("Date of birth cannot be empty. Please try again.");
+                    continue;
+                }
+
+                if (!DateTimeValidator.TryParseDate(dateOfBirthInput, out dateOfBirth))
+                {
+                    Console.WriteLine("Invalid date format. Please enter a valid date (e.g. 22/02/2025).");
+                    continue;
+                }
+
+                if (dateOfBirth > DateTime.Now)
+                {
+                    Console.WriteLine("Date of birth cannot be in the future. Please enter a valid date.");
+                    continue;
+                }
+                break;
+            } while (true);
+
+            birthDates.Add(dateOfBirth);
+
+            if (!IsOldEnough(birthDates, minimumAge))
+            {
+                break;
             }
 
-            if (!DateTimeValidator.TryParseDate(dateOfBirthInput, out dateOfBirth))
+            string? response;
+            do
             {
-                Console.WriteLine("Invalid date format. Please enter a valid date (e.g. 22/02/2025).");
-                continue;
-            }
+                Console.Write("Verify another person? (y/n): ");
+                response = Console.ReadLine()?.Trim().ToLower();
 
-            if (dateOfBirth > DateTime.Now)
-            {
-                Console.WriteLine("Date of birth cannot be in the future. Please enter a valid date.");
-                continue;
-            }
-            break;
-        } while (true);
-        return dateOfBirth;
+                if (response == "n")
+                {
+                    tryAnother = false;
+                    break;
+                }
+
+                if (response == "y") break;
+
+                Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+            } while (true);
+        }
+
+        return birthDates;
     }
 }

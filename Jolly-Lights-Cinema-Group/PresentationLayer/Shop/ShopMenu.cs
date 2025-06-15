@@ -13,7 +13,7 @@ public class ShopMenu
     {
         bool inShop = true;
         int selectedIndex = 0;
-        DateTime? birthDate = null;
+        List<DateTime>? birthDates = null;
 
         while (inShop)
         {
@@ -26,10 +26,10 @@ public class ShopMenu
 
             if (selectedItem.MinimumAge > 0)
             {
-                if (birthDate == null)
-                    birthDate = AgeVerifier.AskDateOfBirth();
+                if (birthDates == null)
+                    birthDates = AgeVerifier.AskDateOfBirth(selectedItem.MinimumAge);
 
-                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedItem.MinimumAge))
+                if (!AgeVerifier.IsOldEnough(birthDates, selectedItem.MinimumAge))
                 {
                     Console.WriteLine($"You must be at least {selectedItem.MinimumAge} years old to buy {selectedItem.Name}.");
                     Console.WriteLine("\nPress any key to continue.");
@@ -59,7 +59,7 @@ public class ShopMenu
 
         bool inShop = true;
         int selectedIndex = 0;
-        DateTime? birthDate = null;
+        List<DateTime>? birthDates = null;
         List<ShopItem> boughtItems = new List<ShopItem>();
 
         while (inShop)
@@ -73,10 +73,10 @@ public class ShopMenu
 
             if (selectedItem.MinimumAge > 0)
             {
-                if (birthDate == null)
-                    birthDate = AgeVerifier.AskDateOfBirth();
+                if (birthDates == null)
+                    birthDates = AgeVerifier.AskDateOfBirth(selectedItem.MinimumAge);
 
-                if (!AgeVerifier.IsOldEnough(birthDate.Value, selectedItem.MinimumAge))
+                if (!AgeVerifier.IsOldEnough(birthDates, selectedItem.MinimumAge))
                 {
                     Console.WriteLine($"You must be at least {selectedItem.MinimumAge} years old to buy {selectedItem.Name}.");
                     Console.WriteLine("\nPress any key to continue.");

@@ -56,7 +56,7 @@ public static class CashDesk
             .OrderBy(s => s.StartDate.Date.Add(s.StartTime))
             .ToList();
         
-        DateTime? birthDate = null;
+        List<DateTime>? birthDates = null;
 
         while (true)
         {
@@ -80,10 +80,9 @@ public static class CashDesk
 
             if (movie.MinimumAge >= 18)
             {
-                if (birthDate == null)
-                    birthDate = AgeVerifier.AskDateOfBirth();
+                if (birthDates == null) birthDates = AgeVerifier.AskDateOfBirth(movie.MinimumAge.Value);
 
-                if (!AgeVerifier.IsOldEnough(birthDate.Value, movie.MinimumAge.Value))
+                if (!AgeVerifier.IsOldEnough(birthDates, movie.MinimumAge.Value))
                 {
                     Console.WriteLine($"You must be at least {movie.MinimumAge} years old to watch {movie.Title}.");
                     Console.WriteLine("\nPress any key to choose another movie.");
