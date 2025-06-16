@@ -71,7 +71,7 @@ public static class ManageMovieMenu
         DateTime releaseDate;
         do
         {
-            Console.WriteLine("Enter release date: ");
+            Console.WriteLine("Enter release date (dd/MM/yyyy): ");
             string? inputReleasedate = Console.ReadLine();
             if (DateTimeValidator.TryParseDate(inputReleasedate, out releaseDate))
             {
