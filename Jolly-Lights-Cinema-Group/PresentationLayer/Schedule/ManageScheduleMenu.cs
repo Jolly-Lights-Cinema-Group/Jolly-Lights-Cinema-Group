@@ -169,71 +169,86 @@ public static class ManageScheduleMenu
         }
         else locationId = Globals.SessionLocationId;
 
+        MovieService movieService = new();
+        Movie? movie = null;
         string? title;
+
         do
         {
-            Console.Write("Enter movie title: ");
+            Console.Write("Enter movie title (or type 'C' to cancel): ");
             title = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(title));
 
-        MovieService movieService = new();
-        Movie? movie = movieService.GetMovieTitle(title);
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                Console.WriteLine("Title cannot be empty.");
+                continue;
+            }
 
-        if (movie is null) Console.WriteLine($"No movie found with title {title}");
+            if (title.Trim().ToLower() == "c")
+            {
+                Console.WriteLine("Operation cancelled.");
+                break;
+            }
+
+            movie = movieService.GetMovieTitle(title);
+            
+            if (movie == null)
+            {
+                Console.WriteLine($"No movie found with title: {title}.");
+            }
+
+        } while (movie == null);
+
+        List<Schedule> movieSchedules = _scheduleService.GetSchedulesByMovie(movie!);
+        if (movieSchedules.Count <= 0)
+        {
+            Console.WriteLine($"No movie schedules found for movie: {title}");
+        }
 
         else
         {
-            List<Schedule> movieSchedules = _scheduleService.GetSchedulesByMovie(movie);
-            if (movieSchedules.Count <= 0)
+            MovieRoomService movieRoomService = new();
+            List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
+
+            string[] movieRoomItems = movieRooms
+                .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu movieRoomMenu = new("Select a movie room:", movieRoomItems);
+            int movieRoomChoice = movieRoomMenu.Run();
+
+            if (movieRoomChoice >= movieRooms.Count)
             {
-                Console.WriteLine($"No movie schedules found for movie: {title}");
+                Console.WriteLine("Cancelled.");
+                return;
             }
 
-            else
+            MovieRoom selectedMovieRoom = movieRooms[movieRoomChoice];
+
+            List<Schedule> schedules = _scheduleService.GetSchedulesByMovieAndRoom(movie!, selectedMovieRoom);
+
+            string[] scheduleItems = schedules
+                .Select(schedule => $"Date: {schedule.StartDate.ToString("dd/MM/yyyy")}, Time: {schedule.StartTime.ToString(@"hh\:mm")}")
+                .Append("Cancel")
+                .ToArray();
+
+            Menu schedulesMenu = new($"Select a schedule for {movie!.Title}, in roomnumber {selectedMovieRoom.RoomNumber}:", scheduleItems);
+            int scheduleChoice = schedulesMenu.Run();
+
+            if (scheduleChoice >= schedules.Count)
             {
-                MovieRoomService movieRoomService = new();
-                List<MovieRoom> movieRooms = movieRoomService.GetMovieRooms(locationId);
-
-                string[] movieRoomItems = movieRooms
-                    .Select(movieRoom => $"Roomnumber: {movieRoom.RoomNumber}")
-                    .Append("Cancel")
-                    .ToArray();
-
-                Menu movieRoomMenu = new("Select a movie room:", movieRoomItems);
-                int movieRoomChoice = movieRoomMenu.Run();
-
-                if (movieRoomChoice >= movieRooms.Count)
-                {
-                    Console.WriteLine("Cancelled.");
-                    return;
-                }
-
-                MovieRoom selectedMovieRoom = movieRooms[movieRoomChoice];
-
-                List<Schedule> schedules = _scheduleService.GetSchedulesByMovieAndRoom(movie, selectedMovieRoom);
-
-                string[] scheduleItems = schedules
-                    .Select(schedule => $"Date: {schedule.StartDate.ToString("dd/MM/yyyy")}, Time: {schedule.StartTime.ToString(@"hh\:mm")}")
-                    .Append("Cancel")
-                    .ToArray();
-
-                Menu schedulesMenu = new($"Select a schedule for {movie.Title}, in roomnumber {selectedMovieRoom.RoomNumber}:", scheduleItems);
-                int scheduleChoice = schedulesMenu.Run();
-
-                if (scheduleChoice >= schedules.Count)
-                {
-                    Console.WriteLine("Cancelled.");
-                    return;
-                }
-
-                Schedule selectedSchedule = schedules[scheduleChoice];
-                if (_scheduleService.DeleteSchedule(selectedSchedule))
-                {
-                    Console.Clear();
-                    Console.WriteLine("Schedule deleted succesfully.");
-                }
-                else Console.WriteLine("Schedule could not be deleted.");
+                Console.WriteLine("Cancelled.");
+                return;
             }
+
+            Schedule selectedSchedule = schedules[scheduleChoice];
+            if (_scheduleService.DeleteSchedule(selectedSchedule))
+            {
+                Console.Clear();
+                Console.WriteLine("Schedule deleted succesfully.");
+            }
+            else Console.WriteLine("Schedule could not be deleted.");
         }
 
         Console.WriteLine("Press any key to continue");
