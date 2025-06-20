@@ -1,3 +1,4 @@
+using Jolly_Lights_Cinema_Group.Helpers;
 using Microsoft.Data.Sqlite;
 
 namespace JollyLightsCinemaGroup.DataAccess
@@ -116,6 +117,81 @@ namespace JollyLightsCinemaGroup.DataAccess
                 }
             }
             return movies;
+        }
+
+        public Movie? ModifyMovie(Movie movie, string? newTitle, string? newDuration, string? newMinimumAge, string? newReleaseDate, string? newCast)
+        {
+            using (var connection = DatabaseManager.GetConnection())
+            {
+                connection.Open();
+
+                var updates = new List<string>();
+                var parameters = new Dictionary<string, object>();
+
+                if (!string.IsNullOrWhiteSpace(newTitle))
+                {
+                    movie.Title = newTitle;
+                    updates.Add("Title = @newTitle");
+                    parameters["@newTitle"] = newTitle;
+                }
+
+                if (!string.IsNullOrWhiteSpace(newDuration))
+                {
+                    if (int.TryParse(newDuration, out int validDuration))
+                    {
+                        movie.Duration = validDuration;
+                        updates.Add("Duration = @newDuration");
+                        parameters["@newDuration"] = validDuration;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(newMinimumAge))
+                {
+                    if (int.TryParse(newMinimumAge, out int validMinimumAge))
+                    {
+                        movie.MinimumAge = validMinimumAge;
+                        updates.Add("MinimumAge = @newMinimumAge");
+                        parameters["@newMinimumAge"] = validMinimumAge;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(newReleaseDate))
+                {
+                    if (DateTimeValidator.TryParseDate(newReleaseDate, out  DateTime validReleaseDate))
+                    {
+                        movie.ReleaseDate = validReleaseDate;
+                        updates.Add("ReleaseDate = @newReleaseDate");
+                        parameters["@newReleaseDate"] = validReleaseDate;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(newCast))
+                {
+                    movie.MovieCast = newCast;
+                    updates.Add("MovieCast = @newCast");
+                    parameters["@newCast"] = newCast;
+                }
+
+                if (updates.Count == 0)
+                {
+                    return null;
+                }
+
+                var command = connection.CreateCommand();
+                command.CommandText = $@"
+                    UPDATE Movie
+                    SET {string.Join(", ", updates)}
+                    WHERE Id = @id;";
+
+                command.Parameters.AddWithValue("@id", movie.Id);
+
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value);
+                }
+
+                return movie;
+            }
         }
     }
 }

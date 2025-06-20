@@ -4,7 +4,7 @@ using Jolly_Lights_Cinema_Group.Helpers;
 public static class ManageMovieMenu
 {
     private static MovieService _movieService = new();
-    private static Menu _manageMovieMenu = new("Movie Management Menu.", new string[] { "Add Movie", "View Movies", "Back" });
+    private static Menu _manageMovieMenu = new("Movie Management Menu.", new string[] { "Add Movie", "View Movies", "Edit Movie", "Back" });
     public static void ShowManageMovieMenu()
     {
         bool inManageMovieMenu = true;
@@ -29,6 +29,9 @@ public static class ManageMovieMenu
                 ViewMovies();
                 return true;
             case 2:
+                EditMovie();
+                return true;
+            case 3:
                 return false;
             default:
                 Console.WriteLine("Invalid selection.");
@@ -68,7 +71,7 @@ public static class ManageMovieMenu
         DateTime releaseDate;
         do
         {
-            Console.WriteLine("Enter release date: ");
+            Console.WriteLine("Enter release date (dd/MM/yyyy): ");
             string? inputReleasedate = Console.ReadLine();
             if (DateTimeValidator.TryParseDate(inputReleasedate, out releaseDate))
             {
@@ -98,7 +101,7 @@ public static class ManageMovieMenu
         {
             Console.WriteLine($"Movie could not be added to the database");
         }
-    
+
         Console.WriteLine("\nPress any key to exit.");
         Console.ReadKey();
     }
@@ -124,5 +127,78 @@ public static class ManageMovieMenu
 
         Console.WriteLine("\nPress any key to exit.");
         Console.ReadKey();
+    }
+
+    public static void EditMovie()
+    {
+        Console.Clear();
+
+        MovieService movieService = new();
+        Movie? movie = null;
+        string? title;
+
+        do
+        {
+            Console.Write("Enter movie title to edit movie (or type 'C' to cancel): ");
+            title = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                Console.WriteLine("Title cannot be empty.");
+                continue;
+            }
+
+            if (title.Trim().ToLower() == "c")
+            {
+                return;
+            }
+
+            movie = movieService.GetMovieTitle(title);
+            
+            if (movie == null)
+            {
+                Console.WriteLine($"No movie found with title: {title}.");
+            }
+
+        } while (movie is null);
+
+
+        Console.Clear();
+
+            Console.Clear();
+            Console.WriteLine($"Editing: {movie!.Title}");
+
+            Console.Write($"New Title (leave empty to keep current: {movie.Title}): ");
+            string? newTitle = Console.ReadLine();
+            newTitle = string.IsNullOrWhiteSpace(newTitle) ? null : newTitle;
+
+            Console.Write($"New Duration (leave empty to keep current: {movie.Duration} minutes): ");
+            string? newDuration = Console.ReadLine();
+            newDuration = string.IsNullOrWhiteSpace(newDuration) ? null : newDuration;
+
+            Console.Write($"New Minimum Age (leave empty to keep current: {movie.MinimumAge}): ");
+            string? newMinimumAge = Console.ReadLine();
+            newMinimumAge = string.IsNullOrWhiteSpace(newMinimumAge) ? null : newMinimumAge;
+
+            Console.Write($"New Release Date dd/MM/yyyy (leave empty to keep current: {movie.ReleaseDate.ToString("dd/MM/yyyy")}): ");
+            string? newReleaseDate = Console.ReadLine();
+            newReleaseDate = string.IsNullOrWhiteSpace(newReleaseDate) ? null : newReleaseDate;
+
+            Console.Write($"New Movie Cast (leave empty to keep current: {movie.MovieCast}):\n");
+            string? newCast = Console.ReadLine();
+            newCast = string.IsNullOrWhiteSpace(newCast) ? null : newCast;
+
+            Movie? newMovie = _movieService.UpdateMovie(movie, newTitle, newDuration, newMinimumAge, newReleaseDate, newCast);
+
+            if (newMovie != null)
+            {
+                Console.Clear();
+                Console.WriteLine($"{newMovie.Title} is updated");
+                Console.WriteLine($"Title: {newMovie.Title}\nDuration: {newMovie.Duration} minutes\nMinimum Age: {newMovie.MinimumAge}\nRelease Date: {newMovie.ReleaseDate.ToString("dd/MM/yyyy")}\nMovie Cast: {newMovie.MovieCast}");
+            }
+            else Console.WriteLine("Movie could not be updated.");
+
+            Console.WriteLine("\nPress any key to continue.");
+            Console.ReadKey();
     }
 }

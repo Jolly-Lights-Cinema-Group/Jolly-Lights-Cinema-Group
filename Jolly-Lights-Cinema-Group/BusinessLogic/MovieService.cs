@@ -26,4 +26,9 @@ public class MovieService
     {
         return _movieRepo.GetMovieByTitle(title);
     }
+
+    public Movie? UpdateMovie(Movie movie, string? newTitle, string? newDuration, string? newMinimumAge, string? newReleaseDate, string? newCast)
+    {
+        return _movieRepo.ModifyMovie(movie, newTitle, newDuration, newMinimumAge, newReleaseDate, newCast);
+    }
 }
